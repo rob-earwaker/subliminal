@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EventScope.Logging.Serilog;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,14 +9,18 @@ namespace EventScope.Test
     {
         private readonly Random _random;
 
+        public Operation ReadAllBytesOperation { get; }
+
         public DataStore()
         {
             _random = new Random();
+            ReadAllBytesOperation = new Operation();
         }
 
         public async Task<byte[]> ReadRandomBytesAsync(int size)
         {
-            return await Task.WhenAll(new object[size].Select(_ => ReadRandomByteAsync()));
+            using (ReadAllBytesOperation.StartNewTimer())
+                return await Task.WhenAll(new object[size].Select(_ => ReadRandomByteAsync()));
         }
 
         private async Task<byte> ReadRandomByteAsync()

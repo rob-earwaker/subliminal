@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EventScope.Logging\EventScope.Logging.csproj" />
+    <ProjectReference Include="..\EventScope\EventScope.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using EventScope.Logging.Serilog;
+using Serilog;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +21,13 @@ namespace EventScope.Test
                 .CreateLogger();
 
             var dataStore = new DataStore();
+
+            var readAllBytesSubscription = new Subscription<OperationCompletedEventArgs>(
+                dataStore.ReadAllBytesOperation,
+                new OperationDurationLogger("ReadAllBytes", Log.Logger.ForContext(dataStore.GetType())));
+
+            var subscriptionLifetimeScopeSource = new SubscriptionLifetimeScopeSource();
+            subscriptionLifetimeScopeSource.AddHandler(readAllBytesSubscription);
 
             for (var index = 0; index < 8; index++)
             {

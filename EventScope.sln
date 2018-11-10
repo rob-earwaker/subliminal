@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventScope", "EventScope\Ev
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventScope.Test", "EventScope.Test\EventScope.Test.csproj", "{19652404-8FF7-4552-8523-A7B8DF24314F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventScope.Logging", "EventScope.Logging\EventScope.Logging.csproj", "{5357F714-D33E-4B9D-BBBC-A8B83B755FB1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventScope.Logging.Serilog", "EventScope.Logging.Serilog\EventScope.Logging.Serilog.csproj", "{C96BC2E5-BFF0-49C1-AB0F-BB36F59B625C}"
 EndProject
 Global
@@ -25,10 +23,6 @@ Global
 		{19652404-8FF7-4552-8523-A7B8DF24314F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19652404-8FF7-4552-8523-A7B8DF24314F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19652404-8FF7-4552-8523-A7B8DF24314F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5357F714-D33E-4B9D-BBBC-A8B83B755FB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5357F714-D33E-4B9D-BBBC-A8B83B755FB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5357F714-D33E-4B9D-BBBC-A8B83B755FB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5357F714-D33E-4B9D-BBBC-A8B83B755FB1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C96BC2E5-BFF0-49C1-AB0F-BB36F59B625C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C96BC2E5-BFF0-49C1-AB0F-BB36F59B625C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C96BC2E5-BFF0-49C1-AB0F-BB36F59B625C}.Release|Any CPU.ActiveCfg = Release|Any CPU
