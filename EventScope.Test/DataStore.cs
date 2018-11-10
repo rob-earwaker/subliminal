@@ -9,26 +9,33 @@ namespace EventScope.Test
     {
         private readonly Random _random;
 
-        public Operation ReadAllBytesOperation { get; }
+        public Operation ReadRandomBytesOperation { get; }
+        public Operation ReadRandomByteOperation { get; }
 
         public DataStore()
         {
             _random = new Random();
-            ReadAllBytesOperation = new Operation();
+            ReadRandomBytesOperation = new Operation();
+            ReadRandomByteOperation = new Operation();
         }
 
         public async Task<byte[]> ReadRandomBytesAsync(int size)
         {
-            using (ReadAllBytesOperation.StartNewTimer())
+            using (ReadRandomBytesOperation.StartNewTimer())
+            {
                 return await Task.WhenAll(new object[size].Select(_ => ReadRandomByteAsync()));
+            }
         }
 
         private async Task<byte> ReadRandomByteAsync()
         {
-            var buffer = new byte[1];
-            _random.NextBytes(buffer);
-            await Task.Delay(TimeSpan.FromSeconds(_random.NextDouble())).ConfigureAwait(false);
-            return buffer[0];
+            using (ReadRandomByteOperation.StartNewTimer())
+            {
+                var buffer = new byte[1];
+                _random.NextBytes(buffer);
+                await Task.Delay(TimeSpan.FromSeconds(_random.NextDouble())).ConfigureAwait(false);
+                return buffer[0];
+            }
         }
     }
 }
