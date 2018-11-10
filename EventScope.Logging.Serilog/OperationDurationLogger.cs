@@ -20,8 +20,8 @@ namespace EventScope.Logging.Serilog
         {
             _logger.Write(
                 _logEventLevel,
-                "{OperationName} completed in {OperationDurationSeconds}s",
-                _operationName, eventArgs.OperationDuration.TotalSeconds);
+                "Took {OperationDurationSeconds}s to {OperationName}",
+                eventArgs.OperationDuration.TotalSeconds, _operationName);
         }
     }
 }
