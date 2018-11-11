@@ -4,7 +4,7 @@ namespace EventScope
 {
     public interface ISubscription : IEventHandler<ScopeStartedEventArgs>
     {
-        bool Active { get; }
+        bool IsActive { get; }
         HashSet<IScope> ActiveScopes { get; }
     }
 }

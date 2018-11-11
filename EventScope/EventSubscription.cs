@@ -13,7 +13,7 @@ namespace EventScope
                 onDeactivation: () => eventSource.RemoveHandler(eventHandler));
         }
 
-        public bool Active => _subscription.Active;
+        public bool IsActive => _subscription.IsActive;
         public HashSet<IScope> ActiveScopes => _subscription.ActiveScopes;
 
         public void HandleEvent(object sender, ScopeStartedEventArgs eventArgs)

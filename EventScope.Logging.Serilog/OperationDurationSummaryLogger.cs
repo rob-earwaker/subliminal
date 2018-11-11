@@ -15,7 +15,7 @@ namespace EventScope.Logging.Serilog
         private readonly object _operationDurationsLock;
         private readonly IEventHandler<ScopeEndedEventArgs> _scopeEndedHandler;
 
-        public OperationDurationSummaryLogger(string operationName, ILogger logger, LogEventLevel logEventLevel)
+        public OperationDurationSummaryLogger(string operationName, ILogger logger, LogEventLevel logEventLevel = LogEventLevel.Information)
         {
             _operationName = operationName;
             _logger = logger;
@@ -47,20 +47,23 @@ namespace EventScope.Logging.Serilog
 
             lock (_operationDurationsLock)
             {
-                eventArgs.EventScope.ScopeEnded.RemoveHandler(_scopeEndedHandler);
+                eventArgs.EndedScope.ScopeEnded.RemoveHandler(_scopeEndedHandler);
 
-                if (!_operationDurations.TryGetValue(eventArgs.EventScope, out operationDurations))
+                if (!_operationDurations.TryGetValue(eventArgs.EndedScope, out operationDurations))
                     return;
 
-                _operationDurations.Remove(eventArgs.EventScope);
+                _operationDurations.Remove(eventArgs.EndedScope);
             }
 
             var averageDurationSeconds = operationDurations?.Average(duration => duration.TotalSeconds) ?? 0;
 
             _logger.Write(
                 _logEventLevel,
-                "Average time taken to {OperationName} was {AverageDurationSeconds} over the last {SamplePeriodDurationSeconds}",
-                _operationName, averageDurationSeconds, eventArgs.EventScope.Duration);
+                "Average time taken to {OperationName} was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s within scope {ScopeId}",
+                _operationName,
+                averageDurationSeconds,
+                eventArgs.EndedScope.Duration.TotalSeconds,
+                $"{eventArgs.EndedScope.GetHashCode():X8}");
         }
     }
 }

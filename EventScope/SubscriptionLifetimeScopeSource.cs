@@ -15,7 +15,7 @@ namespace EventScope
             _activeScopesLock = new object();
         }
 
-        public bool Active => throw new NotImplementedException();
+        public bool IsActive => throw new NotImplementedException();
         public HashSet<IScope> ActiveScopes => throw new NotImplementedException();
 
         public void HandleEvent(object sender, ScopeStartedEventArgs eventArgs)

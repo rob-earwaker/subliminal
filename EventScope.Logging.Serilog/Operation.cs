@@ -5,20 +5,18 @@ namespace EventScope.Logging.Serilog
 {
     public class Operation : IEventSource<OperationCompletedEventArgs>, IScopeSource
     {
-        private readonly ManualEventSource<ScopeStartedEventArgs> _scopeStarted;
-        private readonly DelegateEventHandler<ScopeEndedEventArgs> _operationScopeEndedHandler;
         private readonly ISubscription _subscription;
-
-        private event EventHandler<OperationCompletedEventArgs> _operationCompleted;
+        private readonly ConcurrentHashSet<IEventHandler<ScopeStartedEventArgs>> _scopeStartedHandlers;
+        private readonly ConcurrentHashSet<IEventHandler<OperationCompletedEventArgs>> _operationCompletedHandlers;
 
         public Operation()
         {
-            _scopeStarted = new ManualEventSource<ScopeStartedEventArgs>();
-            _operationScopeEndedHandler = new DelegateEventHandler<ScopeEndedEventArgs>(RaiseOperationCompleted);
             _subscription = new Subscription(onActivation: () => { }, onDeactivation: () => { });
+            _scopeStartedHandlers = new ConcurrentHashSet<IEventHandler<ScopeStartedEventArgs>>();
+            _operationCompletedHandlers = new ConcurrentHashSet<IEventHandler<OperationCompletedEventArgs>>();
         }
 
-        public bool Active => _subscription.Active;
+        public bool IsActive => _subscription.IsActive;
         public HashSet<IScope> ActiveScopes => _subscription.ActiveScopes;
 
         public void HandleEvent(object sender, ScopeStartedEventArgs eventArgs)
@@ -28,39 +26,41 @@ namespace EventScope.Logging.Serilog
 
         public void AddHandler(IEventHandler<OperationCompletedEventArgs> eventHandler)
         {
-            _operationCompleted += eventHandler.HandleEvent;
+            _operationCompletedHandlers.Add(eventHandler);
         }
 
         public void RemoveHandler(IEventHandler<OperationCompletedEventArgs> eventHandler)
         {
-            _operationCompleted -= eventHandler.HandleEvent;
+            _operationCompletedHandlers.Remove(eventHandler);
         }
 
         public void AddHandler(IEventHandler<ScopeStartedEventArgs> eventHandler)
         {
-            _scopeStarted.AddHandler(eventHandler);
+            _scopeStartedHandlers.Add(eventHandler);
         }
 
         public void RemoveHandler(IEventHandler<ScopeStartedEventArgs> eventHandler)
         {
-            _scopeStarted.RemoveHandler(eventHandler);
+            _scopeStartedHandlers.Remove(eventHandler);
         }
 
         public IScope StartNewTimer()
         {
-            var newScope = new Scope(Guid.NewGuid(), Scope.RootScope);
-            newScope.ScopeEnded.AddHandler(_operationScopeEndedHandler);
-            newScope.Start();
-            _scopeStarted.RaiseEvent(this, new ScopeStartedEventArgs(newScope));
-            return newScope;
-        }
+            var operationTimer = new OperationTimer(_subscription);
 
-        private void RaiseOperationCompleted(object sender, ScopeEndedEventArgs eventArgs)
-        {
-            foreach (var activeScope in _subscription.ActiveScopes)
+            foreach (var scopeStartedHandler in _scopeStartedHandlers.Snapshot())
             {
-                _operationCompleted?.Invoke(this, new OperationCompletedEventArgs(activeScope, eventArgs.EndedScope.Duration));
+                operationTimer.AddHandler(scopeStartedHandler);
             }
+
+            foreach (var operationCompletedHandler in _operationCompletedHandlers.Snapshot())
+            {
+                operationTimer.AddHandler(operationCompletedHandler);
+            }
+
+            operationTimer.Start();
+
+            return operationTimer;
         }
     }
 }
