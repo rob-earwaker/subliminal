@@ -4,11 +4,11 @@ namespace EventScope
 {
     public class ScopedEventArgs : EventArgs
     {
-        public ScopedEventArgs(IScope scope)
+        public ScopedEventArgs(IScope eventScope)
         {
-            Scope = scope;
+            EventScope = eventScope;
         }
 
-        public IScope Scope { get; }
+        public IScope EventScope { get; }
     }
 }

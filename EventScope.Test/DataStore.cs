@@ -33,7 +33,7 @@ namespace EventScope.Test
             {
                 var buffer = new byte[1];
                 _random.NextBytes(buffer);
-                await Task.Delay(TimeSpan.FromSeconds(_random.NextDouble())).ConfigureAwait(false);
+                //await Task.Delay(TimeSpan.FromSeconds(_random.NextDouble())).ConfigureAwait(false);
                 return buffer[0];
             }
         }

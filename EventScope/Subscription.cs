@@ -1,23 +1,46 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace EventScope
 {
-    public class Subscription<TEventArgs> : IEventHandler<ScopeStartedEventArgs> where TEventArgs : ScopedEventArgs
+    public class Subscription : ISubscription
     {
-        private readonly IEventSource<TEventArgs> _eventSource;
-        private readonly IEventHandler<TEventArgs> _eventHandler;
+        private readonly Action _onActivation;
+        private readonly Action _onDeactivation;
         private readonly HashSet<IScope> _activeScopes;
         private readonly object _activeScopesLock;
         private readonly IEventHandler<ScopeEndedEventArgs> _scopeEndedEventHandler;
 
-        public Subscription(IEventSource<TEventArgs> eventSource, IEventHandler<TEventArgs> eventHandler)
+        public Subscription(Action onActivation, Action onDeactivation)
         {
-            _eventSource = eventSource;
-            _eventHandler = eventHandler;
+            _onActivation = onActivation;
+            _onDeactivation = onDeactivation;
             _activeScopes = new HashSet<IScope>();
             _activeScopesLock = new object();
             _scopeEndedEventHandler = new DelegateEventHandler<ScopeEndedEventArgs>(Unsubscribe);
+        }
+
+        public bool Active
+        {
+            get
+            {
+                lock (_activeScopesLock)
+                {
+                    return _activeScopes.Any();
+                }
+            }
+        }
+
+        public HashSet<IScope> ActiveScopes
+        {
+            get
+            {
+                lock (_activeScopesLock)
+                {
+                    return new HashSet<IScope>(_activeScopes);
+                }
+            }
         }
 
         public void HandleEvent(object sender, ScopeStartedEventArgs eventArgs)
@@ -25,10 +48,10 @@ namespace EventScope
             lock (_activeScopesLock)
             {
                 if (!_activeScopes.Any())
-                    _eventSource.AddHandler(_eventHandler);
+                    _onActivation?.Invoke();
 
-                _activeScopes.Add(eventArgs.Scope);
-                eventArgs.Scope.ScopeEnded.AddHandler(_scopeEndedEventHandler);
+                _activeScopes.Add(eventArgs.StartedScope);
+                eventArgs.StartedScope.ScopeEnded.AddHandler(_scopeEndedEventHandler);
             }
         }
 
@@ -36,11 +59,11 @@ namespace EventScope
         {
             lock (_activeScopesLock)
             {
-                eventArgs.Scope.ScopeEnded.RemoveHandler(_scopeEndedEventHandler);
-                _activeScopes.Remove(eventArgs.Scope);
+                eventArgs.EventScope.ScopeEnded.RemoveHandler(_scopeEndedEventHandler);
+                _activeScopes.Remove(eventArgs.EventScope);
 
                 if (!_activeScopes.Any())
-                    _eventSource.RemoveHandler(_eventHandler);
+                    _onDeactivation?.Invoke();
             }
         }
     }
