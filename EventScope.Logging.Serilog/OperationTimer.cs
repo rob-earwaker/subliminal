@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace EventScope.Logging.Serilog
 {
@@ -47,7 +46,7 @@ namespace EventScope.Logging.Serilog
 
         public void Start()
         {
-            var newScopes = ActiveScopes.Select(activeScope => new Scope(Guid.NewGuid(), activeScope)).ToArray();
+            var newScopes = _scopeSource.StartNewScopes();
 
             void StopScopes(object sender, ScopeEndedEventArgs eventArgs)
             {
@@ -64,13 +63,6 @@ namespace EventScope.Logging.Serilog
             }
 
             _scope.ScopeEnded.AddHandler(new DelegateEventHandler<ScopeEndedEventArgs>(StopScopes));
-
-            foreach (var newScope in newScopes)
-            {
-                newScope.Start();
-                _scopeSource.RaiseScopeStartedEvent(this, newScope);
-            }
-
             _scope.Start();
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EventScope
 {
@@ -32,9 +33,19 @@ namespace EventScope
             _scopeStarted -= subscription.HandleEvent;
         }
 
-        public void RaiseScopeStartedEvent(object sender, IScope startedScope)
+        public ICollection<IScope> StartNewScopes()
         {
-            _scopeStarted?.Invoke(sender, new ScopeStartedEventArgs(startedScope));
+            var newScopes = ActiveScopes
+                .Select(activeScope => new Scope(Guid.NewGuid(), activeScope))
+                .ToArray();
+
+            foreach (var newScope in newScopes)
+            {
+                newScope.Start();
+                _scopeStarted?.Invoke(this, new ScopeStartedEventArgs(newScope));
+            }
+
+            return newScopes;
         }
     }
 }
