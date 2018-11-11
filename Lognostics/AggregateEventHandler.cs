@@ -4,7 +4,7 @@ namespace Lognostics
 {
     public static class AggregateEventHandler
     {
-        public static IScopedEventHandler<TValue> Create<TValue>(IScopedEventHandler<TValue[]> eventHandler)
+        public static AggregateEventHandler<TValue> Create<TValue>(IScopedEventHandler<TValue[]> eventHandler)
         {
             return new AggregateEventHandler<TValue>(eventHandler);
         }

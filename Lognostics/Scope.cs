@@ -15,7 +15,7 @@ namespace Lognostics
             _controlStateLock = new object();
         }
 
-        public static IScope StartNew()
+        public static Scope StartNew()
         {
             var scope = new Scope(Guid.NewGuid(), new Stopwatch());
             scope.Start();

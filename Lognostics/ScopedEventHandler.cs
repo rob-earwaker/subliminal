@@ -4,7 +4,7 @@ namespace Lognostics
 {
     public static class ScopedEventHandler
     {
-        public static IEventHandler<TEventArgs> Create<TEventArgs>(
+        public static ScopedEventHandler<TEventArgs> Create<TEventArgs>(
             IScopedEventHandler<TEventArgs> eventHandler, IScopeSource scopeSource) where TEventArgs : EventArgs
         {
             return new ScopedEventHandler<TEventArgs>(eventHandler, scopeSource);
