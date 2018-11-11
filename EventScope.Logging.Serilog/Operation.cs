@@ -1,65 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace EventScope.Logging.Serilog
 {
-    public class Operation : IEventSource<OperationCompletedEventArgs>, IScopeSource
+    public class Operation : IScopeSource
     {
-        private readonly ISubscription _subscription;
-        private readonly ConcurrentHashSet<ISubscription> _scopeSubscriptions;
-        private readonly ConcurrentHashSet<IEventHandler<OperationCompletedEventArgs>> _operationCompletedHandlers;
+        private readonly ConcurrentHashSet<IScope> _activeScopes;
 
         public Operation()
         {
-            _subscription = new Subscription(onActivation: () => { }, onDeactivation: () => { });
-            _scopeSubscriptions = new ConcurrentHashSet<ISubscription>();
-            _operationCompletedHandlers = new ConcurrentHashSet<IEventHandler<OperationCompletedEventArgs>>();
+            _activeScopes = new ConcurrentHashSet<IScope>();
         }
 
-        public bool IsActive => _subscription.IsActive;
-        public HashSet<IScope> ActiveScopes => _subscription.ActiveScopes;
+        public event EventHandler<OperationCompletedEventArgs> Completed;
 
-        public void HandleEvent(object sender, ScopeStartedEventArgs eventArgs)
+        public ICollection<IScope> ActiveScopes => _activeScopes.Snapshot();
+
+        public IScope StartNewTimer()
         {
-            _subscription.HandleEvent(sender, eventArgs);
+            var timerScope = Scope.StartNew();
+            _activeScopes.Add(timerScope);
+            timerScope.Stopped += TimerScopeEndedHandler;
+            return timerScope;
         }
 
-        public void AddHandler(IEventHandler<OperationCompletedEventArgs> eventHandler)
+        private void TimerScopeEndedHandler(object sender, ScopeStoppedEventArgs eventArgs)
         {
-            _operationCompletedHandlers.Add(eventHandler);
-        }
-
-        public void RemoveHandler(IEventHandler<OperationCompletedEventArgs> eventHandler)
-        {
-            _operationCompletedHandlers.Remove(eventHandler);
-        }
-
-        public void AddSubscription(ISubscription subscription)
-        {
-            _scopeSubscriptions.Add(subscription);
-        }
-
-        public void RemoveSubscription(ISubscription subscription)
-        {
-            _scopeSubscriptions.Remove(subscription);
-        }
-
-        public OperationTimer StartNewTimer()
-        {
-            var operationTimer = new OperationTimer(_subscription);
-
-            foreach (var scopeStartedHandler in _scopeSubscriptions.Snapshot())
-            {
-                operationTimer.AddSubscription(scopeStartedHandler);
-            }
-
-            foreach (var operationCompletedHandler in _operationCompletedHandlers.Snapshot())
-            {
-                operationTimer.AddHandler(operationCompletedHandler);
-            }
-
-            operationTimer.Start();
-
-            return operationTimer;
+            eventArgs.Scope.Stopped -= TimerScopeEndedHandler;
+            _activeScopes.Remove(eventArgs.Scope);
+            Completed?.Invoke(this, new OperationCompletedEventArgs(eventArgs.Scope.Duration));
         }
     }
 }

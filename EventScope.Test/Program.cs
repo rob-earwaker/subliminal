@@ -21,22 +21,18 @@ namespace EventScope.Test
 
             var dataStore = new DataStore();
 
-            var readRandomBytesSubscription = new EventSubscription<OperationCompletedEventArgs>(
-                dataStore.ReadRandomBytesOperation,
-                new OperationDurationLogger("ReadRandomBytes", Log.Logger.ForContext(dataStore.GetType())));
+            var dataStoreLogger = Log.Logger.ForContext(dataStore.GetType());
 
-            var readRandomByteSubscription = new EventSubscription<OperationCompletedEventArgs>(
-                dataStore.ReadRandomByteOperation,
-                new OperationDurationSummaryLogger("ReadRandomByte", Log.Logger.ForContext(dataStore.GetType())));
+            var readRandomBytesLogger = new OperationDurationLogger("ReadRandomBytes", dataStoreLogger);
+            var readRandomByteLogger = new OperationDurationLogger("ReadRandomByte", dataStoreLogger);
 
-            var subscriptionLifetimeScopeSource = new SubscriptionLifetimeScopeSource();
-            subscriptionLifetimeScopeSource.HandleEvent(new object(), new ScopeStartedEventArgs(Scope.RootScope));
+            var readRandomByteSummryLogger = new ScopedEventHandler<OperationCompletedEventArgs>(
+                new OperationDurationSummaryLogger("ReadRandomByte", dataStoreLogger),
+                dataStore.ReadRandomBytesOperation);
 
-            subscriptionLifetimeScopeSource.AddSubscription(readRandomBytesSubscription);
-            subscriptionLifetimeScopeSource.AddSubscription(dataStore.ReadRandomBytesOperation);
-
-            dataStore.ReadRandomBytesOperation.AddSubscription(readRandomByteSubscription);
-            dataStore.ReadRandomBytesOperation.AddSubscription(dataStore.ReadRandomByteOperation);
+            dataStore.ReadRandomBytesOperation.Completed += readRandomBytesLogger.HandleEvent;
+            dataStore.ReadRandomByteOperation.Completed += readRandomByteLogger.HandleEvent;
+            dataStore.ReadRandomByteOperation.Completed += readRandomByteSummryLogger.HandleEvent;
 
             for (var index = 0; index < 8; index++)
             {

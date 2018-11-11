@@ -2,9 +2,9 @@
 
 namespace EventScope.Logging.Serilog
 {
-    public class OperationCompletedEventArgs : ScopeEndedEventArgs
+    public class OperationCompletedEventArgs : EventArgs
     {
-        public OperationCompletedEventArgs(IScope eventScope, TimeSpan operationDuration) : base(eventScope)
+        public OperationCompletedEventArgs(TimeSpan operationDuration)
         {
             OperationDuration = operationDuration;
         }

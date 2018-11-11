@@ -1,14 +1,14 @@
-﻿using System;
-
-namespace EventScope
+﻿namespace EventScope
 {
-    public class ScopedEventArgs : EventArgs
+    public class ScopedEventArgs<TValue>
     {
-        public ScopedEventArgs(IScope eventScope)
+        public ScopedEventArgs(IScope scope, TValue value)
         {
-            EventScope = eventScope;
+            Scope = scope;
+            Value = value;
         }
 
-        public IScope EventScope { get; }
+        public IScope Scope { get; }
+        public TValue Value { get; }
     }
 }

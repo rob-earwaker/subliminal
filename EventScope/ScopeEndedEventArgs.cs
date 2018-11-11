@@ -1,12 +1,14 @@
-﻿namespace EventScope
+﻿using System;
+
+namespace EventScope
 {
-    public class ScopeEndedEventArgs : ScopedEventArgs
+    public class ScopeStoppedEventArgs : EventArgs
     {
-        public ScopeEndedEventArgs(IScope endedScope) : base(endedScope.ParentScope)
+        public ScopeStoppedEventArgs(IScope scope)
         {
-            EndedScope = endedScope;
+            Scope = scope;
         }
 
-        public IScope EndedScope { get; }
+        public IScope Scope { get; }
     }
 }

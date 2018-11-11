@@ -20,8 +20,8 @@ namespace EventScope.Logging.Serilog
         {
             _logger.Write(
                 _logEventLevel,
-                "Took {OperationDurationSeconds}s to {OperationName} within scope {ScopeId}",
-                eventArgs.OperationDuration.TotalSeconds, _operationName, $"{eventArgs.EventScope.GetHashCode():X8}");
+                "Took {OperationDurationSeconds}s to {OperationName}",
+                eventArgs.OperationDuration.TotalSeconds, _operationName);
         }
     }
 }

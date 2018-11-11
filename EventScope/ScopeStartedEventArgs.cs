@@ -2,13 +2,13 @@
 
 namespace EventScope
 {
-    public class ScopeStartedEventArgs : ScopedEventArgs
+    public class ScopeStartedEventArgs : EventArgs
     {
-        public ScopeStartedEventArgs(IScope startedScope) : base(startedScope.ParentScope)
+        public ScopeStartedEventArgs(IScope scope)
         {
-            StartedScope = startedScope;
+            Scope = scope;
         }
 
-        public IScope StartedScope { get; }
+        public IScope Scope { get; }
     }
 }

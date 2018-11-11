@@ -1,69 +1,35 @@
 ﻿using Serilog;
-using Serilog.Events;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace EventScope.Logging.Serilog
 {
-    public class OperationDurationSummaryLogger : IEventHandler<OperationCompletedEventArgs>
+    public class OperationDurationSummaryLogger : IScopedEventHandler<OperationCompletedEventArgs>
     {
         private readonly string _operationName;
         private readonly ILogger _logger;
-        private readonly LogEventLevel _logEventLevel;
-        private readonly Dictionary<IScope, List<TimeSpan>> _operationDurations;
-        private readonly object _operationDurationsLock;
-        private readonly IEventHandler<ScopeEndedEventArgs> _scopeEndedHandler;
+        private readonly EventAggregator<OperationCompletedEventArgs> _eventAggregator;
 
-        public OperationDurationSummaryLogger(string operationName, ILogger logger, LogEventLevel logEventLevel = LogEventLevel.Information)
+        public OperationDurationSummaryLogger(string operationName, ILogger logger)
         {
             _operationName = operationName;
             _logger = logger;
-            _logEventLevel = logEventLevel;
-            _operationDurations = new Dictionary<IScope, List<TimeSpan>>();
-            _operationDurationsLock = new object();
-            _scopeEndedHandler = new DelegateEventHandler<ScopeEndedEventArgs>(LogSummary);
+            _eventAggregator = new EventAggregator<OperationCompletedEventArgs>();
+            _eventAggregator.EventsAggregated += LogSummary;
         }
 
-        public void HandleEvent(object sender, OperationCompletedEventArgs eventArgs)
+        public void HandleEvent(object sender, ScopedEventArgs<OperationCompletedEventArgs> eventArgs)
         {
-            lock (_operationDurationsLock)
-            {
-                if (!_operationDurations.TryGetValue(eventArgs.EventScope, out var operationDurations))
-                {
-                    _operationDurations.Add(eventArgs.EventScope, new List<TimeSpan> { eventArgs.OperationDuration });
-                    eventArgs.EventScope.ScopeEnded.AddHandler(_scopeEndedHandler);
-                }
-                else
-                {
-                    operationDurations.Add(eventArgs.OperationDuration);
-                }
-            }
+            _eventAggregator.HandleEvent(sender, eventArgs);
         }
 
-        private void LogSummary(object sender, ScopeEndedEventArgs eventArgs)
+        private void LogSummary(object sender, ScopedEventArgs<OperationCompletedEventArgs[]> eventArgs)
         {
-            List<TimeSpan> operationDurations;
-
-            lock (_operationDurationsLock)
-            {
-                eventArgs.EndedScope.ScopeEnded.RemoveHandler(_scopeEndedHandler);
-
-                if (!_operationDurations.TryGetValue(eventArgs.EndedScope, out operationDurations))
-                    return;
-
-                _operationDurations.Remove(eventArgs.EndedScope);
-            }
-
-            var averageDurationSeconds = operationDurations?.Average(duration => duration.TotalSeconds) ?? 0;
-
-            _logger.Write(
-                _logEventLevel,
+            _logger.Information(
                 "Average time taken to {OperationName} was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s within scope {ScopeId}",
                 _operationName,
-                averageDurationSeconds,
-                eventArgs.EndedScope.Duration.TotalSeconds,
-                $"{eventArgs.EndedScope.GetHashCode():X8}");
+                eventArgs.Value.Average(operationCompletedEventArgs => operationCompletedEventArgs.OperationDuration.TotalSeconds),
+                eventArgs.Scope.Duration.TotalSeconds,
+                $"{eventArgs.Scope.GetHashCode():X8}");
         }
     }
 }

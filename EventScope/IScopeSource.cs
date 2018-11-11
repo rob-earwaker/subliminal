@@ -1,8 +1,9 @@
-﻿namespace EventScope
+﻿using System.Collections.Generic;
+
+namespace EventScope
 {
-    public interface IScopeSource : ISubscription
+    public interface IScopeSource
     {
-        void AddSubscription(ISubscription subscription);
-        void RemoveSubscription(ISubscription subscription);
+        ICollection<IScope> ActiveScopes { get; }
     }
 }

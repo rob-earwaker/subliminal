@@ -4,11 +4,10 @@ namespace EventScope
 {
     public interface IScope : IDisposable
     {
-        Guid ScopeId { get; }
-        IScope ParentScope { get; }
+        Guid Id { get; }
         TimeSpan Duration { get; }
+        event EventHandler<ScopeStoppedEventArgs> Stopped;
         void Start();
         void Stop();
-        IEventSource<ScopeEndedEventArgs> ScopeEnded { get; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace EventScope
 {
@@ -35,14 +34,6 @@ namespace EventScope
             lock (_hashSetLock)
             {
                 return new HashSet<TValue>(_hashSet);
-            }
-        }
-
-        public bool Any()
-        {
-            lock (_hashSetLock)
-            {
-                return _hashSet.Any();
             }
         }
     }
