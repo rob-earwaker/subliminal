@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using Serilog.Events;
 
-namespace EventScope.Logging.Serilog
+namespace Lognostics.Serilog
 {
     public class OperationDurationLogger : IEventHandler<OperationCompletedEventArgs>
     {

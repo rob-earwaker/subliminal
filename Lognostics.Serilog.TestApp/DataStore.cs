@@ -1,9 +1,8 @@
-﻿using EventScope.Logging.Serilog;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EventScope.Test
+namespace Lognostics.Serilog.TestApp
 {
     internal class DataStore
     {

@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -11,11 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="Serilog" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EventScope.Logging.Serilog\EventScope.Logging.Serilog.csproj" />
+    <ProjectReference Include="..\Lognostics\Lognostics.csproj" />
   </ItemGroup>
 
 </Project>

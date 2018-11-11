@@ -1,9 +1,8 @@
-﻿using EventScope.Logging.Serilog;
-using Serilog;
+﻿using Serilog;
 using System;
 using System.Threading.Tasks;
 
-namespace EventScope.Test
+namespace Lognostics.Serilog.TestApp
 {
     internal class Program
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EventScope
+namespace Lognostics
 {
     public interface IEventHandler<TEventArgs> where TEventArgs : EventArgs
     {

@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2047
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventScope", "EventScope\EventScope.csproj", "{E9755AF7-8ECC-4B61-B397-5E100D754F4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lognostics", "Lognostics\Lognostics.csproj", "{AB980232-2296-4942-B0C6-911C042B61F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventScope.Test", "EventScope.Test\EventScope.Test.csproj", "{19652404-8FF7-4552-8523-A7B8DF24314F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lognostics.Serilog", "Lognostics.Serilog\Lognostics.Serilog.csproj", "{8477546A-A72B-4705-8BEE-2AFBBEFB9A74}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventScope.Logging.Serilog", "EventScope.Logging.Serilog\EventScope.Logging.Serilog.csproj", "{C96BC2E5-BFF0-49C1-AB0F-BB36F59B625C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lognostics.Serilog.TestApp", "Lognostics.Serilog.TestApp\Lognostics.Serilog.TestApp.csproj", "{022D20F4-B724-422A-BDEB-9CA03EE2D5E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E9755AF7-8ECC-4B61-B397-5E100D754F4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E9755AF7-8ECC-4B61-B397-5E100D754F4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E9755AF7-8ECC-4B61-B397-5E100D754F4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E9755AF7-8ECC-4B61-B397-5E100D754F4D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{19652404-8FF7-4552-8523-A7B8DF24314F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{19652404-8FF7-4552-8523-A7B8DF24314F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{19652404-8FF7-4552-8523-A7B8DF24314F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{19652404-8FF7-4552-8523-A7B8DF24314F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C96BC2E5-BFF0-49C1-AB0F-BB36F59B625C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C96BC2E5-BFF0-49C1-AB0F-BB36F59B625C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C96BC2E5-BFF0-49C1-AB0F-BB36F59B625C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C96BC2E5-BFF0-49C1-AB0F-BB36F59B625C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB980232-2296-4942-B0C6-911C042B61F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB980232-2296-4942-B0C6-911C042B61F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB980232-2296-4942-B0C6-911C042B61F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB980232-2296-4942-B0C6-911C042B61F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8477546A-A72B-4705-8BEE-2AFBBEFB9A74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8477546A-A72B-4705-8BEE-2AFBBEFB9A74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8477546A-A72B-4705-8BEE-2AFBBEFB9A74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8477546A-A72B-4705-8BEE-2AFBBEFB9A74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{022D20F4-B724-422A-BDEB-9CA03EE2D5E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{022D20F4-B724-422A-BDEB-9CA03EE2D5E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{022D20F4-B724-422A-BDEB-9CA03EE2D5E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{022D20F4-B724-422A-BDEB-9CA03EE2D5E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

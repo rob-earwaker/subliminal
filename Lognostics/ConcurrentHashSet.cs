@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace EventScope
+namespace Lognostics
 {
     public class ConcurrentHashSet<TValue>
     {

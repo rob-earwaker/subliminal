@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace EventScope
+namespace Lognostics
 {
     public class Scope : IScope
     {

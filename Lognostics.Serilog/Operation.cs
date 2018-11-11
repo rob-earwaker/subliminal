@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EventScope.Logging.Serilog
+namespace Lognostics.Serilog
 {
     public class Operation : IScopeSource
     {

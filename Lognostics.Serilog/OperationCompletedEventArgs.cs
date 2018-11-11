@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EventScope.Logging.Serilog
+namespace Lognostics.Serilog
 {
     public class OperationCompletedEventArgs : EventArgs
     {

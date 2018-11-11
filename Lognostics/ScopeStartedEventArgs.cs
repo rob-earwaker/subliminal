@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EventScope
+namespace Lognostics
 {
     public class ScopeStartedEventArgs : EventArgs
     {
