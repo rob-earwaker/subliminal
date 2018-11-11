@@ -1,8 +1,6 @@
 ﻿using EventScope.Logging.Serilog;
 using Serilog;
-using Serilog.Events;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace EventScope.Test

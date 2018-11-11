@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace EventScope.Logging.Serilog
 {
@@ -44,7 +43,7 @@ namespace EventScope.Logging.Serilog
             _scopeStartedHandlers.Remove(eventHandler);
         }
 
-        public IScope StartNewTimer()
+        public OperationTimer StartNewTimer()
         {
             var operationTimer = new OperationTimer(_subscription);
 

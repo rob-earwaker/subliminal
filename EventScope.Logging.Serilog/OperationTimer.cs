@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace EventScope.Logging.Serilog
 {
-    public class OperationTimer : IEventSource<OperationCompletedEventArgs>, IScope, IScopeSource
+    public class OperationTimer : IEventSource<OperationCompletedEventArgs>, IScopeSource, IDisposable
     {
         private readonly ISubscription _subscription;
         private readonly Scope _scope;
@@ -18,11 +18,6 @@ namespace EventScope.Logging.Serilog
             _scopeStarted = new ManualEventSource<ScopeStartedEventArgs>();
             _operationCompleted = new ManualEventSource<OperationCompletedEventArgs>();
         }
-
-        public Guid ScopeId => _scope.ScopeId;
-        public IScope ParentScope => _scope.ParentScope;
-        public TimeSpan Duration => _scope.Duration;
-        public IEventSource<ScopeEndedEventArgs> ScopeEnded => _scope.ScopeEnded;
 
         public bool IsActive => _subscription.IsActive;
         public HashSet<IScope> ActiveScopes => _subscription.ActiveScopes;
