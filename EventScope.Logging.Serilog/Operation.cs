@@ -5,13 +5,13 @@ namespace EventScope.Logging.Serilog
     public class Operation : IEventSource<OperationCompletedEventArgs>, IScopeSource
     {
         private readonly ISubscription _subscription;
-        private readonly ConcurrentHashSet<IEventHandler<ScopeStartedEventArgs>> _scopeStartedHandlers;
+        private readonly ConcurrentHashSet<ISubscription> _scopeSubscriptions;
         private readonly ConcurrentHashSet<IEventHandler<OperationCompletedEventArgs>> _operationCompletedHandlers;
 
         public Operation()
         {
             _subscription = new Subscription(onActivation: () => { }, onDeactivation: () => { });
-            _scopeStartedHandlers = new ConcurrentHashSet<IEventHandler<ScopeStartedEventArgs>>();
+            _scopeSubscriptions = new ConcurrentHashSet<ISubscription>();
             _operationCompletedHandlers = new ConcurrentHashSet<IEventHandler<OperationCompletedEventArgs>>();
         }
 
@@ -33,21 +33,21 @@ namespace EventScope.Logging.Serilog
             _operationCompletedHandlers.Remove(eventHandler);
         }
 
-        public void AddHandler(IEventHandler<ScopeStartedEventArgs> eventHandler)
+        public void AddHandler(ISubscription subscription)
         {
-            _scopeStartedHandlers.Add(eventHandler);
+            _scopeSubscriptions.Add(subscription);
         }
 
-        public void RemoveHandler(IEventHandler<ScopeStartedEventArgs> eventHandler)
+        public void RemoveHandler(ISubscription subscription)
         {
-            _scopeStartedHandlers.Remove(eventHandler);
+            _scopeSubscriptions.Remove(subscription);
         }
 
         public OperationTimer StartNewTimer()
         {
             var operationTimer = new OperationTimer(_subscription);
 
-            foreach (var scopeStartedHandler in _scopeStartedHandlers.Snapshot())
+            foreach (var scopeStartedHandler in _scopeSubscriptions.Snapshot())
             {
                 operationTimer.AddHandler(scopeStartedHandler);
             }

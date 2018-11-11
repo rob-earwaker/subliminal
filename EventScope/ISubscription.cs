@@ -2,9 +2,10 @@
 
 namespace EventScope
 {
-    public interface ISubscription : IEventHandler<ScopeStartedEventArgs>
+    public interface ISubscription
     {
         bool IsActive { get; }
         HashSet<IScope> ActiveScopes { get; }
+        void HandleEvent(object sender, ScopeStartedEventArgs eventArgs);
     }
 }

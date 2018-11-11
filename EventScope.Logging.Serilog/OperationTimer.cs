@@ -6,35 +6,33 @@ namespace EventScope.Logging.Serilog
 {
     public class OperationTimer : IEventSource<OperationCompletedEventArgs>, IScopeSource, IDisposable
     {
-        private readonly ISubscription _subscription;
         private readonly Scope _scope;
-        private readonly ManualEventSource<ScopeStartedEventArgs> _scopeStarted;
+        private readonly ManualScopeSource _scopeSource;
         private readonly ManualEventSource<OperationCompletedEventArgs> _operationCompleted;
 
         public OperationTimer(ISubscription subscription)
         {
-            _subscription = subscription;
             _scope = new Scope(Guid.NewGuid(), Scope.RootScope);
-            _scopeStarted = new ManualEventSource<ScopeStartedEventArgs>();
+            _scopeSource = new ManualScopeSource(subscription);
             _operationCompleted = new ManualEventSource<OperationCompletedEventArgs>();
         }
 
-        public bool IsActive => _subscription.IsActive;
-        public HashSet<IScope> ActiveScopes => _subscription.ActiveScopes;
+        public bool IsActive => _scopeSource.IsActive;
+        public HashSet<IScope> ActiveScopes => _scopeSource.ActiveScopes;
 
         public void HandleEvent(object sender, ScopeStartedEventArgs eventArgs)
         {
-            _subscription.HandleEvent(sender, eventArgs);
+            _scopeSource.HandleEvent(sender, eventArgs);
         }
 
-        public void AddHandler(IEventHandler<ScopeStartedEventArgs> eventHandler)
+        public void AddHandler(ISubscription subscription)
         {
-            _scopeStarted.AddHandler(eventHandler);
+            _scopeSource.AddHandler(subscription);
         }
 
-        public void RemoveHandler(IEventHandler<ScopeStartedEventArgs> eventHandler)
+        public void RemoveHandler(ISubscription subscription)
         {
-            _scopeStarted.RemoveHandler(eventHandler);
+            _scopeSource.RemoveHandler(subscription);
         }
 
         public void AddHandler(IEventHandler<OperationCompletedEventArgs> eventHandler)
@@ -70,7 +68,7 @@ namespace EventScope.Logging.Serilog
             foreach (var newScope in newScopes)
             {
                 newScope.Start();
-                _scopeStarted.RaiseEvent(this, new ScopeStartedEventArgs(newScope));
+                _scopeSource.RaiseScopeStartedEvent(this, newScope);
             }
 
             _scope.Start();

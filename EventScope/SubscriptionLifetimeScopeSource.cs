@@ -5,13 +5,13 @@ namespace EventScope
 {
     public class SubscriptionLifetimeScopeSource : IScopeSource
     {
-        private readonly Dictionary<IEventHandler<ScopeStartedEventArgs>, IScope> _activeScopes;
+        private readonly Dictionary<ISubscription, IScope> _activeScopes;
         private readonly object _activeScopesLock;
         private IScope _parentScope;
 
         public SubscriptionLifetimeScopeSource()
         {
-            _activeScopes = new Dictionary<IEventHandler<ScopeStartedEventArgs>, IScope>();
+            _activeScopes = new Dictionary<ISubscription, IScope>();
             _activeScopesLock = new object();
         }
 
@@ -23,25 +23,25 @@ namespace EventScope
             _parentScope = eventArgs.StartedScope;
         }
 
-        public void AddHandler(IEventHandler<ScopeStartedEventArgs> eventHandler)
+        public void AddHandler(ISubscription subscription)
         {
             lock (_activeScopesLock)
             {
-                if (_activeScopes.ContainsKey(eventHandler))
+                if (_activeScopes.ContainsKey(subscription))
                     return;
 
                 var newScope = new Scope(Guid.NewGuid(), _parentScope);
-                _activeScopes.Add(eventHandler, newScope);
+                _activeScopes.Add(subscription, newScope);
                 newScope.Start();
-                eventHandler.HandleEvent(this, new ScopeStartedEventArgs(newScope));
+                subscription.HandleEvent(this, new ScopeStartedEventArgs(newScope));
             }
         }
 
-        public void RemoveHandler(IEventHandler<ScopeStartedEventArgs> eventHandler)
+        public void RemoveHandler(ISubscription subscription)
         {
             lock (_activeScopesLock)
             {
-                if (!_activeScopes.TryGetValue(eventHandler, out var activeScope))
+                if (!_activeScopes.TryGetValue(subscription, out var activeScope))
                     return;
 
                 activeScope.Stop();

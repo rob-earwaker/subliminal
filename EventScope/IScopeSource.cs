@@ -1,6 +1,8 @@
 ﻿namespace EventScope
 {
-    public interface IScopeSource : IEventSource<ScopeStartedEventArgs>, ISubscription
+    public interface IScopeSource : ISubscription
     {
+        void AddHandler(ISubscription subscription);
+        void RemoveHandler(ISubscription subscription);
     }
 }
