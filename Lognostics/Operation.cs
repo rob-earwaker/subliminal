@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Lognostics.Serilog
+namespace Lognostics
 {
     public class Operation : IScopeSource
     {
