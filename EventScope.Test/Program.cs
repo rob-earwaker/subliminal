@@ -26,13 +26,13 @@ namespace EventScope.Test
             var readRandomBytesLogger = new OperationDurationLogger("ReadRandomBytes", dataStoreLogger);
             var readRandomByteLogger = new OperationDurationLogger("ReadRandomByte", dataStoreLogger);
 
-            var readRandomByteSummryLogger = new ScopedEventHandler<OperationCompletedEventArgs>(
-                new OperationDurationSummaryLogger("ReadRandomByte", dataStoreLogger),
+            var readRandomByteSummaryLogger = ScopedEventHandler.For(
+                EventAggregator.WithHandler(new OperationDurationSummaryLogger("ReadRandomByte", dataStoreLogger)),
                 dataStore.ReadRandomBytesOperation);
 
             dataStore.ReadRandomBytesOperation.Completed += readRandomBytesLogger.HandleEvent;
             dataStore.ReadRandomByteOperation.Completed += readRandomByteLogger.HandleEvent;
-            dataStore.ReadRandomByteOperation.Completed += readRandomByteSummryLogger.HandleEvent;
+            dataStore.ReadRandomByteOperation.Completed += readRandomByteSummaryLogger.HandleEvent;
 
             for (var index = 0; index < 8; index++)
             {

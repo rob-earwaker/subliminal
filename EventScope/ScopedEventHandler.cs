@@ -2,6 +2,15 @@
 
 namespace EventScope
 {
+    public static class ScopedEventHandler
+    {
+        public static IEventHandler<TEventArgs> For<TEventArgs>(
+            IScopedEventHandler<TEventArgs> eventHandler, IScopeSource scopeSource) where TEventArgs : EventArgs
+        {
+            return new ScopedEventHandler<TEventArgs>(eventHandler, scopeSource);
+        }
+    }
+
     public class ScopedEventHandler<TEventArgs> : IEventHandler<TEventArgs> where TEventArgs : EventArgs
     {
         private readonly IScopedEventHandler<TEventArgs> _eventHandler;
