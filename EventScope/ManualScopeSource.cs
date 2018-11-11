@@ -22,12 +22,12 @@ namespace EventScope
             _subscription.HandleEvent(sender, eventArgs);
         }
 
-        public void AddHandler(ISubscription subscription)
+        public void AddSubscription(ISubscription subscription)
         {
             _scopeStarted += subscription.HandleEvent;
         }
 
-        public void RemoveHandler(ISubscription subscription)
+        public void RemoveSubscription(ISubscription subscription)
         {
             _scopeStarted -= subscription.HandleEvent;
         }

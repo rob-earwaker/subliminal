@@ -32,11 +32,11 @@ namespace EventScope.Test
             var subscriptionLifetimeScopeSource = new SubscriptionLifetimeScopeSource();
             subscriptionLifetimeScopeSource.HandleEvent(new object(), new ScopeStartedEventArgs(Scope.RootScope));
 
-            subscriptionLifetimeScopeSource.AddHandler(readRandomBytesSubscription);
-            subscriptionLifetimeScopeSource.AddHandler(dataStore.ReadRandomBytesOperation);
+            subscriptionLifetimeScopeSource.AddSubscription(readRandomBytesSubscription);
+            subscriptionLifetimeScopeSource.AddSubscription(dataStore.ReadRandomBytesOperation);
 
-            dataStore.ReadRandomBytesOperation.AddHandler(readRandomByteSubscription);
-            dataStore.ReadRandomBytesOperation.AddHandler(dataStore.ReadRandomByteOperation);
+            dataStore.ReadRandomBytesOperation.AddSubscription(readRandomByteSubscription);
+            dataStore.ReadRandomBytesOperation.AddSubscription(dataStore.ReadRandomByteOperation);
 
             for (var index = 0; index < 8; index++)
             {

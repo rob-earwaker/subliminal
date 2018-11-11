@@ -33,12 +33,12 @@ namespace EventScope.Logging.Serilog
             _operationCompletedHandlers.Remove(eventHandler);
         }
 
-        public void AddHandler(ISubscription subscription)
+        public void AddSubscription(ISubscription subscription)
         {
             _scopeSubscriptions.Add(subscription);
         }
 
-        public void RemoveHandler(ISubscription subscription)
+        public void RemoveSubscription(ISubscription subscription)
         {
             _scopeSubscriptions.Remove(subscription);
         }
@@ -49,7 +49,7 @@ namespace EventScope.Logging.Serilog
 
             foreach (var scopeStartedHandler in _scopeSubscriptions.Snapshot())
             {
-                operationTimer.AddHandler(scopeStartedHandler);
+                operationTimer.AddSubscription(scopeStartedHandler);
             }
 
             foreach (var operationCompletedHandler in _operationCompletedHandlers.Snapshot())

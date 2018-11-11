@@ -25,14 +25,14 @@ namespace EventScope.Logging.Serilog
             _scopeSource.HandleEvent(sender, eventArgs);
         }
 
-        public void AddHandler(ISubscription subscription)
+        public void AddSubscription(ISubscription subscription)
         {
-            _scopeSource.AddHandler(subscription);
+            _scopeSource.AddSubscription(subscription);
         }
 
-        public void RemoveHandler(ISubscription subscription)
+        public void RemoveSubscription(ISubscription subscription)
         {
-            _scopeSource.RemoveHandler(subscription);
+            _scopeSource.RemoveSubscription(subscription);
         }
 
         public void AddHandler(IEventHandler<OperationCompletedEventArgs> eventHandler)

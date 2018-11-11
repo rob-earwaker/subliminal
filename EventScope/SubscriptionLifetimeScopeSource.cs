@@ -23,7 +23,7 @@ namespace EventScope
             _parentScope = eventArgs.StartedScope;
         }
 
-        public void AddHandler(ISubscription subscription)
+        public void AddSubscription(ISubscription subscription)
         {
             lock (_activeScopesLock)
             {
@@ -37,7 +37,7 @@ namespace EventScope
             }
         }
 
-        public void RemoveHandler(ISubscription subscription)
+        public void RemoveSubscription(ISubscription subscription)
         {
             lock (_activeScopesLock)
             {

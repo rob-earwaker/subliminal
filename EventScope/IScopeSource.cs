@@ -2,7 +2,7 @@
 {
     public interface IScopeSource : ISubscription
     {
-        void AddHandler(ISubscription subscription);
-        void RemoveHandler(ISubscription subscription);
+        void AddSubscription(ISubscription subscription);
+        void RemoveSubscription(ISubscription subscription);
     }
 }
