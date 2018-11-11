@@ -2,34 +2,34 @@
 
 namespace EventScope
 {
-    public static class EventAggregator
+    public static class AggregateEventHandler
     {
-        public static IScopedEventHandler<TEvent> WithHandler<TEvent>(IScopedEventHandler<TEvent[]> eventHandler)
+        public static IScopedEventHandler<TValue> Create<TValue>(IScopedEventHandler<TValue[]> eventHandler)
         {
-            return new EventAggregator<TEvent>(eventHandler);
+            return new AggregateEventHandler<TValue>(eventHandler);
         }
     }
 
-    public class EventAggregator<TEvent> : IScopedEventHandler<TEvent>
+    public class AggregateEventHandler<TValue> : IScopedEventHandler<TValue>
     {
-        private readonly IScopedEventHandler<TEvent[]> _eventHandler;
-        private readonly Dictionary<IScope, List<TEvent>> _collectedEventArgs;
+        private readonly IScopedEventHandler<TValue[]> _eventHandler;
+        private readonly Dictionary<IScope, List<TValue>> _collectedEventArgs;
         private readonly object _collectedEventArgsLock;
 
-        public EventAggregator(IScopedEventHandler<TEvent[]> eventHandler)
+        public AggregateEventHandler(IScopedEventHandler<TValue[]> eventHandler)
         {
             _eventHandler = eventHandler;
-            _collectedEventArgs = new Dictionary<IScope, List<TEvent>>();
+            _collectedEventArgs = new Dictionary<IScope, List<TValue>>();
             _collectedEventArgsLock = new object();
         }
 
-        public void HandleEvent(object sender, ScopedEventArgs<TEvent> eventArgs)
+        public void HandleEvent(object sender, ScopedEventArgs<TValue> eventArgs)
         {
             lock (_collectedEventArgsLock)
             {
                 if (!_collectedEventArgs.TryGetValue(eventArgs.Scope, out var existingEventArgs))
                 {
-                    _collectedEventArgs.Add(eventArgs.Scope, new List<TEvent> { eventArgs.Value });
+                    _collectedEventArgs.Add(eventArgs.Scope, new List<TValue> { eventArgs.Value });
                     eventArgs.Scope.Stopped += ScopeStoppedHandler;
                 }
                 else
@@ -41,7 +41,7 @@ namespace EventScope
 
         private void ScopeStoppedHandler(object sender, ScopeStoppedEventArgs eventArgs)
         {
-            var collectedEventArgs = new List<TEvent>();
+            var collectedEventArgs = new List<TValue>();
 
             lock (_collectedEventArgsLock)
             {
@@ -53,7 +53,7 @@ namespace EventScope
                 _collectedEventArgs.Remove(eventArgs.Scope);
             }
 
-            _eventHandler.HandleEvent(this, new ScopedEventArgs<TEvent[]>(eventArgs.Scope, collectedEventArgs.ToArray()));
+            _eventHandler.HandleEvent(this, new ScopedEventArgs<TValue[]>(eventArgs.Scope, collectedEventArgs.ToArray()));
         }
     }
 }

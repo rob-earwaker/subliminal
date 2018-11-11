@@ -1,7 +1,6 @@
 ﻿namespace EventScope
 {
-    public interface IScopedEventHandler<TEventArgs>
+    public interface IScopedEventHandler<TValue> : IEventHandler<ScopedEventArgs<TValue>>
     {
-        void HandleEvent(object sender, ScopedEventArgs<TEventArgs> eventArgs);
     }
 }

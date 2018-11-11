@@ -1,6 +1,8 @@
-﻿namespace EventScope
+﻿using System;
+
+namespace EventScope
 {
-    public class ScopedEventArgs<TValue>
+    public class ScopedEventArgs<TValue> : EventArgs
     {
         public ScopedEventArgs(IScope scope, TValue value)
         {

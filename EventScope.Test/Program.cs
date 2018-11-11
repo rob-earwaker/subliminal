@@ -26,8 +26,8 @@ namespace EventScope.Test
             var readRandomBytesLogger = new OperationDurationLogger("ReadRandomBytes", dataStoreLogger);
             var readRandomByteLogger = new OperationDurationLogger("ReadRandomByte", dataStoreLogger);
 
-            var readRandomByteSummaryLogger = ScopedEventHandler.For(
-                EventAggregator.WithHandler(new OperationDurationSummaryLogger("ReadRandomByte", dataStoreLogger)),
+            var readRandomByteSummaryLogger = ScopedEventHandler.Create(
+                AggregateEventHandler.Create(new OperationDurationSummaryLogger("ReadRandomByte", dataStoreLogger)),
                 dataStore.ReadRandomBytesOperation);
 
             dataStore.ReadRandomBytesOperation.Completed += readRandomBytesLogger.HandleEvent;
