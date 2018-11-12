@@ -12,6 +12,7 @@ namespace Lognostics
             _activeScopes = new ConcurrentHashSet<IScope>();
         }
 
+        public event EventHandler<OperationStartedEventArgs> Started;
         public event EventHandler<OperationCompletedEventArgs> Completed;
 
         public ICollection<IScope> ActiveScopes => _activeScopes.Snapshot();
