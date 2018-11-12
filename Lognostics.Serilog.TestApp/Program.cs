@@ -1,5 +1,6 @@
 ﻿using Serilog;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lognostics.Serilog.TestApp
@@ -14,7 +15,7 @@ namespace Lognostics.Serilog.TestApp
         private static async Task MainAsync()
         {
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
+                .MinimumLevel.Information()
                 .WriteTo.Console()
                 .CreateLogger();
 
@@ -23,24 +24,32 @@ namespace Lognostics.Serilog.TestApp
             var dataStoreLogger = Log.Logger.ForContext(dataStore.GetType());
 
             var readRandomBytesLogger = new OperationDurationLogger("ReadRandomBytes", dataStoreLogger);
-            var readRandomByteLogger = new OperationDurationLogger("ReadRandomByte", dataStoreLogger);
+            var readRandomByteLogger = new OperationDurationSummaryLogger("ReadRandomByte", dataStoreLogger);
 
             var readRandomByteSummaryLogger = ScopedEventHandler.Create(
-                AggregateEventHandler.Create(new OperationDurationSummaryLogger("ReadRandomByte", dataStoreLogger)),
+                AggregateEventHandler.Create(readRandomByteLogger),
                 dataStore.ReadRandomBytesOperation);
+            
+            var periodicScopeSource = new PeriodicScopeSource(TimeSpan.FromSeconds(10));
+            var cancellationTokenSource = new CancellationTokenSource();
+            var task = periodicScopeSource.StartAsync(cancellationTokenSource.Token);
+
+            var readRandomBytePeriodicSummaryLogger = ScopedEventHandler.Create(
+                AggregateEventHandler.Create(readRandomByteLogger),
+                periodicScopeSource);
 
             dataStore.ReadRandomBytesOperation.Completed += readRandomBytesLogger.HandleEvent;
-            dataStore.ReadRandomByteOperation.Completed += readRandomByteLogger.HandleEvent;
             dataStore.ReadRandomByteOperation.Completed += readRandomByteSummaryLogger.HandleEvent;
+            dataStore.ReadRandomByteOperation.Completed += readRandomBytePeriodicSummaryLogger.HandleEvent;
 
-            for (var index = 0; index < 8; index++)
+            while (true)
             {
                 var buffer = await dataStore.ReadRandomBytesAsync(4).ConfigureAwait(false);
                 Log.Information("Read random bytes from data store: {Base64Bytes}", Convert.ToBase64String(buffer));
             }
 
-            Log.Information("Press any key to exit...");
-            Console.ReadKey();
+            //Log.Information("Press any key to exit...");
+            //Console.ReadKey();
         }
     }
 }
