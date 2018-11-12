@@ -24,23 +24,19 @@ namespace Lognostics.Serilog.TestApp
             var dataStoreLogger = Log.Logger.ForContext(dataStore.GetType());
 
             var readRandomBytesLogger = new OperationDurationLogger("ReadRandomBytes", dataStoreLogger);
-            var readRandomByteLogger = new OperationDurationSummaryLogger("ReadRandomByte", dataStoreLogger);
 
-            var readRandomByteSummaryLogger = ScopedEventHandler.Create(
-                AggregateEventHandler.Create(readRandomByteLogger),
-                dataStore.ReadRandomBytesOperation);
-            
             var periodicScopeSource = new PeriodicScopeSource(TimeSpan.FromSeconds(10));
             var cancellationTokenSource = new CancellationTokenSource();
             var task = periodicScopeSource.StartAsync(cancellationTokenSource.Token);
 
-            var readRandomBytePeriodicSummaryLogger = ScopedEventHandler.Create(
-                AggregateEventHandler.Create(readRandomByteLogger),
-                periodicScopeSource);
+            var readRandomByteLogger = ScopedEventHandler.Create(
+                AggregateEventHandler.Create(new OperationDurationSummaryLogger("ReadRandomByte", dataStoreLogger)),
+                new AggregateScopeSource(
+                    periodicScopeSource,
+                    dataStore.ReadRandomBytesOperation));
 
             dataStore.ReadRandomBytesOperation.Completed += readRandomBytesLogger.HandleEvent;
-            dataStore.ReadRandomByteOperation.Completed += readRandomByteSummaryLogger.HandleEvent;
-            dataStore.ReadRandomByteOperation.Completed += readRandomBytePeriodicSummaryLogger.HandleEvent;
+            dataStore.ReadRandomByteOperation.Completed += readRandomByteLogger.HandleEvent;
 
             while (true)
             {
