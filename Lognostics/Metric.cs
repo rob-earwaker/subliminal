@@ -2,13 +2,13 @@
 
 namespace Lognostics
 {
-    public class Metric<TValue>
+    public class Metric<TMetric>
     {
-        public event EventHandler<MetricSampledEventArgs<TValue>> Sampled;
+        public event EventHandler<MetricSampledEventArgs<TMetric>> Sampled;
 
-        public void LogValue(TValue value)
+        public void LogValue(TMetric value)
         {
-            Sampled?.Invoke(this, new MetricSampledEventArgs<TValue>(value));
+            Sampled?.Invoke(this, new MetricSampledEventArgs<TMetric>(value));
         }
     }
 }

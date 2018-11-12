@@ -2,13 +2,13 @@
 
 namespace Lognostics
 {
-    public class MetricSampledEventArgs<TValue> : EventArgs
+    public class MetricSampledEventArgs<TMetric> : EventArgs
     {
-        public MetricSampledEventArgs(TValue value)
+        public MetricSampledEventArgs(TMetric value)
         {
             Value = value;
         }
 
-        public TValue Value { get; }
+        public TMetric Value { get; }
     }
 }
