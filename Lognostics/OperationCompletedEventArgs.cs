@@ -4,11 +4,11 @@ namespace Lognostics
 {
     public class OperationCompletedEventArgs : EventArgs
     {
-        public OperationCompletedEventArgs(TimeSpan operationDuration)
+        public OperationCompletedEventArgs(OperationScope operationScope)
         {
-            OperationDuration = operationDuration;
+            Operation = operationScope;
         }
 
-        public TimeSpan OperationDuration { get; }
+        public OperationScope Operation { get; }
     }
 }

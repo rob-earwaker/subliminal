@@ -1,56 +1,39 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Lognostics
 {
-    public class Operation : IScope
+    public class Operation : IScopeSource
     {
-        private readonly IScope _timerScope;
+        private readonly ConcurrentHashSet<IScope> _activeScopes;
 
-        public Operation(IScope timerScope)
+        public Operation()
         {
-            _timerScope = timerScope;
+            OperationTypeId = Guid.NewGuid();
+            _activeScopes = new ConcurrentHashSet<IScope>();
         }
 
-        public static Operation StartNew()
+        public Guid OperationTypeId { get; }
+
+        public event EventHandler<OperationStartedEventArgs> Started;
+        public event EventHandler<OperationCompletedEventArgs> Completed;
+
+        public ICollection<IScope> ActiveScopes => _activeScopes.Snapshot();
+
+        public OperationScope StartNew()
         {
-            var timerScope = new Scope(Guid.NewGuid(), new Stopwatch());
-            var operationTimer = new Operation(timerScope);
-            operationTimer.Start();
-            return operationTimer;
+            var operationScope = OperationScope.StartNew(OperationTypeId);
+            Started?.Invoke(this, new OperationStartedEventArgs(operationScope));
+            operationScope.Completed += OperationCompletedHandler;
+            _activeScopes.Add(operationScope);
+            return operationScope;
         }
 
-        public Guid Id => _timerScope.Id;
-
-        public bool IsStarted => _timerScope.IsStarted;
-
-        public TimeSpan Duration => _timerScope.Duration;
-
-        public event EventHandler<ScopeEndedEventArgs> Ended;
-
-        public void Start()
+        private void OperationCompletedHandler(object sender, OperationCompletedEventArgs eventArgs)
         {
-            if (IsStarted)
-                return;
-
-            _timerScope.Ended += TimerScopeEndedHandler;
-            _timerScope.Start();
-        }
-
-        public void Stop()
-        {
-            _timerScope.Stop();
-        }
-
-        public void Dispose()
-        {
-            _timerScope.Dispose();
-        }
-
-        private void TimerScopeEndedHandler(object sender, ScopeEndedEventArgs eventArgs)
-        {
-            eventArgs.Scope.Ended -= TimerScopeEndedHandler;
-            Ended?.Invoke(this, new ScopeEndedEventArgs(this));
+            _activeScopes.Remove(eventArgs.Operation);
+            eventArgs.Operation.Completed -= OperationCompletedHandler;
+            Completed?.Invoke(this, eventArgs);
         }
     }
 }

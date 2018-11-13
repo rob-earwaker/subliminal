@@ -4,11 +4,11 @@ namespace Lognostics
 {
     public interface IScope : IDisposable
     {
-        Guid Id { get; }
+        Guid ScopeId { get; }
         bool IsStarted { get; }
         TimeSpan Duration { get; }
         event EventHandler<ScopeEndedEventArgs> Ended;
         void Start();
-        void Stop();
+        void End();
     }
 }

@@ -7,21 +7,21 @@ namespace Lognostics
     {
         private readonly Stopwatch _stopwatch;
 
-        public Scope(Guid scopeId, Stopwatch stopwatch)
+        public Scope()
         {
-            _stopwatch = stopwatch;
-            Id = scopeId;
+            ScopeId = Guid.NewGuid();
             IsStarted = false;
+            _stopwatch = new Stopwatch();
         }
 
         public static Scope StartNew()
         {
-            var scope = new Scope(Guid.NewGuid(), new Stopwatch());
+            var scope = new Scope();
             scope.Start();
             return scope;
         }
 
-        public Guid Id { get; }
+        public Guid ScopeId { get; }
 
         public bool IsStarted { get; private set; }
 
@@ -35,7 +35,7 @@ namespace Lognostics
             _stopwatch.Start();
         }
 
-        public void Stop()
+        public void End()
         {
             if (!IsStarted)
                 return;
@@ -46,7 +46,7 @@ namespace Lognostics
 
         public void Dispose()
         {
-            Stop();
+            End();
         }
     }
 }

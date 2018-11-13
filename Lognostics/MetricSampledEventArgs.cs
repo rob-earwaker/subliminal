@@ -4,11 +4,13 @@ namespace Lognostics
 {
     public class MetricSampledEventArgs<TMetric> : EventArgs
     {
-        public MetricSampledEventArgs(TMetric value)
+        public MetricSampledEventArgs(Guid metricId, TMetric value)
         {
+            MetricId = metricId;
             Value = value;
         }
 
+        public Guid MetricId { get; }
         public TMetric Value { get; }
     }
 }

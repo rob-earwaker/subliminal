@@ -8,14 +8,14 @@ namespace Lognostics.Serilog.TestApp
     {
         private readonly Random _random;
 
-        public OperationHandle ReadRandomBytesOperation { get; }
-        public OperationHandle ReadRandomByteOperation { get; }
+        public Operation ReadRandomBytesOperation { get; }
+        public Operation ReadRandomByteOperation { get; }
 
         public DataStore()
         {
             _random = new Random();
-            ReadRandomBytesOperation = new OperationHandle();
-            ReadRandomByteOperation = new OperationHandle();
+            ReadRandomBytesOperation = new Operation();
+            ReadRandomByteOperation = new Operation();
         }
 
         public async Task<byte[]> ReadRandomBytesAsync(int size)

@@ -36,7 +36,7 @@ namespace Lognostics
             {
                 lock (_activeScopeLock)
                 {
-                    _activeScope?.Stop();
+                    _activeScope?.End();
                     _activeScope = Scope.StartNew();
                 }
 
@@ -49,7 +49,7 @@ namespace Lognostics
                 }
             }
 
-            _activeScope?.Stop();
+            _activeScope?.End();
         }
 
         public ICollection<IScope> ActiveScopes

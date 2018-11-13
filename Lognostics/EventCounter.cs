@@ -13,6 +13,17 @@ namespace Lognostics
             _eventCountLock = new object();
         }
 
+        public int EventCount
+        {
+            get
+            {
+                lock (_eventCountLock)
+                {
+                    return _eventCount;
+                }
+            }
+        }
+
         public void HandleEvent(object sender, TEventArgs eventArgs)
         {
             lock (_eventCountLock)
