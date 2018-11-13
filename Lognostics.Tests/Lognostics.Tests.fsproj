@@ -13,6 +13,7 @@
   <ItemGroup>
     <Compile Include="AggregateEventHandlerTests.fs" />
     <Compile Include="EventCounterTests.fs" />
+    <Compile Include="MetricTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
