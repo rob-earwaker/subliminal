@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lognostics.Serilog", "Logno
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lognostics.Serilog.TestApp", "Lognostics.Serilog.TestApp\Lognostics.Serilog.TestApp.csproj", "{022D20F4-B724-422A-BDEB-9CA03EE2D5E7}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Lognostics.Tests", "Lognostics.Tests\Lognostics.Tests.fsproj", "{3455E85D-676F-4141-BF2C-BE752B6FA151}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{022D20F4-B724-422A-BDEB-9CA03EE2D5E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{022D20F4-B724-422A-BDEB-9CA03EE2D5E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{022D20F4-B724-422A-BDEB-9CA03EE2D5E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3455E85D-676F-4141-BF2C-BE752B6FA151}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3455E85D-676F-4141-BF2C-BE752B6FA151}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3455E85D-676F-4141-BF2C-BE752B6FA151}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3455E85D-676F-4141-BF2C-BE752B6FA151}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
