@@ -2,9 +2,9 @@
 
 namespace Lognostics
 {
-    public class ScopeStoppedEventArgs : EventArgs
+    public class ScopeEndedEventArgs : EventArgs
     {
-        public ScopeStoppedEventArgs(IScope scope)
+        public ScopeEndedEventArgs(IScope scope)
         {
             Scope = scope;
         }

@@ -8,19 +8,19 @@ namespace Lognostics.Serilog.TestApp
     {
         private readonly Random _random;
 
-        public Operation ReadRandomBytesOperation { get; }
-        public Operation ReadRandomByteOperation { get; }
+        public OperationHandle ReadRandomBytesOperation { get; }
+        public OperationHandle ReadRandomByteOperation { get; }
 
         public DataStore()
         {
             _random = new Random();
-            ReadRandomBytesOperation = new Operation();
-            ReadRandomByteOperation = new Operation();
+            ReadRandomBytesOperation = new OperationHandle();
+            ReadRandomByteOperation = new OperationHandle();
         }
 
         public async Task<byte[]> ReadRandomBytesAsync(int size)
         {
-            using (ReadRandomBytesOperation.StartNewTimer())
+            using (ReadRandomBytesOperation.StartNew())
             {
                 return await Task.WhenAll(new object[size].Select(_ => ReadRandomByteAsync()));
             }
@@ -28,7 +28,7 @@ namespace Lognostics.Serilog.TestApp
 
         private async Task<byte> ReadRandomByteAsync()
         {
-            using (ReadRandomByteOperation.StartNewTimer())
+            using (ReadRandomByteOperation.StartNew())
             {
                 var buffer = new byte[1];
                 _random.NextBytes(buffer);

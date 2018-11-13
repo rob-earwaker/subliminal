@@ -6,13 +6,12 @@ namespace Lognostics
     public class Scope : IScope
     {
         private readonly Stopwatch _stopwatch;
-        private readonly object _controlStateLock;
 
         public Scope(Guid scopeId, Stopwatch stopwatch)
         {
-            Id = scopeId;
             _stopwatch = stopwatch;
-            _controlStateLock = new object();
+            Id = scopeId;
+            IsStarted = false;
         }
 
         public static Scope StartNew()
@@ -24,31 +23,25 @@ namespace Lognostics
 
         public Guid Id { get; }
 
+        public bool IsStarted { get; private set; }
+
         public TimeSpan Duration => _stopwatch.Elapsed;
 
-        public event EventHandler<ScopeStoppedEventArgs> Stopped;
+        public event EventHandler<ScopeEndedEventArgs> Ended;
 
         public void Start()
         {
-            lock (_controlStateLock)
-            {
-                if (_stopwatch.IsRunning)
-                    return;
-
-                _stopwatch.Start();
-            }
+            IsStarted = true;
+            _stopwatch.Start();
         }
 
         public void Stop()
         {
-            lock (_controlStateLock)
-            {
-                if (!_stopwatch.IsRunning)
-                    return;
+            if (!IsStarted)
+                return;
 
-                _stopwatch.Stop();
-                Stopped?.Invoke(this, new ScopeStoppedEventArgs(this));
-            }
+            _stopwatch.Stop();
+            Ended?.Invoke(this, new ScopeEndedEventArgs(this));
         }
 
         public void Dispose()

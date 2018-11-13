@@ -30,7 +30,7 @@ namespace Lognostics
                 if (!_collectedEventArgs.TryGetValue(eventArgs.Scope, out var existingEventArgs))
                 {
                     _collectedEventArgs.Add(eventArgs.Scope, new List<TValue> { eventArgs.Value });
-                    eventArgs.Scope.Stopped += ScopeStoppedHandler;
+                    eventArgs.Scope.Ended += ScopeStoppedHandler;
                 }
                 else
                 {
@@ -39,13 +39,13 @@ namespace Lognostics
             }
         }
 
-        private void ScopeStoppedHandler(object sender, ScopeStoppedEventArgs eventArgs)
+        private void ScopeStoppedHandler(object sender, ScopeEndedEventArgs eventArgs)
         {
             var collectedEventArgs = new List<TValue>();
 
             lock (_collectedEventArgsLock)
             {
-                eventArgs.Scope.Stopped -= ScopeStoppedHandler;
+                eventArgs.Scope.Ended -= ScopeStoppedHandler;
 
                 if (!_collectedEventArgs.TryGetValue(eventArgs.Scope, out collectedEventArgs))
                     return;
