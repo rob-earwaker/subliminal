@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace Lognostics
 {
-    public class OperationHandle : IScopeSource
+    public class OperationHandle :
+        IEventSource<OperationStartedEventArgs>, IEventSource<OperationCompletedEventArgs>, IScopeSource
     {
         private readonly ConcurrentHashSet<IScope> _activeScopes;
 
@@ -34,6 +35,46 @@ namespace Lognostics
             _activeScopes.Remove(eventArgs.Scope);
             eventArgs.Scope.Ended -= OperationScopeEndedHandler;
             Completed?.Invoke(this, new OperationCompletedEventArgs(eventArgs.Scope.Duration));
+        }
+
+        public void AddHandler(IEventHandler<OperationStartedEventArgs> eventHandler)
+        {
+            AddHandler(eventHandler.HandleEvent);
+        }
+
+        public void AddHandler(EventHandler<OperationStartedEventArgs> eventHandler)
+        {
+            Started += eventHandler;
+        }
+
+        public void RemoveHandler(IEventHandler<OperationStartedEventArgs> eventHandler)
+        {
+            RemoveHandler(eventHandler);
+        }
+
+        public void RemoveHandler(EventHandler<OperationStartedEventArgs> eventHandler)
+        {
+            Started -= eventHandler;
+        }
+
+        public void AddHandler(IEventHandler<OperationCompletedEventArgs> eventHandler)
+        {
+            AddHandler(eventHandler.HandleEvent);
+        }
+
+        public void AddHandler(EventHandler<OperationCompletedEventArgs> eventHandler)
+        {
+            Completed += eventHandler;
+        }
+
+        public void RemoveHandler(IEventHandler<OperationCompletedEventArgs> eventHandler)
+        {
+            RemoveHandler(eventHandler);
+        }
+
+        public void RemoveHandler(EventHandler<OperationCompletedEventArgs> eventHandler)
+        {
+            Completed -= eventHandler;
         }
     }
 }
