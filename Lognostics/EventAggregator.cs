@@ -2,21 +2,21 @@
 
 namespace Lognostics
 {
-    public static class AggregateEventHandler
+    public static class EventAggregator
     {
-        public static AggregateEventHandler<TValue> Create<TValue>(IScopedEventHandler<TValue[]> eventHandler)
+        public static EventAggregator<TValue> Create<TValue>(IScopedEventHandler<TValue[]> eventHandler)
         {
-            return new AggregateEventHandler<TValue>(eventHandler);
+            return new EventAggregator<TValue>(eventHandler);
         }
     }
 
-    public class AggregateEventHandler<TValue> : IScopedEventHandler<TValue>
+    public class EventAggregator<TValue> : IScopedEventHandler<TValue>
     {
         private readonly IScopedEventHandler<TValue[]> _eventHandler;
         private readonly Dictionary<IScope, List<TValue>> _collectedEventArgs;
         private readonly object _collectedEventArgsLock;
 
-        public AggregateEventHandler(IScopedEventHandler<TValue[]> eventHandler)
+        public EventAggregator(IScopedEventHandler<TValue[]> eventHandler)
         {
             _eventHandler = eventHandler;
             _collectedEventArgs = new Dictionary<IScope, List<TValue>>();

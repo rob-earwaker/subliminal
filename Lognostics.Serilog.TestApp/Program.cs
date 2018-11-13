@@ -30,7 +30,7 @@ namespace Lognostics.Serilog.TestApp
             var task = periodicScopeSource.StartAsync(cancellationTokenSource.Token);
 
             var readRandomByteLogger = ScopedEventHandler.Create(
-                AggregateEventHandler.Create(new OperationDurationSummaryLogger("ReadRandomByte", dataStoreLogger)),
+                EventAggregator.Create(new OperationDurationSummaryLogger("ReadRandomByte", dataStoreLogger)),
                 new AggregateScopeSource(
                     periodicScopeSource,
                     dataStore.ReadRandomBytesOperation));
