@@ -1,18 +1,15 @@
 ﻿module AggregateEventHandlerTests
    
-open FsCheck
-open FsCheck.Xunit
 open Lognostics
 open Swensen.Unquote
 open System
+open Xunit
 
-[<Property>]
+[<Fact>]
 let ``test calls child event handlers once for each event handled`` () =
-    let eventHandlerCounts = Gen.choose (0, 10) |> Arb.fromGen
-    Prop.forAll eventHandlerCounts (fun eventHandlerCount ->
-        let eventCounters = Array.init eventHandlerCount (fun _ -> EventCounter())
-        let eventHandlers = eventCounters |> Array.map (fun eventCounter -> eventCounter :> IEventHandler<_>)
-        let aggregateEventHandler = AggregateEventHandler(eventHandlers)
-        aggregateEventHandler.HandleEvent(obj(), EventArgs())
-        for eventCounter in eventCounters do
-            test <@ eventCounter.EventCount = 1 @>)
+    let eventCounter1 = EventCounter()
+    let eventCounter2 = EventCounter()
+    let aggregateEventHandler = AggregateEventHandler(eventCounter1, eventCounter2)
+    aggregateEventHandler.HandleEvent(obj(), EventArgs())
+    test <@ eventCounter1.EventCount = 1 @>
+    test <@ eventCounter2.EventCount = 1 @>

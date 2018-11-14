@@ -10,7 +10,8 @@ namespace Lognostics
         public Scope()
         {
             ScopeId = Guid.NewGuid();
-            IsStarted = false;
+            HasStarted = false;
+            HasEnded = false;
             _stopwatch = new Stopwatch();
         }
 
@@ -22,26 +23,29 @@ namespace Lognostics
         }
 
         public Guid ScopeId { get; }
-
-        public bool IsStarted { get; private set; }
-
+        public bool HasStarted { get; private set; }
+        public bool HasEnded { get; private set; }
         public TimeSpan Duration => _stopwatch.Elapsed;
 
         public event EventHandler<ScopeEndedEventArgs> Ended;
 
         public void Start()
         {
-            IsStarted = true;
+            if (HasStarted)
+                return;
+
             _stopwatch.Start();
+            HasStarted = true;
         }
 
         public void End()
         {
-            if (!IsStarted)
+            if (!HasStarted || HasEnded)
                 return;
 
             _stopwatch.Stop();
             Ended?.Invoke(this, new ScopeEndedEventArgs(this));
+            HasEnded = true;
         }
 
         public void Dispose()

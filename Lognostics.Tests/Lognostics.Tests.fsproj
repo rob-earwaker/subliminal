@@ -16,6 +16,7 @@
     <Compile Include="EventCounterTests.fs" />
     <Compile Include="MetricTests.fs" />
     <Compile Include="OperationTests.fs" />
+    <Compile Include="ScopeTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

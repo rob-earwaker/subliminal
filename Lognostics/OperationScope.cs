@@ -21,15 +21,16 @@ namespace Lognostics
         
         public Guid OperationTypeId { get; }
         public Guid ScopeId => _timerScope.ScopeId;
-        public bool IsStarted => _timerScope.IsStarted;
+        public bool HasStarted => _timerScope.HasStarted;
+        public bool HasEnded => _timerScope.HasEnded;
         public TimeSpan Duration => _timerScope.Duration;
-
+        
         public event EventHandler<OperationCompletedEventArgs> Completed;
         public event EventHandler<ScopeEndedEventArgs> Ended;
 
         public void Start()
         {
-            if (IsStarted)
+            if (HasStarted)
                 return;
 
             _timerScope.Ended += TimerScopeEndedHandler;

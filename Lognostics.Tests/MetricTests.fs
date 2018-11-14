@@ -7,7 +7,7 @@ open Utils
 open Xunit
 
 [<Fact>]
-let ``test metrics have unique metric ids`` () =
+let ``test metrics have different metric ids`` () =
     let metric1 = Metric()
     let metric2 = Metric()
     test <@ metric1.MetricId <> metric2.MetricId @>
