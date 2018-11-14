@@ -6,9 +6,9 @@ namespace Lognostics
     {
         public OperationCompletedEventArgs(OperationScope operationScope)
         {
-            Operation = operationScope;
+            OperationScope = operationScope;
         }
 
-        public OperationScope Operation { get; }
+        public OperationScope OperationScope { get; }
     }
 }

@@ -21,7 +21,7 @@ namespace Lognostics.Serilog
             _logger.Write(
                 _logEventLevel,
                 "Took {OperationDurationSeconds}s to {OperationName}",
-                eventArgs.Operation.Duration.TotalSeconds, _operationName);
+                eventArgs.OperationScope.Duration.TotalSeconds, _operationName);
         }
     }
 }

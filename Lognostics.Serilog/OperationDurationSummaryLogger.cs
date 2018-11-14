@@ -19,7 +19,7 @@ namespace Lognostics.Serilog
             _logger.Information(
                 "Average time taken to {OperationName} was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s",
                 _operationName,
-                eventArgs.Value.Average(operationCompletedEventArgs => operationCompletedEventArgs.Operation.Duration.TotalSeconds),
+                eventArgs.Value.Average(completedEventArgs => completedEventArgs.OperationScope.Duration.TotalSeconds),
                 eventArgs.Scope.Duration.TotalSeconds);
         }
     }

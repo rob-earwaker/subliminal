@@ -11,9 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Utils.fs" />
     <Compile Include="AggregateEventHandlerTests.fs" />
     <Compile Include="EventCounterTests.fs" />
     <Compile Include="MetricTests.fs" />
+    <Compile Include="OperationTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

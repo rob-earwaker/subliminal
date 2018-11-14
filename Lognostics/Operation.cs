@@ -31,8 +31,8 @@ namespace Lognostics
 
         private void OperationCompletedHandler(object sender, OperationCompletedEventArgs eventArgs)
         {
-            _activeScopes.Remove(eventArgs.Operation);
-            eventArgs.Operation.Completed -= OperationCompletedHandler;
+            _activeScopes.Remove(eventArgs.OperationScope);
+            eventArgs.OperationScope.Completed -= OperationCompletedHandler;
             Completed?.Invoke(this, eventArgs);
         }
     }
