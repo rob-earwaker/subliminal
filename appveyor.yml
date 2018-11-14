@@ -1,5 +1,5 @@
 image: Visual Studio 2017
 build_script:
 - ps: dotnet build -c Release .
-test:
+test_script:
 - ps: dotnet test -c Release Lognostics.Tests
