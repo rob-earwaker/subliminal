@@ -4,5 +4,6 @@ dotnet clean -c $buildConfiguration .
 dotnet build -c $buildConfiguration .
 dotnet test -c $buildConfiguration .\Lognostics.Tests
 $versionSuffix =
-    If ($null -eq $env:APPVEYOR_BUILD_NUMBER) {"local"} Else {[string]::Format("build-{0:D4}", $env:APPVEYOR_BUILD_NUMBER)}
+    If ($null -eq $env:APPVEYOR_BUILD_NUMBER) {"local"}
+    Else {[string]::Format("build-{0:D4}", [System.Int32]::Parse($env:APPVEYOR_BUILD_NUMBER))}
 dotnet pack -c $buildConfiguration --version-suffix $versionSuffix -o ..\artifacts .\Lognostics
