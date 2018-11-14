@@ -1,4 +1,4 @@
-Remove-Item -Path .\artifacts -ErrorAction Ignore
+Remove-Item -Path .\artifacts -Recurse -ErrorAction Ignore
 $buildConfiguration = "Release"
 dotnet clean -c $buildConfiguration .
 dotnet build -c $buildConfiguration .
