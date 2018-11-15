@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lognostics.Events;
+using System;
 
 namespace Lognostics
 {
@@ -26,7 +27,7 @@ namespace Lognostics
         {
             foreach (var activeScope in _scopeSource.ActiveScopes)
             {
-                _eventHandler.HandleEvent(sender, new ScopedEventArgs<TEventArgs>(activeScope, eventArgs));
+                _eventHandler.HandleEvent(sender, new Scoped<TEventArgs>(activeScope, eventArgs));
             }
         }
     }

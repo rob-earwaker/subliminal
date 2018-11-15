@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lognostics.Events;
+using System;
 
 namespace Lognostics
 {
@@ -8,7 +9,7 @@ namespace Lognostics
         bool HasStarted { get; }
         bool HasEnded { get; }
         TimeSpan Duration { get; }
-        event EventHandler<ScopeEndedEventArgs> Ended;
+        event EventHandler<ScopeEnded> Ended;
         void Start();
         void End();
     }

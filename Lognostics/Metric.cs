@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lognostics.Events;
+using System;
 
 namespace Lognostics
 {
@@ -11,11 +12,11 @@ namespace Lognostics
 
         public Guid MetricId { get; }
 
-        public event EventHandler<MetricSampledEventArgs<TMetric>> Sampled;
+        public event EventHandler<MetricSampled<TMetric>> Sampled;
 
         public void LogValue(TMetric value)
         {
-            Sampled?.Invoke(this, new MetricSampledEventArgs<TMetric>(MetricId, value));
+            Sampled?.Invoke(this, new MetricSampled<TMetric>(MetricId, value));
         }
     }
 }

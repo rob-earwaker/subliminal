@@ -1,9 +1,10 @@
-﻿using Serilog;
+﻿using Lognostics.Events;
+using Serilog;
 using Serilog.Events;
 
 namespace Lognostics.Serilog
 {
-    public class OperationDurationLogger : IEventHandler<OperationCompletedEventArgs>
+    public class OperationDurationLogger : IEventHandler<OperationCompleted>
     {
         private readonly string _operationName;
         private readonly ILogger _logger;
@@ -16,7 +17,7 @@ namespace Lognostics.Serilog
             _logEventLevel = logEventLevel;
         }
 
-        public void HandleEvent(object sender, OperationCompletedEventArgs eventArgs)
+        public void HandleEvent(object sender, OperationCompleted eventArgs)
         {
             _logger.Write(
                 _logEventLevel,

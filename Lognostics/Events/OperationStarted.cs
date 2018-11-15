@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Lognostics
+namespace Lognostics.Events
 {
-    public class OperationStartedEventArgs : EventArgs
+    public class OperationStarted : EventArgs
     {
-        public OperationStartedEventArgs(OperationScope operationScope)
+        public OperationStarted(OperationScope operationScope)
         {
             OperationScope = operationScope;
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Lognostics.Events;
+using System.Collections.Generic;
 
 namespace Lognostics
 {
@@ -23,7 +24,7 @@ namespace Lognostics
             _collectedEventArgsLock = new object();
         }
 
-        public void HandleEvent(object sender, ScopedEventArgs<TValue> eventArgs)
+        public void HandleEvent(object sender, Scoped<TValue> eventArgs)
         {
             lock (_collectedEventArgsLock)
             {
@@ -39,7 +40,7 @@ namespace Lognostics
             }
         }
 
-        private void ScopeStoppedHandler(object sender, ScopeEndedEventArgs eventArgs)
+        private void ScopeStoppedHandler(object sender, ScopeEnded eventArgs)
         {
             var collectedEventArgs = new List<TValue>();
 
@@ -53,7 +54,7 @@ namespace Lognostics
                 _collectedEventArgs.Remove(eventArgs.Scope);
             }
 
-            _eventHandler.HandleEvent(this, new ScopedEventArgs<TValue[]>(eventArgs.Scope, collectedEventArgs.ToArray()));
+            _eventHandler.HandleEvent(this, new Scoped<TValue[]>(eventArgs.Scope, collectedEventArgs.ToArray()));
         }
     }
 }

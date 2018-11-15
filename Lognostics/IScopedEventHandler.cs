@@ -1,6 +1,8 @@
-﻿namespace Lognostics
+﻿using Lognostics.Events;
+
+namespace Lognostics
 {
-    public interface IScopedEventHandler<TValue> : IEventHandler<ScopedEventArgs<TValue>>
+    public interface IScopedEventHandler<TValue> : IEventHandler<Scoped<TValue>>
     {
     }
 }

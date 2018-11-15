@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lognostics.Events;
+using System;
 using System.Diagnostics;
 
 namespace Lognostics
@@ -27,7 +28,7 @@ namespace Lognostics
         public bool HasEnded { get; private set; }
         public TimeSpan Duration => _stopwatch.Elapsed;
 
-        public event EventHandler<ScopeEndedEventArgs> Ended;
+        public event EventHandler<ScopeEnded> Ended;
 
         public void Start()
         {
@@ -44,7 +45,7 @@ namespace Lognostics
                 return;
 
             _stopwatch.Stop();
-            Ended?.Invoke(this, new ScopeEndedEventArgs(this));
+            Ended?.Invoke(this, new ScopeEnded(this));
             HasEnded = true;
         }
 

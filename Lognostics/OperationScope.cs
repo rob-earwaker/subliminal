@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lognostics.Events;
+using System;
 
 namespace Lognostics
 {
@@ -25,8 +26,8 @@ namespace Lognostics
         public bool HasEnded => _timerScope.HasEnded;
         public TimeSpan Duration => _timerScope.Duration;
         
-        public event EventHandler<OperationCompletedEventArgs> Completed;
-        public event EventHandler<ScopeEndedEventArgs> Ended;
+        public event EventHandler<OperationCompleted> Completed;
+        public event EventHandler<ScopeEnded> Ended;
 
         public void Start()
         {
@@ -47,11 +48,11 @@ namespace Lognostics
             _timerScope.Dispose();
         }
 
-        private void TimerScopeEndedHandler(object sender, ScopeEndedEventArgs eventArgs)
+        private void TimerScopeEndedHandler(object sender, ScopeEnded eventArgs)
         {
             eventArgs.Scope.Ended -= TimerScopeEndedHandler;
-            Ended?.Invoke(this, new ScopeEndedEventArgs(this));
-            Completed?.Invoke(this, new OperationCompletedEventArgs(this));
+            Ended?.Invoke(this, new ScopeEnded(this));
+            Completed?.Invoke(this, new OperationCompleted(this));
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Lognostics
+namespace Lognostics.Events
 {
-    public class MetricSampledEventArgs<TMetric> : EventArgs
+    public class MetricSampled<TMetric> : EventArgs
     {
-        public MetricSampledEventArgs(Guid metricId, TMetric value)
+        public MetricSampled(Guid metricId, TMetric value)
         {
             MetricId = metricId;
             Value = value;

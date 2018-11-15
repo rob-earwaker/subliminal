@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Lognostics
+namespace Lognostics.Events
 {
-    public class ScopedEventArgs<TValue> : EventArgs
+    public class Scoped<TValue> : EventArgs
     {
-        public ScopedEventArgs(IScope scope, TValue value)
+        public Scoped(IScope scope, TValue value)
         {
             Scope = scope;
             Value = value;

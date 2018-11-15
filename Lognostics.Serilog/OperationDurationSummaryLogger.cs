@@ -1,9 +1,10 @@
-﻿using Serilog;
+﻿using Lognostics.Events;
+using Serilog;
 using System.Linq;
 
 namespace Lognostics.Serilog
 {
-    public class OperationDurationSummaryLogger : IScopedEventHandler<OperationCompletedEventArgs[]>
+    public class OperationDurationSummaryLogger : IScopedEventHandler<OperationCompleted[]>
     {
         private readonly string _operationName;
         private readonly ILogger _logger;
@@ -14,7 +15,7 @@ namespace Lognostics.Serilog
             _logger = logger;
         }
 
-        public void HandleEvent(object sender, ScopedEventArgs<OperationCompletedEventArgs[]> eventArgs)
+        public void HandleEvent(object sender, Scoped<OperationCompleted[]> eventArgs)
         {
             _logger.Information(
                 "Average time taken to {OperationName} was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s",
