@@ -1,7 +1,5 @@
 ﻿using Serilog;
-using Serilog.Events;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lognostics.Serilog.TestApp
