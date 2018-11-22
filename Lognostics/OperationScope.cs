@@ -10,7 +10,7 @@ namespace Lognostics
         public OperationScope(Guid operationTypeId)
         {
             OperationTypeId = operationTypeId;
-            _timerScope = new Scope();
+            _timerScope = new Scope(ScopeSourceId);
         }
 
         public static OperationScope StartNew(Guid operationTypeId)
@@ -21,7 +21,9 @@ namespace Lognostics
         }
         
         public Guid OperationTypeId { get; }
+
         public Guid ScopeId => _timerScope.ScopeId;
+        public Guid ScopeSourceId => OperationTypeId;
         public bool HasStarted => _timerScope.HasStarted;
         public bool HasEnded => _timerScope.HasEnded;
         public TimeSpan Duration => _timerScope.Duration;

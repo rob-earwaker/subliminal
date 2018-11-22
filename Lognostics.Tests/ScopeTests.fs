@@ -11,13 +11,13 @@ open Utils
 type Arbitrary =
     static member Scope () =
         Gen.elements (seq {
-            yield new Scope() :> IScope
+            yield new Scope(Guid.NewGuid()) :> IScope
             yield new OperationScope(Guid.NewGuid()) :> IScope })
         |> Arb.fromGen
 
 [<Fact>]
 let ``test scope has started after start new`` () =
-    use scope = Scope.StartNew()
+    use scope = Scope.StartNew(Guid.NewGuid())
     test <@ scope.HasStarted @>
 
 [<Property(Arbitrary=[| typeof<Arbitrary> |])>]

@@ -19,6 +19,7 @@ namespace Lognostics
         public event EventHandler<OperationStarted> Started;
         public event EventHandler<OperationCompleted> Completed;
 
+        public Guid ScopeSourceId => OperationTypeId;
         public ICollection<IScope> ActiveScopes => _activeScopes.Snapshot();
 
         public OperationScope StartNew()

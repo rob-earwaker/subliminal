@@ -19,7 +19,10 @@ namespace Lognostics
             _timerLock = new object();
             _activeScope = null;
             _activeScopeLock = new object();
+            ScopeSourceId = Guid.NewGuid();
         }
+
+        public Guid ScopeSourceId { get; }
 
         public static PeriodicScopeSource StartNew(TimeSpan scopeDuration)
         {
@@ -46,7 +49,7 @@ namespace Lognostics
             lock (_activeScopeLock)
             {
                 _activeScope?.End();
-                _activeScope = Scope.StartNew();
+                _activeScope = Scope.StartNew(ScopeSourceId);
             }
         }
 

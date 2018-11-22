@@ -8,22 +8,24 @@ namespace Lognostics
     {
         private readonly Stopwatch _stopwatch;
 
-        public Scope()
+        public Scope(Guid scopeSourceId)
         {
             ScopeId = Guid.NewGuid();
+            ScopeSourceId = scopeSourceId;
             HasStarted = false;
             HasEnded = false;
             _stopwatch = new Stopwatch();
         }
 
-        public static Scope StartNew()
+        public static Scope StartNew(Guid scopeSourceId)
         {
-            var scope = new Scope();
+            var scope = new Scope(scopeSourceId);
             scope.Start();
             return scope;
         }
 
         public Guid ScopeId { get; }
+        public Guid ScopeSourceId { get; }
         public bool HasStarted { get; private set; }
         public bool HasEnded { get; private set; }
         public TimeSpan Duration => _stopwatch.Elapsed;
