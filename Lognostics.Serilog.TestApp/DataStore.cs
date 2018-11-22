@@ -10,12 +10,14 @@ namespace Lognostics.Serilog.TestApp
 
         public Operation ReadRandomBytesOperation { get; }
         public Operation ReadRandomByteOperation { get; }
+        public Metric<int> RandomMetric { get; }
 
         public DataStore()
         {
             _random = new Random();
             ReadRandomBytesOperation = new Operation();
             ReadRandomByteOperation = new Operation();
+            RandomMetric = new Metric<int>();
         }
 
         public async Task<byte[]> ReadRandomBytesAsync(int size)
@@ -33,6 +35,7 @@ namespace Lognostics.Serilog.TestApp
                 var buffer = new byte[1];
                 _random.NextBytes(buffer);
                 await Task.Delay(TimeSpan.FromSeconds(_random.NextDouble())).ConfigureAwait(false);
+                RandomMetric.LogValue(_random.Next());
                 return buffer[0];
             }
         }

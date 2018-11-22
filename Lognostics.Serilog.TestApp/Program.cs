@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using Serilog.Events;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Lognostics.Serilog.TestApp
         private static async Task MainAsync()
         {
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
+                .MinimumLevel.Debug()
                 .WriteTo.Console()
                 .CreateLogger();
 
@@ -35,8 +36,11 @@ namespace Lognostics.Serilog.TestApp
                     periodicScopeSource,
                     dataStore.ReadRandomBytesOperation));
 
+            var randomMetricLogger = new MetricValueLogger<int>("RandomMetric", "{MetricName} value is {Value}", dataStoreLogger);
+
             dataStore.ReadRandomBytesOperation.Completed += readRandomBytesLogger.HandleEvent;
             dataStore.ReadRandomByteOperation.Completed += readRandomByteLogger.HandleEvent;
+            dataStore.RandomMetric.Sampled += randomMetricLogger.HandleEvent;
 
             while (true)
             {
