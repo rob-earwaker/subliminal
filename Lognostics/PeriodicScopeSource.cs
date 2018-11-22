@@ -1,55 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Timers;
 
 namespace Lognostics
 {
-    public class PeriodicScopeSource : IScopeSource
+    public class PeriodicScopeSource : IScopeSource, IDisposable
     {
         private readonly TimeSpan _scopeDuration;
-        private readonly object _isStartedLock;
-        private readonly object _activeScopeLock;
-        private bool _isStarted;
+        private readonly Timer _timer;
+        private readonly object _timerLock;
         private IScope _activeScope;
+        private readonly object _activeScopeLock;
 
         public PeriodicScopeSource(TimeSpan scopeDuration)
         {
             _scopeDuration = scopeDuration;
-            _isStartedLock = new object();
-            _activeScopeLock = new object();
-            _isStarted = false;
+            _timer = new Timer(scopeDuration.TotalMilliseconds) { AutoReset = true };
+            _timerLock = new object();
             _activeScope = null;
+            _activeScopeLock = new object();
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public static PeriodicScopeSource StartNew(TimeSpan scopeDuration)
         {
-            lock (_isStartedLock)
+            var periodicScopeSource = new PeriodicScopeSource(scopeDuration);
+            periodicScopeSource.Start();
+            return periodicScopeSource;
+        }
+
+        public void Start()
+        {
+            lock (_timerLock)
             {
-                if (_isStarted)
+                if (_timer.Enabled)
                     return;
 
-                _isStarted = true;
+                _timer.Elapsed += RenewActiveScope;
+                _timer.Disposed += EndActiveScope;
+                _timer.Start();
             }
+        }
 
-            while (!cancellationToken.IsCancellationRequested)
+        private void RenewActiveScope(object sender, EventArgs eventArgs)
+        {
+            lock (_activeScopeLock)
             {
-                lock (_activeScopeLock)
-                {
-                    _activeScope?.End();
-                    _activeScope = Scope.StartNew();
-                }
-
-                try
-                {
-                    await Task.Delay(_scopeDuration, cancellationToken).ConfigureAwait(false);
-                }
-                catch (TaskCanceledException)
-                {
-                }
+                _activeScope?.End();
+                _activeScope = Scope.StartNew();
             }
+        }
 
-            _activeScope?.End();
+        private void EndActiveScope(object sender, EventArgs eventArgs)
+        {
+            _timer.Elapsed -= RenewActiveScope;
+            _timer.Disposed -= EndActiveScope;
+
+            lock (_activeScopeLock)
+            {
+                _activeScope?.End();
+                _activeScope = null;
+            }
         }
 
         public ICollection<IScope> ActiveScopes
@@ -60,6 +70,14 @@ namespace Lognostics
                 {
                     return _activeScope == null ? new IScope[0] : new[] { _activeScope };
                 }
+            }
+        }
+
+        public void Dispose()
+        {
+            lock (_timerLock)
+            {
+                _timer.Dispose();
             }
         }
     }
