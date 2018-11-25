@@ -20,11 +20,12 @@ namespace Lognostics.Serilog.TestApp
             RandomMetric = new Metric<int>();
         }
 
-        public async Task<byte[]> ReadRandomBytesAsync(int size)
+        public async Task<byte[]> ReadRandomBytesAsync(int bufferSize)
         {
-            using (ReadRandomBytesOperation.StartNew())
+            using (var operationScope = ReadRandomBytesOperation.StartNew())
             {
-                return await Task.WhenAll(new object[size].Select(_ => ReadRandomByteAsync()));
+                operationScope.AddContext("BufferSize", bufferSize);
+                return await Task.WhenAll(new object[bufferSize].Select(_ => ReadRandomByteAsync()));
             }
         }
 

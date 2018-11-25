@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using Serilog.Events;
 using System;
 using System.Threading.Tasks;
 
@@ -22,15 +23,25 @@ namespace Lognostics.Serilog.TestApp
 
             var dataStoreLogger = Log.Logger.ForContext(dataStore.GetType());
 
-            var readRandomBytesLogger = new OperationDurationLogger("ReadRandomBytes", dataStoreLogger);
-            
+            var readRandomBytesLogger = new OperationDurationLogger(
+                "Took {OperationDurationSeconds}s to {OperationName}",
+                dataStoreLogger.ForContext("OperationName", "ReadRandomBytes"),
+                LogEventLevel.Information);
+
             var readRandomByteLogger = ScopedEventHandler.Create(
-                EventAggregator.Create(new OperationDurationSummaryLogger("ReadRandomByte", dataStoreLogger)),
+                EventAggregator.Create(
+                    new OperationDurationSummaryLogger(
+                        "Average time taken to {OperationName} was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s",
+                        dataStoreLogger.ForContext("OperationName", "ReadRandomByte"),
+                        LogEventLevel.Information)),
                 new AggregateScopeSource(
                     PeriodicScopeSource.StartNew(TimeSpan.FromSeconds(10)),
                     dataStore.ReadRandomBytesOperation));
 
-            var randomMetricLogger = new MetricValueLogger<int>("RandomMetric", "{MetricName} value is {Value}", dataStoreLogger);
+            var randomMetricLogger = new MetricValueLogger<int>(
+                "{MetricName} value is {Value}",
+                dataStoreLogger.ForContext("MetricName", "RandomMetric"),
+                LogEventLevel.Information);
 
             dataStore.ReadRandomBytesOperation.Completed += readRandomBytesLogger.HandleEvent;
             dataStore.ReadRandomByteOperation.Completed += readRandomByteLogger.HandleEvent;

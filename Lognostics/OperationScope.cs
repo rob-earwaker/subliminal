@@ -1,16 +1,17 @@
 ﻿using Lognostics.Events;
 using System;
+using System.Collections.Generic;
 
 namespace Lognostics
 {
     public class OperationScope : IScope
     {
-        private readonly IScope _timerScope;
+        private readonly IScope _scope;
 
         public OperationScope(Guid operationTypeId)
         {
             OperationTypeId = operationTypeId;
-            _timerScope = new Scope(ScopeSourceId);
+            _scope = new Scope(ScopeSourceId);
         }
 
         public static OperationScope StartNew(Guid operationTypeId)
@@ -19,15 +20,17 @@ namespace Lognostics
             operationTimer.Start();
             return operationTimer;
         }
-        
+
+        public Guid OperationId => _scope.ScopeId;
         public Guid OperationTypeId { get; }
 
-        public Guid ScopeId => _timerScope.ScopeId;
+        public Guid ScopeId => _scope.ScopeId;
         public Guid ScopeSourceId => OperationTypeId;
-        public bool HasStarted => _timerScope.HasStarted;
-        public bool HasEnded => _timerScope.HasEnded;
-        public TimeSpan Duration => _timerScope.Duration;
-        
+        public bool HasStarted => _scope.HasStarted;
+        public bool HasEnded => _scope.HasEnded;
+        public IReadOnlyDictionary<string, object> Context => _scope.Context;
+        public TimeSpan Duration => _scope.Duration;
+
         public event EventHandler<OperationCompleted> Completed;
         public event EventHandler<ScopeEnded> Ended;
 
@@ -36,23 +39,28 @@ namespace Lognostics
             if (HasStarted)
                 return;
 
-            _timerScope.Ended += TimerScopeEndedHandler;
-            _timerScope.Start();
+            _scope.Ended += ScopeEndedHandler;
+            _scope.Start();
         }
 
         public void End()
         {
-            _timerScope.End();
+            _scope.End();
+        }
+
+        public void AddContext(string contextKey, object value)
+        {
+            _scope.AddContext(contextKey, value);
         }
 
         public void Dispose()
         {
-            _timerScope.Dispose();
+            _scope.Dispose();
         }
 
-        private void TimerScopeEndedHandler(object sender, ScopeEnded eventArgs)
+        private void ScopeEndedHandler(object sender, ScopeEnded eventArgs)
         {
-            eventArgs.Scope.Ended -= TimerScopeEndedHandler;
+            eventArgs.Scope.Ended -= ScopeEndedHandler;
             Ended?.Invoke(this, new ScopeEnded(this));
             Completed?.Invoke(this, new OperationCompleted(this));
         }
