@@ -38,13 +38,20 @@ namespace Lognostics
                 if (_timer.Enabled)
                     return;
 
-                _timer.Elapsed += RenewActiveScope;
-                _timer.Disposed += EndActiveScope;
+                RenewActiveScope();
+
+                _timer.Elapsed += TimerElapsedHandler;
+                _timer.Disposed += TimerDisposedHandler;
                 _timer.Start();
             }
         }
 
-        private void RenewActiveScope(object sender, EventArgs eventArgs)
+        private void TimerElapsedHandler(object sender, EventArgs eventArgs)
+        {
+            RenewActiveScope();
+        }
+
+        private void RenewActiveScope()
         {
             lock (_activeScopeLock)
             {
@@ -53,10 +60,10 @@ namespace Lognostics
             }
         }
 
-        private void EndActiveScope(object sender, EventArgs eventArgs)
+        private void TimerDisposedHandler(object sender, EventArgs eventArgs)
         {
-            _timer.Elapsed -= RenewActiveScope;
-            _timer.Disposed -= EndActiveScope;
+            _timer.Elapsed -= TimerElapsedHandler;
+            _timer.Disposed -= TimerDisposedHandler;
 
             lock (_activeScopeLock)
             {
