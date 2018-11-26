@@ -5,7 +5,7 @@ namespace Lognostics
 {
     public class Counter
     {
-        public EventHandler<CounterIncremented> Incremented;
+        public event EventHandler<CounterIncremented> Incremented;
 
         public void IncrementBy(int increment)
         {
