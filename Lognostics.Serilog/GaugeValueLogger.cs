@@ -4,22 +4,22 @@ using Serilog.Events;
 
 namespace Lognostics.Serilog
 {
-    public class MetricValueLogger<TMetric> : IEventHandler<MetricSampled<TMetric>>
+    public class GaugeValueLogger<TGauge> : IEventHandler<GaugeSampled<TGauge>>
     {
         private readonly string _messageTemplate;
         private readonly ILogger _logger;
         private readonly LogEventLevel _logEventLevel;
 
-        public MetricValueLogger(string messageTemplate, ILogger logger, LogEventLevel logEventLevel)
+        public GaugeValueLogger(string messageTemplate, ILogger logger, LogEventLevel logEventLevel)
         {
             _messageTemplate = messageTemplate;
             _logger = logger;
             _logEventLevel = logEventLevel;
         }
 
-        public void HandleEvent(object sender, MetricSampled<TMetric> eventArgs)
+        public void HandleEvent(object sender, GaugeSampled<TGauge> eventArgs)
         {
-            _logger.ForContext("MetricId", eventArgs.MetricId)
+            _logger.ForContext("GaugeId", eventArgs.GaugeId)
                 .ForContext("Value", eventArgs.Value)
                 .Write(_logEventLevel, _messageTemplate);
         }

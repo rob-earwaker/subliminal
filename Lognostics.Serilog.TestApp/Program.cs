@@ -38,9 +38,9 @@ namespace Lognostics.Serilog.TestApp
                     PeriodicScopeSource.StartNew(TimeSpan.FromSeconds(10)),
                     dataStore.ReadRandomBytesOperation));
 
-            var randomMetricLogger = new MetricValueLogger<int>(
-                "{MetricName} value is {Value}",
-                dataStoreLogger.ForContext("MetricName", "RandomMetric"),
+            var randomGaugeLogger = new GaugeValueLogger<int>(
+                "{GaugeName} value is {Value}",
+                dataStoreLogger.ForContext("GaugeName", "RandomGauge"),
                 LogEventLevel.Information);
 
             var readByteCountLogger = ScopedEventHandler.Create(
@@ -53,7 +53,7 @@ namespace Lognostics.Serilog.TestApp
 
             dataStore.ReadRandomBytesOperation.Completed += readRandomBytesLogger.HandleEvent;
             dataStore.ReadRandomByteOperation.Completed += readRandomByteLogger.HandleEvent;
-            dataStore.RandomMetric.Sampled += randomMetricLogger.HandleEvent;
+            dataStore.RandomGauge.Sampled += randomGaugeLogger.HandleEvent;
             dataStore.BytesReadCounter.Incremented += readByteCountLogger.HandleEvent;
 
             while (true)
