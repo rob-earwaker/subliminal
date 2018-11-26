@@ -8,24 +8,18 @@ namespace Lognostics
     {
         private readonly IScope _scope;
 
-        public OperationScope(Guid operationTypeId)
+        public OperationScope()
         {
-            OperationTypeId = operationTypeId;
-            _scope = new Scope(ScopeSourceId);
+            _scope = new Scope();
         }
 
-        public static OperationScope StartNew(Guid operationTypeId)
+        public static OperationScope StartNew()
         {
-            var operationTimer = new OperationScope(operationTypeId);
+            var operationTimer = new OperationScope();
             operationTimer.Start();
             return operationTimer;
         }
 
-        public Guid OperationId => _scope.ScopeId;
-        public Guid OperationTypeId { get; }
-
-        public Guid ScopeId => _scope.ScopeId;
-        public Guid ScopeSourceId => OperationTypeId;
         public bool HasStarted => _scope.HasStarted;
         public bool HasEnded => _scope.HasEnded;
         public IReadOnlyDictionary<string, object> Context => _scope.Context;

@@ -10,11 +10,9 @@ namespace Lognostics
 
         public AggregateScopeSource(params IScopeSource[] scopeSources)
         {
-            ScopeSourceId = Guid.NewGuid();
             _scopeSources = scopeSources;
         }
 
-        public Guid ScopeSourceId { get; }
         public ICollection<IScope> ActiveScopes => _scopeSources.SelectMany(scopeSource => scopeSource.ActiveScopes).ToArray();
     }
 }

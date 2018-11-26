@@ -11,25 +11,21 @@ namespace Lognostics
         private readonly Stopwatch _stopwatch;
         private readonly ConcurrentDictionary<string, object> _context;
 
-        public Scope(Guid scopeSourceId)
+        public Scope()
         {
-            ScopeId = Guid.NewGuid();
-            ScopeSourceId = scopeSourceId;
             HasStarted = false;
             HasEnded = false;
             _stopwatch = new Stopwatch();
             _context = new ConcurrentDictionary<string, object>();
         }
 
-        public static Scope StartNew(Guid scopeSourceId)
+        public static Scope StartNew()
         {
-            var scope = new Scope(scopeSourceId);
+            var scope = new Scope();
             scope.Start();
             return scope;
         }
 
-        public Guid ScopeId { get; }
-        public Guid ScopeSourceId { get; }
         public bool HasStarted { get; private set; }
         public IReadOnlyDictionary<string, object> Context => _context;
         public TimeSpan Duration => _stopwatch.Elapsed;

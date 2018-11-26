@@ -20,8 +20,6 @@ namespace Lognostics.Serilog
         public void HandleEvent(object sender, OperationCompleted eventArgs)
         {
             _logger.ForContext(new DictionaryEnricher(eventArgs.OperationScope.Context))
-                .ForContext("OperationId", eventArgs.OperationScope.OperationId)
-                .ForContext("OperationTypeId", eventArgs.OperationScope.OperationTypeId)
                 .ForContext("OperationDurationSeconds", eventArgs.OperationScope.Duration.TotalSeconds)
                 .Write(_logEventLevel, _messageTemplate);
         }

@@ -19,8 +19,7 @@ namespace Lognostics.Serilog
 
         public void HandleEvent(object sender, GaugeSampled<TGauge> eventArgs)
         {
-            _logger.ForContext("GaugeId", eventArgs.GaugeId)
-                .ForContext("Value", eventArgs.Value)
+            _logger.ForContext("Value", eventArgs.Value)
                 .Write(_logEventLevel, _messageTemplate);
         }
     }

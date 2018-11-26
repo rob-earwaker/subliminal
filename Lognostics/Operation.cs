@@ -10,21 +10,17 @@ namespace Lognostics
 
         public Operation()
         {
-            OperationTypeId = Guid.NewGuid();
             _activeScopes = new ConcurrentHashSet<IScope>();
         }
-
-        public Guid OperationTypeId { get; }
 
         public event EventHandler<OperationStarted> Started;
         public event EventHandler<OperationCompleted> Completed;
 
-        public Guid ScopeSourceId => OperationTypeId;
         public ICollection<IScope> ActiveScopes => _activeScopes.Snapshot();
 
         public OperationScope StartNew()
         {
-            var operationScope = OperationScope.StartNew(OperationTypeId);
+            var operationScope = OperationScope.StartNew();
             Started?.Invoke(this, new OperationStarted(operationScope));
             operationScope.Completed += OperationCompletedHandler;
             _activeScopes.Add(operationScope);
