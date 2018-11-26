@@ -43,9 +43,18 @@ namespace Lognostics.Serilog.TestApp
                 dataStoreLogger.ForContext("MetricName", "RandomMetric"),
                 LogEventLevel.Information);
 
+            var readByteCountLogger = ScopedEventHandler.Create(
+                EventAggregator.Create(
+                    new TotalCountLogger(
+                        "Total number of bytes read over the last {SamplePeriodDurationSeconds}s was {TotalCount}",
+                        dataStoreLogger,
+                        LogEventLevel.Information)),
+                PeriodicScopeSource.StartNew(TimeSpan.FromSeconds(8)));
+
             dataStore.ReadRandomBytesOperation.Completed += readRandomBytesLogger.HandleEvent;
             dataStore.ReadRandomByteOperation.Completed += readRandomByteLogger.HandleEvent;
             dataStore.RandomMetric.Sampled += randomMetricLogger.HandleEvent;
+            dataStore.BytesReadCounter.Incremented += readByteCountLogger.HandleEvent;
 
             while (true)
             {

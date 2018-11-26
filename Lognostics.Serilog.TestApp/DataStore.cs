@@ -11,6 +11,7 @@ namespace Lognostics.Serilog.TestApp
         public Operation ReadRandomBytesOperation { get; }
         public Operation ReadRandomByteOperation { get; }
         public Metric<int> RandomMetric { get; }
+        public Counter BytesReadCounter { get; }
 
         public DataStore()
         {
@@ -18,6 +19,7 @@ namespace Lognostics.Serilog.TestApp
             ReadRandomBytesOperation = new Operation();
             ReadRandomByteOperation = new Operation();
             RandomMetric = new Metric<int>();
+            BytesReadCounter = new Counter();
         }
 
         public async Task<byte[]> ReadRandomBytesAsync(int bufferSize)
@@ -25,7 +27,9 @@ namespace Lognostics.Serilog.TestApp
             using (var operationScope = ReadRandomBytesOperation.StartNew())
             {
                 operationScope.AddContext("BufferSize", bufferSize);
-                return await Task.WhenAll(new object[bufferSize].Select(_ => ReadRandomByteAsync()));
+                var buffer = await Task.WhenAll(new object[bufferSize].Select(_ => ReadRandomByteAsync()));
+                BytesReadCounter.IncrementBy(bufferSize);
+                return buffer;
             }
         }
 
