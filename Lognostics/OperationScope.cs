@@ -7,10 +7,12 @@ namespace Lognostics
     public class OperationScope : IScope
     {
         private readonly IScope _scope;
+        private bool _canceled;
 
         public OperationScope()
         {
             _scope = new Scope();
+            _canceled = false;
         }
 
         public static OperationScope StartNew()
@@ -26,6 +28,7 @@ namespace Lognostics
         public TimeSpan Duration => _scope.Duration;
 
         public event EventHandler<OperationCompleted> Completed;
+        public event EventHandler<OperationCanceled> Canceled;
         public event EventHandler<ScopeEnded> Ended;
 
         public void Start()
@@ -35,6 +38,12 @@ namespace Lognostics
 
             _scope.Ended += ScopeEndedHandler;
             _scope.Start();
+        }
+
+        public void Cancel()
+        {
+            _canceled = true;
+            End();
         }
 
         public void End()
@@ -56,7 +65,11 @@ namespace Lognostics
         {
             eventArgs.Scope.Ended -= ScopeEndedHandler;
             Ended?.Invoke(this, new ScopeEnded(this));
-            Completed?.Invoke(this, new OperationCompleted(this));
+
+            if (_canceled)
+                Canceled?.Invoke(this, new OperationCanceled(this));
+            else
+                Completed?.Invoke(this, new OperationCompleted(this));
         }
     }
 }
