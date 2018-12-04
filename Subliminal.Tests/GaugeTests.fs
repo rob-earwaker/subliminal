@@ -8,8 +8,8 @@ open Utils
 [<Property>]
 let ``test includes gauge value in gauge sampled event args`` (gaugeValue: obj) =
     let gauge = Gauge()
-    let observationCollector = ValueCollector()
-    use subscription = gauge.Sampled.Subscribe(observationCollector)
+    let eventCollector = EventCollector()
+    gauge.Sampled.AddHandler(createDelegateFrom eventCollector)
     gauge.LogValue(gaugeValue)
-    test <@ observationCollector.ReceivedValues.Count = 1 @>
-    test <@ observationCollector.ReceivedValues.[0] = gaugeValue @>
+    test <@ eventCollector.ReceivedEvents.Count = 1 @>
+    test <@ eventCollector.ReceivedEvents.[0].Value = gaugeValue @>

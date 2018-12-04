@@ -1,22 +1,15 @@
-﻿using System;
-using System.Reactive.Subjects;
+﻿using Subliminal.Events;
+using System;
 
 namespace Subliminal
 {
     public class Gauge<TGauge>
     {
-        private readonly Subject<TGauge> _sampled;
-
-        public Gauge()
-        {
-            _sampled = new Subject<TGauge>();
-        }
+        public event EventHandler<GaugeSampled<TGauge>> Sampled;
 
         public void LogValue(TGauge value)
         {
-            _sampled.OnNext(value);
+            Sampled?.Invoke(this, new GaugeSampled<TGauge>(value));
         }
-
-        public IObservable<TGauge> Sampled => _sampled;
     }
 }
