@@ -1,6 +1,6 @@
-﻿using Subliminal.Events;
-using Serilog;
+﻿using Serilog;
 using Serilog.Events;
+using Subliminal.Events;
 
 namespace Subliminal.Serilog
 {
