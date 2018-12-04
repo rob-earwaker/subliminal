@@ -53,7 +53,7 @@ namespace Subliminal.Serilog.TestApp
 
             dataStore.ReadRandomBytesOperation.Completed += readRandomBytesLogger.HandleEvent;
             dataStore.ReadRandomByteOperation.Completed += readRandomByteLogger.HandleEvent;
-            dataStore.RandomGauge.Sampled += randomGaugeLogger.HandleEvent;
+            dataStore.RandomGauge.Sampled.Subscribe(randomGaugeLogger);
             dataStore.BytesReadCounter.Incremented += readByteCountLogger.HandleEvent;
 
             while (true)

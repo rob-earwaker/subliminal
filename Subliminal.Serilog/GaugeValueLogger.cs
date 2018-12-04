@@ -1,10 +1,10 @@
 ﻿using Serilog;
 using Serilog.Events;
-using Subliminal.Events;
+using System;
 
 namespace Subliminal.Serilog
 {
-    public class GaugeValueLogger<TGauge> : IEventHandler<GaugeSampled<TGauge>>
+    public class GaugeValueLogger<TGauge> : IObserver<TGauge>
     {
         private readonly string _messageTemplate;
         private readonly ILogger _logger;
@@ -17,10 +17,18 @@ namespace Subliminal.Serilog
             _logEventLevel = logEventLevel;
         }
 
-        public void HandleEvent(object sender, GaugeSampled<TGauge> eventArgs)
+        public void OnNext(TGauge value)
         {
-            _logger.ForContext("Value", eventArgs.Value)
+            _logger.ForContext("Value", value)
                 .Write(_logEventLevel, _messageTemplate);
+        }
+
+        public void OnCompleted()
+        {
+        }
+
+        public void OnError(Exception error)
+        {
         }
     }
 }
