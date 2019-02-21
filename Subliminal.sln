@@ -5,11 +5,11 @@ VisualStudioVersion = 15.0.27703.2047
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subliminal", "Subliminal\Subliminal.csproj", "{AB980232-2296-4942-B0C6-911C042B61F1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subliminal.Serilog", "Subliminal.Serilog\Subliminal.Serilog.csproj", "{8477546A-A72B-4705-8BEE-2AFBBEFB9A74}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subliminal.Serilog.TestApp", "Subliminal.Serilog.TestApp\Subliminal.Serilog.TestApp.csproj", "{022D20F4-B724-422A-BDEB-9CA03EE2D5E7}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Subliminal.Tests", "Subliminal.Tests\Subliminal.Tests.fsproj", "{3455E85D-676F-4141-BF2C-BE752B6FA151}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Subliminal.Tests", "Subliminal.Tests\Subliminal.Tests.fsproj", "{3455E85D-676F-4141-BF2C-BE752B6FA151}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subliminal.Serilog", "Subliminal.Serilog\Subliminal.Serilog.csproj", "{30D90798-093A-419A-982F-80C2AE672F87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +21,6 @@ Global
 		{AB980232-2296-4942-B0C6-911C042B61F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB980232-2296-4942-B0C6-911C042B61F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB980232-2296-4942-B0C6-911C042B61F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8477546A-A72B-4705-8BEE-2AFBBEFB9A74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8477546A-A72B-4705-8BEE-2AFBBEFB9A74}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8477546A-A72B-4705-8BEE-2AFBBEFB9A74}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8477546A-A72B-4705-8BEE-2AFBBEFB9A74}.Release|Any CPU.Build.0 = Release|Any CPU
 		{022D20F4-B724-422A-BDEB-9CA03EE2D5E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{022D20F4-B724-422A-BDEB-9CA03EE2D5E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{022D20F4-B724-422A-BDEB-9CA03EE2D5E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +29,10 @@ Global
 		{3455E85D-676F-4141-BF2C-BE752B6FA151}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3455E85D-676F-4141-BF2C-BE752B6FA151}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3455E85D-676F-4141-BF2C-BE752B6FA151}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30D90798-093A-419A-982F-80C2AE672F87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30D90798-093A-419A-982F-80C2AE672F87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30D90798-093A-419A-982F-80C2AE672F87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30D90798-093A-419A-982F-80C2AE672F87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

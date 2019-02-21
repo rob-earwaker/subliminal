@@ -1,37 +1,31 @@
-﻿using Subliminal.Events;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class Operation : IScopeSource
+    public class Operation
     {
-        private readonly ConcurrentHashSet<IScope> _activeScopes;
+        private readonly Subject<OperationScope> _started;
 
         public Operation()
         {
-            _activeScopes = new ConcurrentHashSet<IScope>();
+            _started = new Subject<OperationScope>();
         }
 
-        public event EventHandler<OperationStarted> Started;
-        public event EventHandler<OperationCompleted> Completed;
+        public IObservable<OperationScope> Started => _started.AsObservable();
 
-        public ICollection<IScope> ActiveScopes => _activeScopes.Snapshot();
+        public IObservable<OperationScope> Completed =>
+                Started.SelectMany(operationScope => operationScope.Completed.Select(_ => operationScope));
 
+        public IObservable<OperationScope> Canceled =>
+                Started.SelectMany(operationScope => operationScope.Canceled.Select(_ => operationScope));
+        
         public OperationScope StartNew()
         {
             var operationScope = OperationScope.StartNew();
-            Started?.Invoke(this, new OperationStarted(operationScope));
-            operationScope.Completed += OperationCompletedHandler;
-            _activeScopes.Add(operationScope);
+            _started.OnNext(operationScope);
             return operationScope;
-        }
-
-        private void OperationCompletedHandler(object sender, OperationCompleted eventArgs)
-        {
-            _activeScopes.Remove(eventArgs.OperationScope);
-            eventArgs.OperationScope.Completed -= OperationCompletedHandler;
-            Completed?.Invoke(this, eventArgs);
         }
     }
 }

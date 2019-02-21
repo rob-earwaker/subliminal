@@ -1,6 +1,8 @@
 ﻿using Serilog;
 using Serilog.Events;
 using System;
+using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 namespace Subliminal.Serilog.TestApp
@@ -22,40 +24,50 @@ namespace Subliminal.Serilog.TestApp
             var dataStore = new DataStore();
 
             var dataStoreLogger = Log.Logger.ForContext(dataStore.GetType());
+            
+            dataStore.ReadRandomBytesOperation.Completed
+                .Subscribe(operationScope =>
+                    dataStoreLogger
+                        .ForContext("OperationName", "ReadRandomBytes")
+                        .ForContext("OperationDurationSeconds", operationScope.Duration.TotalSeconds)
+                        .Information("Took {OperationDurationSeconds}s to {OperationName}"));
+            
+            dataStore.ReadRandomByteOperation.Completed
+                .Buffer(TimeSpan.FromSeconds(10))
+                .TimeInterval()
+                .Subscribe(buffer =>
+                    dataStoreLogger
+                        .ForContext("AverageDurationSeconds", buffer.Value.Average(operationScope => operationScope.Duration.TotalSeconds))
+                        .ForContext("SamplePeriodDurationSeconds", buffer.Interval.TotalSeconds)
+                        .ForContext("OperationName", "ReadRandomByte")
+                        .Information("Average time taken to {OperationName} was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
 
-            var readRandomBytesLogger = new OperationDurationLogger(
-                "Took {OperationDurationSeconds}s to {OperationName}",
-                dataStoreLogger.ForContext("OperationName", "ReadRandomBytes"),
-                LogEventLevel.Information);
+            dataStore.ReadRandomByteOperation.Completed
+                .Buffer(dataStore.ReadRandomBytesOperation.Started, readRandomBytesOperation => readRandomBytesOperation.Ended)
+                .TimeInterval()
+                .Subscribe(buffer =>
+                    dataStoreLogger
+                        .ForContext("AverageDurationSeconds", buffer.Value.Average(operationScope => operationScope.Duration.TotalSeconds))
+                        .ForContext("SamplePeriodDurationSeconds", buffer.Interval.TotalSeconds)
+                        .ForContext("OperationName", "ReadRandomByte")
+                        .Information("Average time taken to {OperationName} was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
+            
+            dataStore.RandomGauge.Sampled
+                .Subscribe(value =>
+                    dataStoreLogger
+                        .ForContext("GaugeName", "RandomGauge")
+                        .ForContext("Value", value)
+                        .Information("{GaugeName} value is {Value}"));
 
-            var readRandomByteLogger = ScopedEventHandler.Create(
-                EventAggregator.Create(
-                    new OperationDurationSummaryLogger(
-                        "Average time taken to {OperationName} was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s",
-                        dataStoreLogger.ForContext("OperationName", "ReadRandomByte"),
-                        LogEventLevel.Information)),
-                new AggregateScopeSource(
-                    PeriodicScopeSource.StartNew(TimeSpan.FromSeconds(10)),
-                    dataStore.ReadRandomBytesOperation));
-
-            var randomGaugeLogger = new GaugeValueLogger<int>(
-                "{GaugeName} value is {Value}",
-                dataStoreLogger.ForContext("GaugeName", "RandomGauge"),
-                LogEventLevel.Information);
-
-            var readByteCountLogger = ScopedEventHandler.Create(
-                EventAggregator.Create(
-                    new TotalCountLogger(
-                        "Total number of bytes read over the last {SamplePeriodDurationSeconds}s was {TotalCount}",
-                        dataStoreLogger,
-                        LogEventLevel.Information)),
-                PeriodicScopeSource.StartNew(TimeSpan.FromSeconds(8)));
-
-            dataStore.ReadRandomBytesOperation.Completed += readRandomBytesLogger.HandleEvent;
-            dataStore.ReadRandomByteOperation.Completed += readRandomByteLogger.HandleEvent;
-            dataStore.RandomGauge.Sampled += randomGaugeLogger.HandleEvent;
-            dataStore.BytesReadCounter.Incremented += readByteCountLogger.HandleEvent;
-
+            dataStore.BytesReadCounter.Incremented
+                .Buffer(TimeSpan.FromSeconds(8))
+                .TimeInterval()
+                .Subscribe(buffer =>
+                    dataStoreLogger
+                        .ForContext("SamplePeriodDurationSeconds", buffer.Interval.TotalSeconds)
+                        .ForContext("TotalCount", buffer.Value.Sum())
+                        .Information("Total number of bytes read over the last {SamplePeriodDurationSeconds}s was {TotalCount}"));
+            
             while (true)
             {
                 var buffer = await dataStore.ReadRandomBytesAsync(4).ConfigureAwait(false);

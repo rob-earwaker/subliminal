@@ -1,8 +1,10 @@
-﻿using Subliminal.Events;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace Subliminal
 {
@@ -10,13 +12,16 @@ namespace Subliminal
     {
         private readonly Stopwatch _stopwatch;
         private readonly ConcurrentDictionary<string, object> _context;
+        private readonly Subject<Unit> _ended;
 
         public Scope()
         {
             HasStarted = false;
             HasEnded = false;
+
             _stopwatch = new Stopwatch();
             _context = new ConcurrentDictionary<string, object>();
+            _ended = new Subject<Unit>();
         }
 
         public static Scope StartNew()
@@ -31,7 +36,7 @@ namespace Subliminal
         public TimeSpan Duration => _stopwatch.Elapsed;
         public bool HasEnded { get; private set; }
 
-        public event EventHandler<ScopeEnded> Ended;
+        public IObservable<Unit> Ended => _ended.AsObservable();
 
         public void Start()
         {
@@ -39,6 +44,7 @@ namespace Subliminal
                 return;
 
             _stopwatch.Start();
+
             HasStarted = true;
         }
 
@@ -48,7 +54,10 @@ namespace Subliminal
                 return;
 
             _stopwatch.Stop();
-            Ended?.Invoke(this, new ScopeEnded(this));
+
+            _ended.OnNext(Unit.Default);
+            _ended.OnCompleted();
+
             HasEnded = true;
         }
 

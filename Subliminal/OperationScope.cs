@@ -1,6 +1,7 @@
-﻿using Subliminal.Events;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace Subliminal
 {
@@ -26,17 +27,13 @@ namespace Subliminal
         public bool HasEnded => _scope.HasEnded;
         public IReadOnlyDictionary<string, object> Context => _scope.Context;
         public TimeSpan Duration => _scope.Duration;
+        public IObservable<Unit> Ended => _scope.Ended;
 
-        public event EventHandler<OperationCompleted> Completed;
-        public event EventHandler<OperationCanceled> Canceled;
-        public event EventHandler<ScopeEnded> Ended;
+        public IObservable<Unit> Completed => _scope.Ended.Where(_ => !_canceled);
+        public IObservable<Unit> Canceled => _scope.Ended.Where(_ => _canceled);
 
         public void Start()
         {
-            if (HasStarted)
-                return;
-
-            _scope.Ended += ScopeEndedHandler;
             _scope.Start();
         }
 
@@ -59,17 +56,6 @@ namespace Subliminal
         public void Dispose()
         {
             _scope.Dispose();
-        }
-
-        private void ScopeEndedHandler(object sender, ScopeEnded eventArgs)
-        {
-            eventArgs.Scope.Ended -= ScopeEndedHandler;
-            Ended?.Invoke(this, new ScopeEnded(this));
-
-            if (_canceled)
-                Canceled?.Invoke(this, new OperationCanceled(this));
-            else
-                Completed?.Invoke(this, new OperationCompleted(this));
         }
     }
 }
