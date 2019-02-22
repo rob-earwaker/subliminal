@@ -1,15 +1,21 @@
 ﻿module GaugeTests
 
-open FsCheck.Xunit
+open Xunit
+open FsCheck
 open Subliminal
 open Swensen.Unquote
-open Utils
+open System.Collections.Generic
 
-[<Property>]
-let ``test includes gauge value in gauge sampled event args`` (gaugeValue: obj) =
-    let gauge = Gauge()
-    let eventCollector = EventCollector()
-    gauge.Sampled.AddHandler(createDelegateFrom eventCollector)
-    gauge.LogValue(gaugeValue)
-    test <@ eventCollector.ReceivedEvents.Count = 1 @>
-    test <@ eventCollector.ReceivedEvents.[0].Value = gaugeValue @>
+[<Fact>]
+let ``test sampled events observed when values logged`` () =
+    let runTest valueCount =
+        let gauge = Gauge<obj>()
+        let observations = Queue<obj>()
+        use subscription = gauge.Sampled.Subscribe(observations.Enqueue)
+        for _ in Array.zeroCreate valueCount do
+            let value = obj()
+            gauge.LogValue(value)
+            test <@ observations.Count = 1 @>
+            test <@ observations.Dequeue() = value @>
+    let valueCounts = Gen.choose (0, 100) |> Arb.fromGen
+    Prop.forAll valueCounts runTest |> Check.Quick

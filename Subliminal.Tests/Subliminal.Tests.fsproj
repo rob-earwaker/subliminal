@@ -11,9 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Utils.fs" />
-    <Compile Include="AggregateEventHandlerTests.fs" />
-    <Compile Include="EventCounterTests.fs" />
     <Compile Include="GaugeTests.fs" />
     <Compile Include="OperationTests.fs" />
     <Compile Include="ScopeTests.fs" />
