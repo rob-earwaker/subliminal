@@ -1,14 +1,28 @@
 ﻿using System;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class Event<TEventArgs> where TEventArgs : EventArgs
+    public class Event<TEvent> : IDisposable
     {
-        public event EventHandler<TEventArgs> Occured;
+        private readonly Subject<TEvent> _occurred;
 
-        public void LogOccurrence(TEventArgs eventArgs)
+        public Event()
         {
-            Occured?.Invoke(this, eventArgs);
+            _occurred = new Subject<TEvent>();
+        }
+
+        public IObservable<TEvent> Occured => _occurred.AsObservable();
+
+        public void LogOccurrence(TEvent @event)
+        {
+            _occurred.OnNext(@event);
+        }
+
+        public void Dispose()
+        {
+            _occurred?.Dispose();
         }
     }
 }

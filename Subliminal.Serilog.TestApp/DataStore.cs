@@ -26,7 +26,6 @@ namespace Subliminal.Serilog.TestApp
         {
             using (var operationScope = ReadRandomBytesOperation.StartNew())
             {
-                operationScope.AddContext("BufferSize", bufferSize);
                 var readRandomByteTasks = new object[bufferSize].Select(_ => ReadRandomByteAsync()).ToArray();
                 var buffer = await Task.WhenAll(readRandomByteTasks).ConfigureAwait(false);
                 BytesReadCounter.IncrementBy(bufferSize);

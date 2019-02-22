@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive;
 
 namespace Subliminal
@@ -8,11 +7,9 @@ namespace Subliminal
     {
         bool HasStarted { get; }
         bool HasEnded { get; }
-        IReadOnlyDictionary<string, object> Context { get; }
         TimeSpan Duration { get; }
         IObservable<Unit> Ended { get; }
         void Start();
         void End();
-        void AddContext(string contextKey, object value);
     }
 }

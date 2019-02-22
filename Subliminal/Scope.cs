@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -11,7 +9,6 @@ namespace Subliminal
     public class Scope : IScope
     {
         private readonly Stopwatch _stopwatch;
-        private readonly ConcurrentDictionary<string, object> _context;
         private readonly Subject<Unit> _ended;
 
         public Scope()
@@ -20,7 +17,6 @@ namespace Subliminal
             HasEnded = false;
 
             _stopwatch = new Stopwatch();
-            _context = new ConcurrentDictionary<string, object>();
             _ended = new Subject<Unit>();
         }
 
@@ -32,7 +28,6 @@ namespace Subliminal
         }
 
         public bool HasStarted { get; private set; }
-        public IReadOnlyDictionary<string, object> Context => _context;
         public TimeSpan Duration => _stopwatch.Elapsed;
         public bool HasEnded { get; private set; }
 
@@ -61,14 +56,10 @@ namespace Subliminal
             HasEnded = true;
         }
 
-        public void AddContext(string contextKey, object value)
-        {
-            _context.AddOrUpdate(contextKey, value, (_, __) => value);
-        }
-
         public void Dispose()
         {
             End();
+            _ended?.Dispose();
         }
     }
 }

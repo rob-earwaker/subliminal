@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 
@@ -25,7 +24,6 @@ namespace Subliminal
 
         public bool HasStarted => _scope.HasStarted;
         public bool HasEnded => _scope.HasEnded;
-        public IReadOnlyDictionary<string, object> Context => _scope.Context;
         public TimeSpan Duration => _scope.Duration;
         public IObservable<Unit> Ended => _scope.Ended;
 
@@ -46,11 +44,6 @@ namespace Subliminal
         public void End()
         {
             _scope.End();
-        }
-
-        public void AddContext(string contextKey, object value)
-        {
-            _scope.AddContext(contextKey, value);
         }
 
         public void Dispose()

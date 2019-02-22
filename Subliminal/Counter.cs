@@ -4,7 +4,7 @@ using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class Counter
+    public class Counter : IDisposable
     {
         private readonly Subject<int> _incremented;
 
@@ -21,6 +21,11 @@ namespace Subliminal
                 _incremented.OnError(new ArgumentException("Increment must be positive", nameof(increment)));
             else
                 _incremented.OnNext(increment);
+        }
+
+        public void Dispose()
+        {
+            _incremented?.Dispose();
         }
     }
 }
