@@ -59,7 +59,6 @@ namespace Subliminal
         public void Dispose()
         {
             End();
-            _ended?.Dispose();
         }
     }
 }

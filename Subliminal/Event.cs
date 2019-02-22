@@ -4,7 +4,7 @@ using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class Event<TEvent> : IDisposable
+    public class Event<TEvent>
     {
         private readonly Subject<TEvent> _occurred;
 
@@ -18,11 +18,6 @@ namespace Subliminal
         public void LogOccurrence(TEvent @event)
         {
             _occurred.OnNext(@event);
-        }
-
-        public void Dispose()
-        {
-            _occurred?.Dispose();
         }
     }
 }

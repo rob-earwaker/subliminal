@@ -4,7 +4,7 @@ using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class Operation : IDisposable
+    public class Operation
     {
         private readonly Subject<OperationScope> _started;
 
@@ -30,11 +30,6 @@ namespace Subliminal
             var operationScope = OperationScope.StartNew();
             _started.OnNext(operationScope);
             return operationScope;
-        }
-
-        public void Dispose()
-        {
-            _started?.Dispose();
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class Gauge<TGauge> : IDisposable
+    public class Gauge<TGauge>
     {
         private readonly Subject<TGauge> _sampled;
 
@@ -18,11 +18,6 @@ namespace Subliminal
         public void LogValue(TGauge value)
         {
             _sampled.OnNext(value);
-        }
-
-        public void Dispose()
-        {
-            _sampled?.Dispose();
         }
     }
 }
