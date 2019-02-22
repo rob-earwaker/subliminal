@@ -19,8 +19,8 @@ namespace Subliminal
         {
             if (increment <= 0)
                 _incremented.OnError(new ArgumentException("Increment must be positive", nameof(increment)));
-            else
-                _incremented.OnNext(increment);
+
+            _incremented.OnNext(increment);
         }
     }
 }
