@@ -40,7 +40,7 @@ namespace Subliminal.Serilog.TestApp
                     "Average time taken to complete {OperationName} operations was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
 
             dataStore.ReadRandomByteOperation.Completed
-                .Buffer(dataStore.ReadRandomBytesOperation.Started, started => started.Operation.Ended)
+                .Buffer(dataStore.ReadRandomBytesOperation)
                 .TimeInterval()
                 .Subscribe(new CompletedOperationsLogger(
                     dataStoreLogger.ForContext("OperationName", "ReadRandomByte"),
