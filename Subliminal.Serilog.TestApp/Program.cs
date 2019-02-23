@@ -29,7 +29,7 @@ namespace Subliminal.Serilog.TestApp
                 new OperationCompletedLogger(
                     dataStoreLogger.ForContext("OperationName", "ReadRandomBytes"),
                     LogEventLevel.Information,
-                    "Took {DurationSeconds} to {OperationName}"));
+                    "Took {DurationSeconds}s to {OperationName}"));
             
             dataStore.ReadRandomByteOperation.Completed
                 .Buffer(TimeSpan.FromSeconds(10))
@@ -52,10 +52,10 @@ namespace Subliminal.Serilog.TestApp
                         .Information("Average time taken to {OperationName} was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
             
             dataStore.RandomGauge.Sampled
-                .Subscribe(value =>
+                .Subscribe(sampled =>
                     dataStoreLogger
                         .ForContext("GaugeName", "RandomGauge")
-                        .ForContext("Value", value)
+                        .ForContext("Value", sampled.Value)
                         .Information("{GaugeName} value is {Value}"));
 
             dataStore.BytesReadCounter.Incremented
