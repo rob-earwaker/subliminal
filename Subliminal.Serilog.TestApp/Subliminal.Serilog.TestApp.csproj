@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Subliminal\Subliminal.csproj" />
+    <ProjectReference Include="..\Subliminal.Serilog\Subliminal.Serilog.csproj" />
   </ItemGroup>
 
 </Project>

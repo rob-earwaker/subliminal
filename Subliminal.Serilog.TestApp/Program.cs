@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using Serilog.Events;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
@@ -24,12 +25,11 @@ namespace Subliminal.Serilog.TestApp
 
             var dataStoreLogger = Log.Logger.ForContext(dataStore.GetType());
             
-            dataStore.ReadRandomBytesOperation.Completed
-                .Subscribe(completed =>
-                    dataStoreLogger
-                        .ForContext("OperationName", "ReadRandomBytes")
-                        .ForContext("OperationDurationSeconds", completed.Operation.Duration.TotalSeconds)
-                        .Information("Took {OperationDurationSeconds}s to {OperationName}"));
+            dataStore.ReadRandomBytesOperation.Completed.Subscribe(
+                new OperationCompletedLogger(
+                    dataStoreLogger.ForContext("OperationName", "ReadRandomBytes"),
+                    LogEventLevel.Information,
+                    "Took {DurationSeconds} to {OperationName}"));
             
             dataStore.ReadRandomByteOperation.Completed
                 .Buffer(TimeSpan.FromSeconds(10))
