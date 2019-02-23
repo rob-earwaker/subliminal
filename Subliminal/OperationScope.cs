@@ -1,17 +1,24 @@
-﻿using System;
-using System.Reactive;
+﻿using Subliminal.Events;
+using System;
+using System.Diagnostics;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class OperationScope : IScope
+    public class OperationScope : IDisposable
     {
-        private readonly IScope _scope;
+        private readonly Stopwatch _stopwatch;
+        private readonly Subject<OperationEnded> _ended;
         private bool _canceled;
 
         public OperationScope()
         {
-            _scope = new Scope();
+            HasStarted = false;
+            HasEnded = false;
+
+            _stopwatch = new Stopwatch();
+            _ended = new Subject<OperationEnded>();
             _canceled = false;
         }
 
@@ -22,17 +29,35 @@ namespace Subliminal
             return operationTimer;
         }
 
-        public bool HasStarted => _scope.HasStarted;
-        public bool HasEnded => _scope.HasEnded;
-        public TimeSpan Duration => _scope.Duration;
-        public IObservable<Unit> Ended => _scope.Ended;
+        public bool HasStarted { get; private set; }
+        public bool HasEnded { get; private set; }
+        public TimeSpan Duration => _stopwatch.Elapsed;
 
-        public IObservable<Unit> Completed => _scope.Ended.Where(_ => !_canceled);
-        public IObservable<Unit> Canceled => _scope.Ended.Where(_ => _canceled);
+        public IObservable<OperationEnded> Ended => _ended.AsObservable();
+        public IObservable<OperationCompleted> Completed => Ended.Where(_ => !_canceled).Select(_ => new OperationCompleted(this));
+        public IObservable<OperationCanceled> Canceled => Ended.Where(_ => _canceled).Select(_ => new OperationCanceled(this));
 
         public void Start()
         {
-            _scope.Start();
+            if (HasStarted)
+                return;
+
+            _stopwatch.Start();
+
+            HasStarted = true;
+        }
+
+        public void End()
+        {
+            if (!HasStarted || HasEnded)
+                return;
+
+            _stopwatch.Stop();
+
+            _ended.OnNext(new OperationEnded(this));
+            _ended.OnCompleted();
+
+            HasEnded = true;
         }
 
         public void Cancel()
@@ -41,14 +66,9 @@ namespace Subliminal
             End();
         }
 
-        public void End()
-        {
-            _scope.End();
-        }
-
         public void Dispose()
         {
-            _scope.Dispose();
+            End();
         }
     }
 }

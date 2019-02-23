@@ -13,7 +13,7 @@
   <ItemGroup>
     <Compile Include="GaugeTests.fs" />
     <Compile Include="OperationTests.fs" />
-    <Compile Include="ScopeTests.fs" />
+    <Compile Include="OperationScopeTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
