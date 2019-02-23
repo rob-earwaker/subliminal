@@ -5,13 +5,13 @@ using System;
 
 namespace Subliminal.Serilog
 {
-    public class OperationCompletedLogger : IObserver<OperationCompleted>
+    public class CompletedOperationLogger : IObserver<OperationCompleted>
     {
         private readonly ILogger _logger;
         private readonly LogEventLevel _level;
         private readonly string _messageTemplate;
 
-        public OperationCompletedLogger(ILogger logger, LogEventLevel level, string messageTemplate)
+        public CompletedOperationLogger(ILogger logger, LogEventLevel level, string messageTemplate)
         {
             _logger = logger;
             _level = level;

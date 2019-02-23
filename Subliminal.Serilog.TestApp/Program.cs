@@ -25,32 +25,28 @@ namespace Subliminal.Serilog.TestApp
 
             var dataStoreLogger = Log.Logger.ForContext(dataStore.GetType());
             
-            dataStore.ReadRandomBytesOperation.Completed.Subscribe(
-                new OperationCompletedLogger(
+            dataStore.ReadRandomBytesOperation.Completed
+                .Subscribe(new CompletedOperationLogger(
                     dataStoreLogger.ForContext("OperationName", "ReadRandomBytes"),
                     LogEventLevel.Information,
-                    "Took {DurationSeconds}s to {OperationName}"));
+                    "{OperationName} operation completed in {DurationSeconds}s"));
             
             dataStore.ReadRandomByteOperation.Completed
                 .Buffer(TimeSpan.FromSeconds(10))
                 .TimeInterval()
-                .Subscribe(buffer =>
-                    dataStoreLogger
-                        .ForContext("AverageDurationSeconds", buffer.Value.Average(completed => completed.Operation.Duration.TotalSeconds))
-                        .ForContext("SamplePeriodDurationSeconds", buffer.Interval.TotalSeconds)
-                        .ForContext("OperationName", "ReadRandomByte")
-                        .Information("Average time taken to {OperationName} was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
+                .Subscribe(new CompletedOperationsLogger(
+                    dataStoreLogger.ForContext("OperationName", "ReadRandomByte"),
+                    LogEventLevel.Information,
+                    "Average time taken to complete {OperationName} operations was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
 
             dataStore.ReadRandomByteOperation.Completed
                 .Buffer(dataStore.ReadRandomBytesOperation.Started, started => started.Operation.Ended)
                 .TimeInterval()
-                .Subscribe(buffer =>
-                    dataStoreLogger
-                        .ForContext("AverageDurationSeconds", buffer.Value.Average(completed => completed.Operation.Duration.TotalSeconds))
-                        .ForContext("SamplePeriodDurationSeconds", buffer.Interval.TotalSeconds)
-                        .ForContext("OperationName", "ReadRandomByte")
-                        .Information("Average time taken to {OperationName} was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
-            
+                .Subscribe(new CompletedOperationsLogger(
+                    dataStoreLogger.ForContext("OperationName", "ReadRandomByte"),
+                    LogEventLevel.Information,
+                    "Average time taken to complete {OperationName} operations was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
+
             dataStore.RandomGauge.Sampled
                 .Subscribe(sampled =>
                     dataStoreLogger
