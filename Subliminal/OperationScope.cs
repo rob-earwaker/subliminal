@@ -14,6 +14,7 @@ namespace Subliminal
 
         public OperationScope()
         {
+            OperationId = OperationId.New();
             HasStarted = false;
             HasEnded = false;
 
@@ -29,6 +30,7 @@ namespace Subliminal
             return operationTimer;
         }
 
+        public OperationId OperationId { get; }
         public bool HasStarted { get; private set; }
         public bool HasEnded { get; private set; }
         public TimeSpan Duration => _stopwatch.Elapsed;
