@@ -1,4 +1,4 @@
-﻿module GaugeTests
+﻿module ManualGaugeTests
 
 open Xunit
 open FsCheck
@@ -10,7 +10,7 @@ open System.Collections.Generic
 [<Fact>]
 let ``test sampled events observed when values logged`` () =
     let runTest valueCount =
-        let gauge = Gauge<obj>()
+        let gauge = ManualGauge<obj>()
         let observations = Queue<GaugeSampled<obj>>()
         use subscription = gauge.Sampled.Subscribe(observations.Enqueue)
         for _ in Array.zeroCreate valueCount do

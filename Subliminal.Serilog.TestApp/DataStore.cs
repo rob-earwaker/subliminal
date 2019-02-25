@@ -10,7 +10,7 @@ namespace Subliminal.Serilog.TestApp
 
         public Operation ReadRandomBytesOperation { get; }
         public Operation ReadRandomByteOperation { get; }
-        public Gauge<int> RandomGauge { get; }
+        public ManualGauge<int> RandomGauge { get; }
         public Counter BytesReadCounter { get; }
 
         public DataStore()
@@ -18,7 +18,7 @@ namespace Subliminal.Serilog.TestApp
             _random = new Random();
             ReadRandomBytesOperation = new Operation();
             ReadRandomByteOperation = new Operation();
-            RandomGauge = new Gauge<int>();
+            RandomGauge = new ManualGauge<int>();
             BytesReadCounter = new Counter();
         }
 

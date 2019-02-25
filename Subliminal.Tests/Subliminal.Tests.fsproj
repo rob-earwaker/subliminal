@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="GaugeTests.fs" />
+    <Compile Include="ManualGaugeTests.fs" />
     <Compile Include="OperationTests.fs" />
     <Compile Include="OperationScopeTests.fs" />
     <Compile Include="Program.fs" />
