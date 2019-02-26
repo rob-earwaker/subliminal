@@ -1,5 +1,4 @@
-﻿using Subliminal.Events;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -17,14 +16,14 @@ namespace Subliminal
             _gauge = _source.AsObservable().AsGauge();
         }
 
-        public IObservable<GaugeSampled<TValue>> Sampled => _gauge.Sampled;
+        public IObservable<Sample<TValue>> Sampled => _gauge.Sampled;
 
         public void LogValue(TValue value)
         {
             _source.OnNext(value);
         }
 
-        public IGauge<IList<TValue>> Buffer(int count, int skip)
+        public IGauge<IList<Sample<TValue>>> Buffer(int count, int skip)
         {
             return _gauge.Buffer(count, skip);
         }

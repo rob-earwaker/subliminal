@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Subliminal.Events
+namespace Subliminal
 {
-    public class GaugeSampled<TValue>
+    public class Sample<TValue>
     {
-        public GaugeSampled(TValue value, DateTimeOffset timestamp, TimeSpan interval)
+        public Sample(TValue value, DateTimeOffset timestamp, TimeSpan interval)
         {
             Value = value;
             Timestamp = timestamp;

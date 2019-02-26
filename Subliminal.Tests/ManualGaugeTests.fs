@@ -3,15 +3,14 @@
 open Xunit
 open FsCheck
 open Subliminal
-open Subliminal.Events
 open Swensen.Unquote
 open System.Collections.Generic
 
 [<Fact>]
-let ``test sampled events observed when values logged`` () =
+let ``test samples observed when values logged`` () =
     let runTest valueCount =
         let gauge = ManualGauge<obj>()
-        let observations = Queue<GaugeSampled<obj>>()
+        let observations = Queue<Sample<obj>>()
         use subscription = gauge.Sampled.Subscribe(observations.Enqueue)
         for _ in Array.zeroCreate valueCount do
             let value = obj()

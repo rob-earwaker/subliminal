@@ -1,5 +1,4 @@
-﻿using Subliminal.Events;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Reactive.Linq;
 
@@ -26,17 +25,12 @@ namespace Subliminal
         {
             get
             {
-                return TotalProcessorTimeGauge.Sampled
+                return TotalProcessorTimeGauge
                     .Buffer(count: 2, skip: 1)
-                    .Select(buffer =>
-                        new GaugeSampled<double>(
-                            value: CalculateCpuUsage(
-                                startTotalUsage: buffer[0].Value,
-                                endTotalUsage: buffer[1].Value,
-                                interval: buffer[1].Interval),
-                            timestamp: buffer[1].Timestamp,
-                            interval: buffer[1].Interval))
-                    .AsGauge();
+                    .Select(buffer => CalculateCpuUsage(
+                        startTotalUsage: buffer[0].Value,
+                        endTotalUsage: buffer[1].Value,
+                        interval: buffer[1].Interval));
             }
         }
 

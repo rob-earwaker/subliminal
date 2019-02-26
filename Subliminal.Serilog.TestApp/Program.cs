@@ -28,29 +28,29 @@ namespace Subliminal.Serilog.TestApp
             var processMonitor = new ProcessMonitor(TimeSpan.FromSeconds(5));
 
             processMonitor.CpuUsageGauge.Sampled
-                .Subscribe(sampled => Log.Information(
+                .Subscribe(sample => Log.Information(
                     "[{Timestamp}] [{Interval}] CPU usage: {CpuUsage}%",
-                    sampled.Timestamp.ToString("o"), sampled.Interval, sampled.Value * 100, sampled.Interval));
+                    sample.Timestamp.ToString("o"), sample.Interval, sample.Value * 100, sample.Interval));
 
             processMonitor.TotalProcessorTimeGauge.Sampled
-                .Subscribe(sampled => Log.Information(
+                .Subscribe(sample => Log.Information(
                     "[{Timestamp}] [{Interval}] Total CPU time: {TotalCpuTime}s",
-                    sampled.Timestamp.ToString("o"), sampled.Interval, sampled.Value));
+                    sample.Timestamp.ToString("o"), sample.Interval, sample.Value));
 
             processMonitor.WorkingSet64Gauge.Sampled
-                .Subscribe(sampled => Log.Information(
+                .Subscribe(sample => Log.Information(
                     "[{Timestamp}] [{Interval}] RAM working set: {WorkingSet}MB",
-                    sampled.Timestamp.ToString("o"), sampled.Interval, sampled.Value / 1E6));
+                    sample.Timestamp.ToString("o"), sample.Interval, sample.Value / 1E6));
 
             processMonitor.PrivateMemorySize64Gauge.Sampled
-                .Subscribe(sampled => Log.Information(
+                .Subscribe(sample => Log.Information(
                     "[{Timestamp}] [{Interval}] RAM private: {WorkingSet}MB",
-                    sampled.Timestamp.ToString("o"), sampled.Interval, sampled.Value / 1E6));
+                    sample.Timestamp.ToString("o"), sample.Interval, sample.Value / 1E6));
 
             processMonitor.VirtualMemorySize64Gauge.Sampled
-                .Subscribe(sampled => Log.Information(
+                .Subscribe(sample => Log.Information(
                     "[{Timestamp}] [{Interval}] RAM virtual: {WorkingSet}MB",
-                    sampled.Timestamp.ToString("o"), sampled.Interval, sampled.Value / 1E6));
+                    sample.Timestamp.ToString("o"), sample.Interval, sample.Value / 1E6));
 
             //dataStore.ReadRandomBytesOperation.Completed
             //    .Subscribe(new CompletedOperationLogger(
@@ -75,10 +75,10 @@ namespace Subliminal.Serilog.TestApp
             //        "Average time taken to complete {OperationName} operations was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
 
             //dataStore.RandomGauge.Sampled
-            //    .Subscribe(sampled =>
+            //    .Subscribe(sample =>
             //        dataStoreLogger
             //            .ForContext("GaugeName", "RandomGauge")
-            //            .ForContext("Value", sampled.Value)
+            //            .ForContext("Value", sample.Value)
             //            .Information("{GaugeName} value is {Value}"));
 
             //dataStore.BytesReadCounter.Incremented
