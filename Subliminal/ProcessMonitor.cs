@@ -12,9 +12,6 @@ namespace Subliminal
             ProcessGauge = Observable
                 .Interval(samplingInterval)
                 .Select(_ => Process.GetCurrentProcess())
-                .AsGauge().Sampled
-                .Publish()
-                .AutoConnect()
                 .AsGauge();
         }
 

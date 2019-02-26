@@ -1,5 +1,6 @@
 ﻿using Subliminal.Events;
 using System;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
@@ -21,6 +22,11 @@ namespace Subliminal
         public void LogValue(TValue value)
         {
             _source.OnNext(value);
+        }
+
+        public IGauge<IList<TValue>> Buffer(int count, int skip)
+        {
+            return _gauge.Buffer(count, skip);
         }
 
         public IGauge<TResult> Select<TResult>(Func<TValue, TResult> selector)

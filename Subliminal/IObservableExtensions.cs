@@ -9,15 +9,12 @@ namespace Subliminal
     {
         public static IGauge<TValue> AsGauge<TValue>(this IObservable<TValue> source)
         {
-            return new Gauge<TValue>(source
-                .Timestamp()
-                .TimeInterval()
-                .Select(x => new GaugeSampled<TValue>(x.Value.Value, x.Value.Timestamp, x.Interval)));
+            return Gauge<TValue>.FromSource(source);
         }
 
-        public static IGauge<TValue> AsGauge<TValue>(this IObservable<GaugeSampled<TValue>> sampled)
+        public static IGauge<TValue> AsGauge<TValue>(this IObservable<GaugeSampled<TValue>> source)
         {
-            return new Gauge<TValue>(sampled);
+            return new Gauge<TValue>(source);
         }
 
         public static IObservable<IList<TSource>> Buffer<TSource>(this IObservable<TSource> source, Operation operation)
