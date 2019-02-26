@@ -7,19 +7,15 @@ namespace Subliminal
 {
     public class ProcessMonitor
     {
-        private readonly TimeSpan _samplingInterval;
-
         public ProcessMonitor(TimeSpan samplingInterval)
         {
-            _samplingInterval = samplingInterval;
-
-            ProcessGauge = new Gauge<Process>(
-                Observable
-                    .Interval(_samplingInterval)
-                    .Select(_ => Process.GetCurrentProcess())
-                    .AsGauge().Sampled
-                    .Publish()
-                    .AutoConnect());
+            ProcessGauge = Observable
+                .Interval(samplingInterval)
+                .Select(_ => Process.GetCurrentProcess())
+                .AsGauge().Sampled
+                .Publish()
+                .AutoConnect()
+                .AsGauge();
         }
 
         public IGauge<Process> ProcessGauge { get; }
