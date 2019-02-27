@@ -16,7 +16,7 @@ namespace Subliminal
             _source = _subject.AsObservable().AsSource();
         }
 
-        public void LogOccurrence(TValue value)
+        public void OnNext(TValue value)
         {
             _subject.OnNext(value);
         }
