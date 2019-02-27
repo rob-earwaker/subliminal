@@ -6,9 +6,9 @@ namespace Subliminal
 {
     public static class IObservableExtensions
     {
-        public static IEventSource<TEvent> AsEventSource<TEvent>(this IObservable<TEvent> source)
+        public static ISource<TValue> AsSource<TValue>(this IObservable<TValue> source)
         {
-            return EventSource<TEvent>.FromSource(source);
+            return Source<TValue>.FromObservable(source);
         }
 
         public static IGauge<TValue> AsGauge<TValue>(this IObservable<TValue> source)

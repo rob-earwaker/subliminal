@@ -2,16 +2,16 @@
 
 namespace Subliminal
 {
-    public class Event<TEvent>
+    public class Sourced<TValue>
     {
-        public Event(TEvent value, DateTimeOffset timestamp, TimeSpan interval)
+        public Sourced(TValue value, DateTimeOffset timestamp, TimeSpan interval)
         {
             Value = value;
             Timestamp = timestamp;
             Interval = interval;
         }
 
-        public TEvent Value { get; }
+        public TValue Value { get; }
         public DateTimeOffset Timestamp { get; }
         public TimeSpan Interval { get; }
     }
