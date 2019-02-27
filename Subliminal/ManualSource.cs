@@ -5,7 +5,7 @@ using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class ManualSource<TValue> : ISource<TValue>
+    internal class ManualSource<TValue> : ISource<TValue>
     {
         private readonly Subject<TValue> _subject;
         private readonly ISource<TValue> _source;
@@ -21,9 +21,9 @@ namespace Subliminal
             _subject.OnNext(value);
         }
 
-        public IObservable<Sourced<TValue>> Values => _source.Values;
+        public IObservable<SourcedValue<TValue>> Values => _source.Values;
 
-        public ISource<IList<Sourced<TValue>>> Buffer(int count, int skip)
+        public ISource<IList<SourcedValue<TValue>>> Buffer(int count, int skip)
         {
             return _source.Buffer(count, skip);
         }
