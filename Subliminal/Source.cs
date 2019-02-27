@@ -12,9 +12,9 @@ namespace Subliminal
             Values = values.Publish().AutoConnect();
         }
 
-        public static Source<TValue> FromObservable(IObservable<TValue> source)
+        public static Source<TValue> FromObservable(IObservable<TValue> observable)
         {
-            return new Source<TValue>(source
+            return new Source<TValue>(observable
                 .Timestamp()
                 .TimeInterval()
                 .Select(x => new SourcedValue<TValue>(x.Value.Value, x.Value.Timestamp, x.Interval)));

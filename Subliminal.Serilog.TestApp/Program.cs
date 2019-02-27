@@ -27,27 +27,27 @@ namespace Subliminal.Serilog.TestApp
 
             var processMonitor = new ProcessMonitor(TimeSpan.FromSeconds(5));
 
-            processMonitor.CpuUsageGauge.Sampled
+            processMonitor.CpuUsageSource.Samples
                 .Subscribe(sample => Log.Information(
                     "[{Timestamp}] [{Interval}] CPU usage: {CpuUsage}%",
                     sample.Timestamp.ToString("o"), sample.Interval, sample.Value * 100, sample.Interval));
 
-            processMonitor.TotalProcessorTimeGauge.Sampled
+            processMonitor.TotalProcessorTimeSource.Samples
                 .Subscribe(sample => Log.Information(
                     "[{Timestamp}] [{Interval}] Total CPU time: {TotalCpuTime}s",
                     sample.Timestamp.ToString("o"), sample.Interval, sample.Value));
 
-            processMonitor.WorkingSet64Gauge.Sampled
+            processMonitor.WorkingSet64Source.Samples
                 .Subscribe(sample => Log.Information(
                     "[{Timestamp}] [{Interval}] RAM working set: {WorkingSet}MB",
                     sample.Timestamp.ToString("o"), sample.Interval, sample.Value / 1E6));
 
-            processMonitor.PrivateMemorySize64Gauge.Sampled
+            processMonitor.PrivateMemorySize64Source.Samples
                 .Subscribe(sample => Log.Information(
                     "[{Timestamp}] [{Interval}] RAM private: {WorkingSet}MB",
                     sample.Timestamp.ToString("o"), sample.Interval, sample.Value / 1E6));
 
-            processMonitor.VirtualMemorySize64Gauge.Sampled
+            processMonitor.VirtualMemorySize64Source.Samples
                 .Subscribe(sample => Log.Information(
                     "[{Timestamp}] [{Interval}] RAM virtual: {WorkingSet}MB",
                     sample.Timestamp.ToString("o"), sample.Interval, sample.Value / 1E6));

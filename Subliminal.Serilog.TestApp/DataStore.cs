@@ -10,7 +10,7 @@ namespace Subliminal.Serilog.TestApp
 
         public Operation ReadRandomBytesOperation { get; }
         public Operation ReadRandomByteOperation { get; }
-        public ManualGauge<int> RandomGauge { get; }
+        public ManualSampleSource<int> RandomGauge { get; }
         public Counter BytesReadCounter { get; }
 
         public DataStore()
@@ -18,7 +18,7 @@ namespace Subliminal.Serilog.TestApp
             _random = new Random();
             ReadRandomBytesOperation = new Operation();
             ReadRandomByteOperation = new Operation();
-            RandomGauge = new ManualGauge<int>();
+            RandomGauge = new ManualSampleSource<int>();
             BytesReadCounter = new Counter();
         }
 
@@ -40,7 +40,7 @@ namespace Subliminal.Serilog.TestApp
                 var buffer = new byte[1];
                 _random.NextBytes(buffer);
                 await Task.Delay(TimeSpan.FromSeconds(_random.NextDouble())).ConfigureAwait(false);
-                RandomGauge.LogValue(_random.Next());
+                RandomGauge.OnNext(_random.Next());
                 return buffer[0];
             }
         }

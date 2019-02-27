@@ -8,24 +8,24 @@ namespace Subliminal
     {
         public ProcessMonitor(TimeSpan samplingInterval)
         {
-            ProcessGauge = Observable
+            ProcessSource = Observable
                 .Interval(samplingInterval)
                 .Select(_ => Process.GetCurrentProcess())
-                .AsGauge();
+                .AsSampleSource();
         }
 
-        public IGauge<Process> ProcessGauge { get; }
+        public ISampleSource<Process> ProcessSource { get; }
 
-        public IGauge<long> PrivateMemorySize64Gauge => ProcessGauge.Select(process => process.PrivateMemorySize64);
-        public IGauge<TimeSpan> TotalProcessorTimeGauge => ProcessGauge.Select(process => process.TotalProcessorTime);
-        public IGauge<long> VirtualMemorySize64Gauge => ProcessGauge.Select(process => process.VirtualMemorySize64);
-        public IGauge<long> WorkingSet64Gauge => ProcessGauge.Select(process => process.WorkingSet64);
+        public ISampleSource<long> PrivateMemorySize64Source => ProcessSource.Select(process => process.PrivateMemorySize64);
+        public ISampleSource<TimeSpan> TotalProcessorTimeSource => ProcessSource.Select(process => process.TotalProcessorTime);
+        public ISampleSource<long> VirtualMemorySize64Source => ProcessSource.Select(process => process.VirtualMemorySize64);
+        public ISampleSource<long> WorkingSet64Source => ProcessSource.Select(process => process.WorkingSet64);
 
-        public IGauge<double> CpuUsageGauge
+        public ISampleSource<double> CpuUsageSource
         {
             get
             {
-                return TotalProcessorTimeGauge
+                return TotalProcessorTimeSource
                     .Buffer(count: 2, skip: 1)
                     .Select(buffer => CalculateCpuUsage(
                         startTotalUsage: buffer[0].Value,

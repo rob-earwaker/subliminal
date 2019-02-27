@@ -11,6 +11,14 @@ namespace Subliminal
             Interval = interval;
         }
 
+        internal static Sample<TValue> FromSourcedValue(SourcedValue<TValue> sourcedValue)
+        {
+            return new Sample<TValue>(
+                sourcedValue.Value,
+                sourcedValue.Timestamp,
+                sourcedValue.Interval);
+        }
+
         public TValue Value { get; }
         public DateTimeOffset Timestamp { get; }
         public TimeSpan Interval { get; }
