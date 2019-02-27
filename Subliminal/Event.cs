@@ -1,24 +1,18 @@
-﻿using Subliminal.Events;
-using System;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+﻿using System;
 
 namespace Subliminal
 {
     public class Event<TEvent>
     {
-        private readonly Subject<EventOccurred<TEvent>> _occurred;
-
-        public Event()
+        public Event(TEvent value, DateTimeOffset timestamp, TimeSpan interval)
         {
-            _occurred = new Subject<EventOccurred<TEvent>>();
+            Value = value;
+            Timestamp = timestamp;
+            Interval = interval;
         }
 
-        public IObservable<EventOccurred<TEvent>> Occurred => _occurred.AsObservable();
-
-        public void LogOccurrence(TEvent @event)
-        {
-            _occurred.OnNext(new EventOccurred<TEvent>(@event));
-        }
+        public TEvent Value { get; }
+        public DateTimeOffset Timestamp { get; }
+        public TimeSpan Interval { get; }
     }
 }
