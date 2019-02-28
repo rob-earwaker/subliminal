@@ -2,9 +2,9 @@
 
 namespace Subliminal
 {
-    internal class SourcedValue<TValue>
+    public class Observation<TValue>
     {
-        public SourcedValue(TValue value, DateTimeOffset timestamp, TimeSpan interval)
+        public Observation(TValue value, DateTimeOffset timestamp, TimeSpan interval)
         {
             Value = value;
             Timestamp = timestamp;

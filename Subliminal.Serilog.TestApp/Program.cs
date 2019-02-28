@@ -27,30 +27,30 @@ namespace Subliminal.Serilog.TestApp
 
             var processMonitor = new ProcessMonitor(TimeSpan.FromSeconds(5));
 
-            processMonitor.CpuUsageSource.Samples
-                .Subscribe(sample => Log.Information(
+            processMonitor.ProcessorUsage.Observations
+                .Subscribe(observation => Log.Information(
                     "[{Timestamp}] [{Interval}] CPU usage: {CpuUsage}%",
-                    sample.Timestamp.ToString("o"), sample.Interval, sample.Value * 100, sample.Interval));
+                    observation.Timestamp.ToString("o"), observation.Interval, observation.Value.Percentage));
 
-            processMonitor.TotalProcessorTimeSource.Samples
-                .Subscribe(sample => Log.Information(
+            processMonitor.TotalProcessorTime.Observations
+                .Subscribe(observation => Log.Information(
                     "[{Timestamp}] [{Interval}] Total CPU time: {TotalCpuTime}s",
-                    sample.Timestamp.ToString("o"), sample.Interval, sample.Value));
+                    observation.Timestamp.ToString("o"), observation.Interval, observation.Value));
 
-            processMonitor.WorkingSet64Source.Samples
-                .Subscribe(sample => Log.Information(
+            processMonitor.WorkingSet.Observations
+                .Subscribe(observation => Log.Information(
                     "[{Timestamp}] [{Interval}] RAM working set: {WorkingSet}MB",
-                    sample.Timestamp.ToString("o"), sample.Interval, sample.Value / 1E6));
+                    observation.Timestamp.ToString("o"), observation.Interval, observation.Value / 1E6));
 
-            processMonitor.PrivateMemorySize64Source.Samples
-                .Subscribe(sample => Log.Information(
+            processMonitor.PrivateMemorySize.Observations
+                .Subscribe(observation => Log.Information(
                     "[{Timestamp}] [{Interval}] RAM private: {WorkingSet}MB",
-                    sample.Timestamp.ToString("o"), sample.Interval, sample.Value / 1E6));
+                    observation.Timestamp.ToString("o"), observation.Interval, observation.Value / 1E6));
 
-            processMonitor.VirtualMemorySize64Source.Samples
-                .Subscribe(sample => Log.Information(
+            processMonitor.VirtualMemorySize.Observations
+                .Subscribe(observation => Log.Information(
                     "[{Timestamp}] [{Interval}] RAM virtual: {WorkingSet}MB",
-                    sample.Timestamp.ToString("o"), sample.Interval, sample.Value / 1E6));
+                    observation.Timestamp.ToString("o"), observation.Interval, observation.Value / 1E6));
 
             //dataStore.ReadRandomBytesOperation.Completed
             //    .Subscribe(new CompletedOperationLogger(

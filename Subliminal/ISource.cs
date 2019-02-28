@@ -3,11 +3,10 @@ using System.Collections.Generic;
 
 namespace Subliminal
 {
-    internal interface ISource<TValue>
+    public interface ISource<TValue>
     {
-        IObservable<SourcedValue<TValue>> Values { get; }
-
-        ISource<IList<SourcedValue<TValue>>> Buffer(int count, int skip);
+        IObservable<Observation<TValue>> Observations { get; }
+        ISource<IList<Observation<TValue>>> Buffer(int count, int skip);
         ISource<TNewValue> Select<TNewValue>(Func<TValue, TNewValue> selector);
     }
 }

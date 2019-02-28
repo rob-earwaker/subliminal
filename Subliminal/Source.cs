@@ -7,9 +7,9 @@ namespace Subliminal
 {
     internal class Source<TValue> : ISource<TValue>
     {
-        private Source(IObservable<SourcedValue<TValue>> values)
+        private Source(IObservable<Observation<TValue>> observations)
         {
-            Values = values.Publish().AutoConnect();
+            Observations = observations;
         }
 
         public static Source<TValue> FromObservable(IObservable<TValue> observable)
@@ -17,19 +17,21 @@ namespace Subliminal
             return new Source<TValue>(observable
                 .Timestamp()
                 .TimeInterval()
-                .Select(x => new SourcedValue<TValue>(x.Value.Value, x.Value.Timestamp, x.Interval)));
+                .Select(x => new Observation<TValue>(x.Value.Value, x.Value.Timestamp, x.Interval))
+                .Publish()
+                .AutoConnect());
         }
 
-        public IObservable<SourcedValue<TValue>> Values { get; }
+        public IObservable<Observation<TValue>> Observations { get; }
 
-        public ISource<IList<SourcedValue<TValue>>> Buffer(int count, int skip)
+        public ISource<IList<Observation<TValue>>> Buffer(int count, int skip)
         {
             if (count <= 0 || skip <= 0)
-                Values.Buffer(count, skip);
+                Observations.Buffer(count, skip);
 
-            return new Source<IList<SourcedValue<TValue>>>(Values
+            return new Source<IList<Observation<TValue>>>(Observations
                 .Buffer(Math.Max(count, skip), skip)
-                .Select(buffer => new SourcedValue<IList<SourcedValue<TValue>>>(
+                .Select(buffer => new Observation<IList<Observation<TValue>>>(
                     value: buffer.Take(count).ToList(),
                     timestamp: buffer.Take(count).Last().Timestamp,
                     interval: buffer.Reverse().Take(skip)
@@ -38,11 +40,11 @@ namespace Subliminal
 
         public ISource<TNewValue> Select<TNewValue>(Func<TValue, TNewValue> selector)
         {
-            return new Source<TNewValue>(Values
-                .Select(sample => new SourcedValue<TNewValue>(
-                    selector(sample.Value),
-                    sample.Timestamp,
-                    sample.Interval)));
+            return new Source<TNewValue>(Observations
+                .Select(observation => new Observation<TNewValue>(
+                    selector(observation.Value),
+                    observation.Timestamp,
+                    observation.Interval)));
         }
     }
 }

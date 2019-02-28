@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reactive.Linq;
 
 namespace Subliminal
@@ -8,36 +7,38 @@ namespace Subliminal
     {
         public ProcessMonitor(TimeSpan samplingInterval)
         {
-            ProcessSource = Observable
+            Process = Observable
                 .Interval(samplingInterval)
-                .Select(_ => Process.GetCurrentProcess())
-                .AsSampleSource();
+                .Select(_ => Subliminal.Process.FromCurrentProcess())
+                .AsSource();
         }
 
-        public ISampleSource<Process> ProcessSource { get; }
+        public ISource<Process> Process { get; }
 
-        public ISampleSource<long> PrivateMemorySize64Source => ProcessSource.Select(process => process.PrivateMemorySize64);
-        public ISampleSource<TimeSpan> TotalProcessorTimeSource => ProcessSource.Select(process => process.TotalProcessorTime);
-        public ISampleSource<long> VirtualMemorySize64Source => ProcessSource.Select(process => process.VirtualMemorySize64);
-        public ISampleSource<long> WorkingSet64Source => ProcessSource.Select(process => process.WorkingSet64);
+        public ISource<long> PrivateMemorySize => Process.Select(process => process.PrivateMemorySize);
+        public ISource<TimeSpan> TotalProcessorTime => Process.Select(process => process.TotalProcessorTime);
+        public ISource<long> VirtualMemorySize => Process.Select(process => process.VirtualMemorySize);
+        public ISource<long> WorkingSet => Process.Select(process => process.WorkingSet);
 
-        public ISampleSource<double> CpuUsageSource
+        public ISource<ProcessorUsage> ProcessorUsage
         {
             get
             {
-                return TotalProcessorTimeSource
+                return Process
                     .Buffer(count: 2, skip: 1)
-                    .Select(buffer => CalculateCpuUsage(
-                        startTotalUsage: buffer[0].Value,
-                        endTotalUsage: buffer[1].Value,
-                        interval: buffer[1].Interval));
+                    .Select(buffer => new ProcessorUsage(
+                        fraction: CalculateProcessorUsageFraction(
+                            startTotalUsage: buffer[0].Value.TotalProcessorTime,
+                            endTotalUsage: buffer[1].Value.TotalProcessorTime,
+                            interval: buffer[1].Interval),
+                        processorCount: Environment.ProcessorCount));
             }
         }
 
-        private double CalculateCpuUsage(TimeSpan startTotalUsage, TimeSpan endTotalUsage, TimeSpan interval)
+        private double CalculateProcessorUsageFraction(TimeSpan startTotalUsage, TimeSpan endTotalUsage, TimeSpan interval)
         {
-            var intervaUsage = endTotalUsage - startTotalUsage;
-            return intervaUsage.TotalMilliseconds / interval.TotalMilliseconds / Environment.ProcessorCount;
+            var intervalUsage = endTotalUsage - startTotalUsage;
+            return intervalUsage.TotalMilliseconds / interval.TotalMilliseconds;
         }
     }
 }

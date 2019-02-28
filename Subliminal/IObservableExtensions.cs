@@ -6,14 +6,9 @@ namespace Subliminal
 {
     public static class IObservableExtensions
     {
-        internal static ISource<TValue> AsSource<TValue>(this IObservable<TValue> observable)
+        public static ISource<TValue> AsSource<TValue>(this IObservable<TValue> observable)
         {
             return Source<TValue>.FromObservable(observable);
-        }
-
-        public static ISampleSource<TValue> AsSampleSource<TValue>(this IObservable<TValue> observable)
-        {
-            return SampleSource<TValue>.FromObservable(observable);
         }
 
         public static IObservable<IList<TSource>> Buffer<TSource>(this IObservable<TSource> source, Operation operation)
