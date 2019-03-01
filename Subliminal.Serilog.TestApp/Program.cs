@@ -21,6 +21,14 @@ namespace Subliminal.Serilog.TestApp
                 .WriteTo.Console()
                 .CreateLogger();
 
+            var currentProcessSource = new CurrentProcessSource(TimeSpan.FromSeconds(5));
+
+            currentProcessSource.ProcessorUsage
+                .Subscribe(processorUsage =>
+                    Log.Information(
+                        "CPU usage over the last {Interval} was {Percentage}%",
+                        processorUsage.Interval, processorUsage.ObservedValue.Percentage));
+
             var dataStore = new DataStore();
 
             var dataStoreLogger = Log.Logger.ForContext(dataStore.GetType());
