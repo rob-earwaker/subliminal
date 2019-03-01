@@ -7,20 +7,22 @@ namespace Subliminal.Serilog.TestApp
     internal class DataStore
     {
         private readonly Random _random;
-
-        public Operation ReadRandomBytesOperation { get; }
-        public Operation ReadRandomByteOperation { get; }
-        public Sink<int> RandomGauge { get; }
-        public Counter BytesReadCounter { get; }
+        private readonly DiscreteGauge _randomGauge;
 
         public DataStore()
         {
             _random = new Random();
+            _randomGauge = new DiscreteGauge();
+
             ReadRandomBytesOperation = new Operation();
             ReadRandomByteOperation = new Operation();
-            RandomGauge = new Sink<int>();
             BytesReadCounter = new Counter();
         }
+
+        public ISource<int> RandomGauge => _randomGauge.AsSource();
+        public Operation ReadRandomBytesOperation { get; }
+        public Operation ReadRandomByteOperation { get; }
+        public Counter BytesReadCounter { get; }
 
         public async Task<byte[]> ReadRandomBytesAsync(int bufferSize)
         {
@@ -40,7 +42,7 @@ namespace Subliminal.Serilog.TestApp
                 var buffer = new byte[1];
                 _random.NextBytes(buffer);
                 await Task.Delay(TimeSpan.FromSeconds(_random.NextDouble())).ConfigureAwait(false);
-                RandomGauge.OnNext(_random.Next());
+                _randomGauge.OnNext(_random.Next());
                 return buffer[0];
             }
         }

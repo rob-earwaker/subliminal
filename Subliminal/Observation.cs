@@ -4,14 +4,14 @@ namespace Subliminal
 {
     public class Observation<TValue>
     {
-        public Observation(TValue value, DateTimeOffset timestamp, TimeSpan interval)
+        public Observation(TValue observedValue, DateTimeOffset timestamp, TimeSpan interval)
         {
-            Value = value;
+            ObservedValue = observedValue;
             Timestamp = timestamp;
             Interval = interval;
         }
 
-        public TValue Value { get; }
+        public TValue ObservedValue { get; }
         public DateTimeOffset Timestamp { get; }
         public TimeSpan Interval { get; }
     }

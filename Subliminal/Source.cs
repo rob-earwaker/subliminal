@@ -32,7 +32,7 @@ namespace Subliminal
             return new Source<IList<Observation<TValue>>>(Observations
                 .Buffer(Math.Max(count, skip), skip)
                 .Select(buffer => new Observation<IList<Observation<TValue>>>(
-                    value: buffer.Take(count).ToList(),
+                    observedValue: buffer.Take(count).ToList(),
                     timestamp: buffer.Take(count).Last().Timestamp,
                     interval: buffer.Reverse().Take(skip)
                         .Aggregate(TimeSpan.Zero, (interval, sample) => interval + sample.Interval))));
@@ -42,9 +42,14 @@ namespace Subliminal
         {
             return new Source<TNewValue>(Observations
                 .Select(observation => new Observation<TNewValue>(
-                    selector(observation.Value),
+                    selector(observation.ObservedValue),
                     observation.Timestamp,
                     observation.Interval)));
+        }
+
+        public IDisposable Subscribe(Action<Observation<TValue>> onNext)
+        {
+            return Observations.Subscribe(onNext);
         }
     }
 }

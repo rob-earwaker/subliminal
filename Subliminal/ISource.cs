@@ -8,5 +8,6 @@ namespace Subliminal
         IObservable<Observation<TValue>> Observations { get; }
         ISource<IList<Observation<TValue>>> Buffer(int count, int skip);
         ISource<TNewValue> Select<TNewValue>(Func<TValue, TNewValue> selector);
+        IDisposable Subscribe(Action<Observation<TValue>> onNext);
     }
 }

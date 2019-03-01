@@ -28,8 +28,8 @@ namespace Subliminal
                     .Buffer(count: 2, skip: 1)
                     .Select(buffer => new ProcessorUsage(
                         fraction: CalculateProcessorUsageFraction(
-                            startTotalUsage: buffer[0].Value.TotalProcessorTime,
-                            endTotalUsage: buffer[1].Value.TotalProcessorTime,
+                            startTotalUsage: buffer[0].ObservedValue.TotalProcessorTime,
+                            endTotalUsage: buffer[1].ObservedValue.TotalProcessorTime,
                             interval: buffer[1].Interval),
                         processorCount: Environment.ProcessorCount));
             }
