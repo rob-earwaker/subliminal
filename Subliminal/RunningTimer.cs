@@ -6,20 +6,20 @@ namespace Subliminal
     public class RunningTimer : IDisposable
     {
         private readonly Stopwatch _stopwatch;
-        private readonly Event<TimerEnded> _endedEvent;
+        private readonly Event<TimerEnded> _ended;
         private bool _hasEnded;
 
         public RunningTimer()
         {
             _stopwatch = Stopwatch.StartNew();
-            _endedEvent = new Event<TimerEnded>();
+            _ended = new Event<TimerEnded>();
             _hasEnded = false;
 
             TimerId = Guid.NewGuid();
         }
 
         public Guid TimerId { get; }
-        public IEvent<TimerEnded> EndedEvent => _endedEvent;
+        public IEvent<TimerEnded> Ended => _ended;
 
         public void End()
         {
@@ -28,7 +28,7 @@ namespace Subliminal
 
             _stopwatch.Stop();
 
-            _endedEvent.Log(new TimerEnded(TimerId, _stopwatch.Elapsed));
+            _ended.Log(new TimerEnded(TimerId, _stopwatch.Elapsed));
 
             _hasEnded = true;
         }

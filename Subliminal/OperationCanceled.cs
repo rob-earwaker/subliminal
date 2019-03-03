@@ -4,13 +4,13 @@ namespace Subliminal
 {
     public class OperationCanceled
     {
-        public OperationCanceled(OperationId operationId, TimeSpan duration)
+        public OperationCanceled(Guid operationId, TimeSpan duration)
         {
             OperationId = operationId;
             Duration = duration;
         }
 
-        public OperationId OperationId { get; }
+        public Guid OperationId { get; }
         public TimeSpan Duration { get; }
     }
 }

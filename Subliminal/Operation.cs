@@ -1,71 +1,86 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Reactive.Linq;
 
 namespace Subliminal
 {
-    public class Operation : IDisposable
+    public class Operation : IOperation
     {
-        private readonly Stopwatch _stopwatch;
-        private readonly Event<OperationEnded> _endedEvent;
-        private bool _hasStarted;
-        private bool _hasEnded;
+        private readonly EventLog<OperationStarted> _started;
 
-        private Operation()
+        public Operation()
         {
-            OperationId = OperationId.New();
-
-            _stopwatch = new Stopwatch();
-            _endedEvent = new Event<OperationEnded>();
-            _hasStarted = false;
-            _hasEnded = false;
+            _started = new EventLog<OperationStarted>();
         }
 
-        public OperationId OperationId { get; }
-
-        public static Operation StartNew()
+        public RunningOperation StartNew()
         {
-            var operationTimer = new Operation();
-            operationTimer.Start();
-            return operationTimer;
+            var runningOperation = new RunningOperation();
+            _started.Log(new OperationStarted(runningOperation.OperationId, runningOperation.Ended));
+            return runningOperation;
         }
 
-        public IEvent<OperationEnded> EndedEvent => _endedEvent;
+        public IEventLog<OperationStarted> Started => _started;
 
-        private void Start()
+        public IEventLog<OperationEnded> Ended
         {
-            if (_hasStarted)
-                return;
-
-            _stopwatch.Start();
-
-            _hasStarted = true;
+            get
+            {
+                return Started
+                    .SelectMany(operationStarted => operationStarted.Ended)
+                    .AsEventLog();
+            }
         }
 
-        public void End()
+        public IEventLog<OperationCompleted> Completed
         {
-            End(wasCanceled: false);
+            get
+            {
+                return Ended
+                    .Where(operationEnded => !operationEnded.WasCanceled)
+                    .Select(operationEnded => new OperationCompleted(operationEnded.OperationId, operationEnded.Duration))
+                    .AsEventLog();
+            }
         }
 
-        public void Cancel()
+        public IEventLog<OperationCanceled> Canceled
         {
-            End(wasCanceled: true);
+            get
+            {
+                return Ended
+                    .Where(operationEnded => operationEnded.WasCanceled)
+                    .Select(operationEnded => new OperationCanceled(operationEnded.OperationId, operationEnded.Duration))
+                    .AsEventLog();
+            }
         }
 
-        public void Dispose()
+        public IMetric<TimeSpan> EndedDuration
         {
-            End();
+            get
+            {
+                return Ended
+                    .Select(operationEnded => operationEnded.Duration)
+                    .AsMetric();
+            }
         }
 
-        private void End(bool wasCanceled)
+        public IMetric<TimeSpan> CompletedDuration
         {
-            if (!_hasStarted || _hasEnded)
-                return;
+            get
+            {
+                return Completed
+                    .Select(operationCompleted => operationCompleted.Duration)
+                    .AsMetric();
+            }
+        }
 
-            _stopwatch.Stop();
-
-            _endedEvent.Log(new OperationEnded(OperationId, _stopwatch.Elapsed, wasCanceled));
-
-            _hasEnded = true;
+        public IMetric<TimeSpan> CanceledDuration
+        {
+            get
+            {
+                return Canceled
+                    .Select(operationCanceled => operationCanceled.Duration)
+                    .AsMetric();
+            }
         }
     }
 }

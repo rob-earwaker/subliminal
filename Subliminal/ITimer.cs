@@ -4,8 +4,8 @@ namespace Subliminal
 {
     public interface ITimer
     {
-        IEventLog<TimerStarted> TimerStarted { get; }
-        IEventLog<TimerEnded> TimerEnded { get; }
+        IEventLog<TimerStarted> Started { get; }
+        IEventLog<TimerEnded> Ended { get; }
         IMetric<TimeSpan> Duration { get; }
     }
 }

@@ -9,22 +9,22 @@ namespace Subliminal.Serilog.TestApp
         private readonly Random _random;
         private readonly Metric<int> _randomMetric;
         private readonly Counter _bytesReadCounter;
-        private readonly OperationLog _readRandomBytesOperation;
-        private readonly OperationLog _readRandomByteOperation;
+        private readonly Operation _readRandomBytesOperation;
+        private readonly Operation _readRandomByteOperation;
 
         public DataStore()
         {
             _random = new Random();
             _randomMetric = new Metric<int>();
             _bytesReadCounter = new Counter();
-            _readRandomBytesOperation = new OperationLog();
-            _readRandomByteOperation = new OperationLog();
+            _readRandomBytesOperation = new Operation();
+            _readRandomByteOperation = new Operation();
         }
 
         public IMetric<int> RandomMetric => _randomMetric;
         public ICounter BytesReadCounter => _bytesReadCounter;
-        public IOperationLog ReadRandomBytesOperation => _readRandomBytesOperation;
-        public IOperationLog ReadRandomByteOperation => _readRandomByteOperation;
+        public IOperation ReadRandomBytesOperation => _readRandomBytesOperation;
+        public IOperation ReadRandomByteOperation => _readRandomByteOperation;
 
         public async Task<byte[]> ReadRandomBytesAsync(int bufferSize)
         {

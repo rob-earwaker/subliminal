@@ -19,6 +19,12 @@ namespace Subliminal
             _counter.Increment();
         }
 
+        public void Close()
+        {
+            _log.Close();
+            _counter.Stop();
+        }
+
         public ICounter Counter => _counter;
 
         public IDisposable Subscribe(IObserver<TEvent> observer)

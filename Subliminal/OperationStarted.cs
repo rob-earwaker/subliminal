@@ -1,14 +1,16 @@
-﻿namespace Subliminal
+﻿using System;
+
+namespace Subliminal
 {
     public class OperationStarted
     {
-        public OperationStarted(OperationId operationId, IEvent<OperationEnded> endedEvent)
+        public OperationStarted(Guid operationId, IEvent<OperationEnded> ended)
         {
             OperationId = operationId;
-            EndedEvent = endedEvent;
+            Ended = ended;
         }
 
-        public OperationId OperationId { get; }
-        public IEvent<OperationEnded> EndedEvent { get; }
+        public Guid OperationId { get; }
+        public IEvent<OperationEnded> Ended { get; }
     }
 }

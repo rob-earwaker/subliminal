@@ -33,13 +33,13 @@ namespace Subliminal.Serilog.TestApp
 
             var dataStoreLogger = Log.Logger.ForContext(dataStore.GetType());
 
-            dataStore.ReadRandomBytesOperation.OperationCompleted
+            dataStore.ReadRandomBytesOperation.Completed
                 .Subscribe(new CompletedOperationLogger(
                     dataStoreLogger.ForContext("OperationName", "ReadRandomBytes"),
                     LogEventLevel.Information,
                     "{OperationName} operation {OperationId} completed in {DurationSeconds}s"));
 
-            dataStore.ReadRandomByteOperation.OperationCompleted
+            dataStore.ReadRandomByteOperation.Completed
                 .Buffer(TimeSpan.FromSeconds(10))
                 .TimeInterval()
                 .Subscribe(new CompletedOperationsLogger(
@@ -47,7 +47,7 @@ namespace Subliminal.Serilog.TestApp
                     LogEventLevel.Information,
                     "Average time taken to complete {OperationName} operations was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
 
-            dataStore.ReadRandomByteOperation.OperationCompleted
+            dataStore.ReadRandomByteOperation.Completed
                 .Buffer(dataStore.ReadRandomBytesOperation)
                 .TimeInterval()
                 .Subscribe(new CompletedOperationsLogger(
