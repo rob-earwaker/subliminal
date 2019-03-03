@@ -13,7 +13,7 @@ namespace Subliminal
         public static ProcessMonitor ForProcess(System.Diagnostics.Process process, TimeSpan samplingInterval)
         {
             return new ProcessMonitor(Observable
-                .Interval(samplingInterval)
+                .Timer(DateTimeOffset.UtcNow, samplingInterval)
                 .Select(_ => GetProcessSnapshot(process))
                 .AsMetric());
         }
