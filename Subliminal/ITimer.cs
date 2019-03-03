@@ -2,10 +2,7 @@
 
 namespace Subliminal
 {
-    public interface ITimer
+    public interface ITimer : IMetric<TimeSpan>
     {
-        IEventLog<TimerStarted> Started { get; }
-        IEventLog<TimerEnded> Ended { get; }
-        IMetric<TimeSpan> Duration { get; }
     }
 }

@@ -5,9 +5,9 @@ namespace Subliminal
 {
     public class ProcessMonitor
     {
-        private ProcessMonitor(IMetric<Process> metric)
+        private ProcessMonitor(IMetric<Process> process)
         {
-            Process = metric;
+            Process = process;
         }
 
         public static ProcessMonitor ForProcess(System.Diagnostics.Process process, TimeSpan samplingInterval)

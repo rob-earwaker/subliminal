@@ -14,11 +14,8 @@ namespace Subliminal
             _stopwatch = Stopwatch.StartNew();
             _ended = new Event<TimerEnded>();
             _hasEnded = false;
-
-            TimerId = Guid.NewGuid();
         }
-
-        public Guid TimerId { get; }
+        
         public IEvent<TimerEnded> Ended => _ended;
 
         public void End()
@@ -28,7 +25,7 @@ namespace Subliminal
 
             _stopwatch.Stop();
 
-            _ended.Log(new TimerEnded(TimerId, _stopwatch.Elapsed));
+            _ended.Log(new TimerEnded(_stopwatch.Elapsed));
 
             _hasEnded = true;
         }

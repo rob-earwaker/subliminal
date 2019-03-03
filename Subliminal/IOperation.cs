@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Subliminal
+﻿namespace Subliminal
 {
     public interface IOperation
     {
@@ -8,8 +6,8 @@ namespace Subliminal
         IEventLog<OperationEnded> Ended { get; }
         IEventLog<OperationCompleted> Completed { get; }
         IEventLog<OperationCanceled> Canceled { get; }
-        IMetric<TimeSpan> EndedDuration { get; }
-        IMetric<TimeSpan> CompletedDuration { get; }
-        IMetric<TimeSpan> CanceledDuration { get; }
+        ITimer EndedTimer { get; }
+        ITimer CompletedTimer { get; }
+        ITimer CanceledTimer { get; }
     }
 }

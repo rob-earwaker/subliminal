@@ -12,9 +12,11 @@ namespace Subliminal
         {
             _runningTimer = new RunningTimer();
             _canceled = false;
+
+            OperationId = Guid.NewGuid();
         }
 
-        public Guid OperationId => _runningTimer.TimerId;
+        public Guid OperationId { get; }
 
         public IEvent<OperationEnded> Ended
         {

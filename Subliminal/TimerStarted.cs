@@ -4,13 +4,11 @@ namespace Subliminal
 {
     public class TimerStarted
     {
-        public TimerStarted(Guid timerId, IEvent<TimerEnded> ended)
+        public TimerStarted(IEvent<TimerEnded> ended)
         {
-            TimerId = timerId;
             Ended = ended;
         }
-
-        public Guid TimerId { get; }
+        
         public IEvent<TimerEnded> Ended { get; }
     }
 }

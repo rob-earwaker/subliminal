@@ -53,33 +53,33 @@ namespace Subliminal
             }
         }
 
-        public IMetric<TimeSpan> EndedDuration
+        public ITimer EndedTimer
         {
             get
             {
                 return Ended
                     .Select(operationEnded => operationEnded.Duration)
-                    .AsMetric();
+                    .AsTimer();
             }
         }
 
-        public IMetric<TimeSpan> CompletedDuration
+        public ITimer CompletedTimer
         {
             get
             {
                 return Completed
                     .Select(operationCompleted => operationCompleted.Duration)
-                    .AsMetric();
+                    .AsTimer();
             }
         }
 
-        public IMetric<TimeSpan> CanceledDuration
+        public ITimer CanceledTimer
         {
             get
             {
                 return Canceled
                     .Select(operationCanceled => operationCanceled.Duration)
-                    .AsMetric();
+                    .AsTimer();
             }
         }
     }

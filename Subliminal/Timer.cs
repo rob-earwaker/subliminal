@@ -15,22 +15,16 @@ namespace Subliminal
         public RunningTimer StartNew()
         {
             var runningTimer = new RunningTimer();
-            _timerStarted.Log(new TimerStarted(runningTimer.TimerId, runningTimer.Ended));
+            _timerStarted.Log(new TimerStarted(runningTimer.Ended));
             return runningTimer;
         }
 
-        public IEventLog<TimerStarted> Started => _timerStarted;
-
-        public IEventLog<TimerEnded> Ended
+        public IDisposable Subscribe(IObserver<TimeSpan> observer)
         {
-            get
-            {
-                return Started
-                    .SelectMany(timerStarted => timerStarted.Ended)
-                    .AsEventLog();
-            }
+            return _timerStarted
+                .SelectMany(timerStarted => timerStarted.Ended)
+                .Select(timerEnded => timerEnded.Duration)
+                .Subscribe(observer);
         }
-
-        public IMetric<TimeSpan> Duration => Ended.Select(timerEnded => timerEnded.Duration).AsMetric();
     }
 }
