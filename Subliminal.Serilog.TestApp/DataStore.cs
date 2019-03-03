@@ -9,26 +9,26 @@ namespace Subliminal.Serilog.TestApp
         private readonly Random _random;
         private readonly Metric<int> _randomMetric;
         private readonly Counter _bytesReadCounter;
+        private readonly OperationLog _readRandomBytesOperation;
+        private readonly OperationLog _readRandomByteOperation;
 
         public DataStore()
         {
             _random = new Random();
             _randomMetric = new Metric<int>();
             _bytesReadCounter = new Counter();
-
-            ReadRandomBytesOperation = new Operation();
-            ReadRandomByteOperation = new Operation();
+            _readRandomBytesOperation = new OperationLog();
+            _readRandomByteOperation = new OperationLog();
         }
 
         public IMetric<int> RandomMetric => _randomMetric;
         public ICounter BytesReadCounter => _bytesReadCounter;
-
-        public Operation ReadRandomBytesOperation { get; }
-        public Operation ReadRandomByteOperation { get; }
+        public IOperationLog ReadRandomBytesOperation => _readRandomBytesOperation;
+        public IOperationLog ReadRandomByteOperation => _readRandomByteOperation;
 
         public async Task<byte[]> ReadRandomBytesAsync(int bufferSize)
         {
-            using (var operationScope = ReadRandomBytesOperation.StartNew())
+            using (_readRandomBytesOperation.StartNew())
             {
                 var readRandomByteTasks = new object[bufferSize].Select(_ => ReadRandomByteAsync()).ToArray();
                 var buffer = await Task.WhenAll(readRandomByteTasks).ConfigureAwait(false);
@@ -39,7 +39,7 @@ namespace Subliminal.Serilog.TestApp
 
         private async Task<byte> ReadRandomByteAsync()
         {
-            using (ReadRandomByteOperation.StartNew())
+            using (_readRandomByteOperation.StartNew())
             {
                 var buffer = new byte[1];
                 _random.NextBytes(buffer);

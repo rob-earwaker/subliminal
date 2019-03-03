@@ -26,9 +26,9 @@ namespace Subliminal
             return DerivedCounter.FromObservable(observable);
         }
 
-        public static IObservable<IList<TSource>> Buffer<TSource>(this IObservable<TSource> source, Operation operation)
+        public static IObservable<IList<TSource>> Buffer<TSource>(this IObservable<TSource> source, IOperationLog operationLog)
         {
-            return source.Buffer(operation.StartedEventLog, operationStarted => operationStarted.EndedEvent);
+            return source.Buffer(operationLog.OperationStarted, operationStarted => operationStarted.EndedEvent);
         }
     }
 }
