@@ -1,26 +1,32 @@
 ﻿using System;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class Counter
+    public class Counter : ICounter
     {
-        private readonly Subject<int> _subject;
+        private readonly Log<int> _log;
 
         public Counter()
         {
-            _subject = new Subject<int>();
+            _log = new Log<int>();
         }
 
-        public IObservable<int> Incremented => _subject.AsObservable();
+        public void Increment()
+        {
+            IncrementBy(1);
+        }
 
         public void IncrementBy(int increment)
         {
             if (increment <= 0)
-                _subject.OnError(new ArgumentException("Increment must be positive", nameof(increment)));
+                return;
 
-            _subject.OnNext(increment);
+            _log.Append(increment);
+        }
+
+        public IDisposable Subscribe(IObserver<int> observer)
+        {
+            return _log.Subscribe(observer);
         }
     }
 }

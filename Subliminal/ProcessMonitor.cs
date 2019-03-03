@@ -41,7 +41,7 @@ namespace Subliminal
         public IMetric<SizeBytes> VirtualMemorySizeMetric => ProcessMetric.Select(process => process.VirtualMemorySize).AsMetric();
         public IMetric<SizeBytes> WorkingSetMetric => ProcessMetric.Select(process => process.WorkingSet).AsMetric();
 
-        public IObservable<ProcessorUsage> ProcessorUsageMetric
+        public IMetric<ProcessorUsage> ProcessorUsageMetric
         {
             get
             {

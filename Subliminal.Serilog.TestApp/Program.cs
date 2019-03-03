@@ -62,7 +62,7 @@ namespace Subliminal.Serilog.TestApp
                         .ForContext("Value", randomValue)
                         .Information("{MetricName} value is {Value}"));
 
-            dataStore.BytesReadCounter.Incremented
+            dataStore.BytesReadCounter
                 .Buffer(TimeSpan.FromSeconds(8))
                 .TimeInterval()
                 .Subscribe(buffer =>

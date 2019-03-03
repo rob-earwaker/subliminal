@@ -8,21 +8,23 @@ namespace Subliminal.Serilog.TestApp
     {
         private readonly Random _random;
         private readonly Metric<int> _randomMetric;
+        private readonly Counter _bytesReadCounter;
 
         public DataStore()
         {
             _random = new Random();
             _randomMetric = new Metric<int>();
+            _bytesReadCounter = new Counter();
 
             ReadRandomBytesOperation = new Operation();
             ReadRandomByteOperation = new Operation();
-            BytesReadCounter = new Counter();
         }
 
         public IMetric<int> RandomMetric => _randomMetric;
+        public ICounter BytesReadCounter => _bytesReadCounter;
+
         public Operation ReadRandomBytesOperation { get; }
         public Operation ReadRandomByteOperation { get; }
-        public Counter BytesReadCounter { get; }
 
         public async Task<byte[]> ReadRandomBytesAsync(int bufferSize)
         {
@@ -30,7 +32,7 @@ namespace Subliminal.Serilog.TestApp
             {
                 var readRandomByteTasks = new object[bufferSize].Select(_ => ReadRandomByteAsync()).ToArray();
                 var buffer = await Task.WhenAll(readRandomByteTasks).ConfigureAwait(false);
-                BytesReadCounter.IncrementBy(bufferSize);
+                _bytesReadCounter.IncrementBy(bufferSize);
                 return buffer;
             }
         }
