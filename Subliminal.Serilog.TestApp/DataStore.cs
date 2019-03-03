@@ -19,7 +19,7 @@ namespace Subliminal.Serilog.TestApp
             BytesReadCounter = new Counter();
         }
 
-        public IMetric<int> RandomMetric { get; }
+        public IMetric<int> RandomMetric => _randomMetric;
         public Operation ReadRandomBytesOperation { get; }
         public Operation ReadRandomByteOperation { get; }
         public Counter BytesReadCounter { get; }

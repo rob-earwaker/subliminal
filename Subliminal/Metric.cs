@@ -1,26 +1,24 @@
 ﻿using System;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 
 namespace Subliminal
 {
     public class Metric<TValue> : IMetric<TValue>
     {
-        private readonly Subject<TValue> _subject;
+        private Log<TValue> _log;
 
         public Metric()
         {
-            _subject = new Subject<TValue>();
+            _log = new Log<TValue>();
         }
 
         public void RecordValue(TValue value)
         {
-            _subject.OnNext(value);
+            _log.Append(value);
         }
 
         public IDisposable Subscribe(IObserver<TValue> observer)
         {
-            return _subject.Subscribe(observer);
+            return _log.Subscribe(observer);
         }
     }
 }

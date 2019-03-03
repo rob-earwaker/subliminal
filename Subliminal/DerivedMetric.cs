@@ -1,25 +1,24 @@
 ﻿using System;
-using System.Reactive.Linq;
 
 namespace Subliminal
 {
     public class DerivedMetric<TValue> : IMetric<TValue>
     {
-        private readonly IObservable<TValue> _source;
+        private readonly ILog<TValue> _log;
 
-        internal DerivedMetric(IObservable<TValue> source)
+        private DerivedMetric(ILog<TValue> log)
         {
-            _source = source;
+            _log = log;
         }
 
         public static DerivedMetric<TValue> FromObservable(IObservable<TValue> observable)
         {
-            return new DerivedMetric<TValue>(observable.Publish().AutoConnect());
+            return new DerivedMetric<TValue>(observable.AsLog());
         }
 
         public IDisposable Subscribe(IObserver<TValue> observer)
         {
-            return _source.Subscribe(observer);
+            return _log.Subscribe(observer);
         }
     }
 }

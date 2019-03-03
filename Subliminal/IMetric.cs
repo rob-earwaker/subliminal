@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Subliminal
+﻿namespace Subliminal
 {
-    public interface IMetric<TValue> : IObservable<TValue>
+    public interface IMetric<TValue> : ILog<TValue>
     {
     }
 }
