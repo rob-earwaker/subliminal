@@ -1,5 +1,4 @@
-﻿using Subliminal.Events;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -10,18 +9,20 @@ namespace Subliminal
     {
         private readonly Stopwatch _stopwatch;
         private readonly Subject<OperationEnded> _ended;
-        private bool _canceled;
+        private bool _hasStarted;
+        private bool _hasEnded;
 
         public OperationScope()
         {
             OperationId = OperationId.New();
-            HasStarted = false;
-            HasEnded = false;
 
             _stopwatch = new Stopwatch();
             _ended = new Subject<OperationEnded>();
-            _canceled = false;
+            _hasStarted = false;
+            _hasEnded = false;
         }
+
+        public OperationId OperationId { get; }
 
         public static OperationScope StartNew()
         {
@@ -30,47 +31,44 @@ namespace Subliminal
             return operationTimer;
         }
 
-        public OperationId OperationId { get; }
-        public bool HasStarted { get; private set; }
-        public bool HasEnded { get; private set; }
-        public TimeSpan Duration => _stopwatch.Elapsed;
-
         public IObservable<OperationEnded> Ended => _ended.AsObservable();
-        public IObservable<OperationCompleted> Completed => Ended.Where(_ => !_canceled).Select(_ => new OperationCompleted(this));
-        public IObservable<OperationCanceled> Canceled => Ended.Where(_ => _canceled).Select(_ => new OperationCanceled(this));
 
         public void Start()
         {
-            if (HasStarted)
+            if (_hasStarted)
                 return;
 
             _stopwatch.Start();
 
-            HasStarted = true;
+            _hasStarted = true;
         }
 
         public void End()
         {
-            if (!HasStarted || HasEnded)
-                return;
-
-            _stopwatch.Stop();
-
-            _ended.OnNext(new OperationEnded(this));
-            _ended.OnCompleted();
-
-            HasEnded = true;
+            End(wasCanceled: false);
         }
 
         public void Cancel()
         {
-            _canceled = true;
-            End();
+            End(wasCanceled: true);
         }
 
         public void Dispose()
         {
             End();
+        }
+
+        private void End(bool wasCanceled)
+        {
+            if (!_hasStarted || _hasEnded)
+                return;
+
+            _stopwatch.Stop();
+
+            _ended.OnNext(new OperationEnded(OperationId, _stopwatch.Elapsed, wasCanceled));
+            _ended.OnCompleted();
+
+            _hasEnded = true;
         }
     }
 }

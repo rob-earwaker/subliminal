@@ -21,13 +21,13 @@ namespace Subliminal.Serilog.TestApp
                 .WriteTo.Console()
                 .CreateLogger();
 
-            var currentProcessSource = new CurrentProcessSource(TimeSpan.FromSeconds(5));
+            var currentProcessMonitor = ProcessMonitor.ForCurrentProcess(TimeSpan.FromSeconds(5));
 
-            currentProcessSource.ProcessorUsage
+            currentProcessMonitor.ProcessorUsageMetric
                 .Subscribe(processorUsage =>
                     Log.Information(
                         "CPU usage over the last {Interval} was {Percentage}%",
-                        processorUsage.Interval, processorUsage.ObservedValue.Percentage));
+                        processorUsage.Interval, processorUsage.Percentage));
 
             var dataStore = new DataStore();
 
@@ -55,12 +55,12 @@ namespace Subliminal.Serilog.TestApp
                     LogEventLevel.Information,
                     "Average time taken to complete {OperationName} operations was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
 
-            dataStore.RandomGauge.Observations
-                .Subscribe(sample =>
+            dataStore.RandomMetric
+                .Subscribe(randomValue =>
                     dataStoreLogger
-                        .ForContext("GaugeName", "RandomGauge")
-                        .ForContext("Value", sample.ObservedValue)
-                        .Information("{GaugeName} value is {Value}"));
+                        .ForContext("MetricName", "RandomMetric")
+                        .ForContext("Value", randomValue)
+                        .Information("{MetricName} value is {Value}"));
 
             dataStore.BytesReadCounter.Incremented
                 .Buffer(TimeSpan.FromSeconds(8))
@@ -68,7 +68,7 @@ namespace Subliminal.Serilog.TestApp
                 .Subscribe(buffer =>
                     dataStoreLogger
                         .ForContext("SamplePeriodDurationSeconds", buffer.Interval.TotalSeconds)
-                        .ForContext("TotalCount", buffer.Value.Sum(incremented => incremented.Increment))
+                        .ForContext("TotalCount", buffer.Value.Sum())
                         .Information("Total number of bytes read over the last {SamplePeriodDurationSeconds}s was {TotalCount}"));
 
             while (true)

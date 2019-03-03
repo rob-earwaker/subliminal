@@ -1,6 +1,5 @@
 ﻿using Serilog;
 using Serilog.Events;
-using Subliminal.Events;
 using System;
 
 namespace Subliminal.Serilog
@@ -20,8 +19,8 @@ namespace Subliminal.Serilog
 
         public void OnNext(OperationCompleted completed)
         {
-            _logger.ForContext("OperationId", completed.Operation.OperationId)
-                .ForContext("DurationSeconds", completed.Operation.Duration.TotalSeconds)
+            _logger.ForContext("OperationId", completed.OperationId)
+                .ForContext("DurationSeconds", completed.Duration.TotalSeconds)
                 .Write(_level, _messageTemplate);
         }
 

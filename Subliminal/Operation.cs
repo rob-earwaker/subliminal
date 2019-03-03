@@ -1,5 +1,4 @@
-﻿using Subliminal.Events;
-using System;
+﻿using System;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
@@ -17,13 +16,32 @@ namespace Subliminal
         public OperationScope StartNew()
         {
             var operationScope = OperationScope.StartNew();
-            _started.OnNext(new OperationStarted(operationScope));
+            _started.OnNext(new OperationStarted(operationScope.OperationId, operationScope.Ended));
             return operationScope;
         }
 
         public IObservable<OperationStarted> Started => _started.AsObservable();
-        public IObservable<OperationEnded> Ended => Started.SelectMany(started => started.Operation.Ended);
-        public IObservable<OperationCompleted> Completed => Started.SelectMany(started => started.Operation.Completed);
-        public IObservable<OperationCanceled> Canceled => Started.SelectMany(started => started.Operation.Canceled);
+
+        public IObservable<OperationEnded> Ended => Started.SelectMany(operationStarted => operationStarted.Ended);
+
+        public IObservable<OperationCompleted> Completed
+        {
+            get
+            {
+                return Ended
+                    .Where(operationEnded => !operationEnded.WasCanceled)
+                    .Select(operationEnded => new OperationCompleted(operationEnded.OperationId, operationEnded.Duration));
+            }
+        }
+
+        public IObservable<OperationCanceled> Canceled
+        {
+            get
+            {
+                return Ended
+                    .Where(operationEnded => operationEnded.WasCanceled)
+                    .Select(operationEnded => new OperationCanceled(operationEnded.OperationId, operationEnded.Duration));
+            }
+        }
     }
 }

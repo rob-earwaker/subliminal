@@ -1,6 +1,5 @@
 ﻿using Serilog;
 using Serilog.Events;
-using Subliminal.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +22,7 @@ namespace Subliminal.Serilog
 
         public void OnNext(TimeInterval<IList<OperationCompleted>> buffer)
         {
-            var averageDurationSeconds = buffer.Value.Average(completed => completed.Operation.Duration.TotalSeconds);
+            var averageDurationSeconds = buffer.Value.Average(completed => completed.Duration.TotalSeconds);
 
             _logger.ForContext("AverageDurationSeconds", averageDurationSeconds)
                 .ForContext("SamplePeriodDurationSeconds", buffer.Interval.TotalSeconds)

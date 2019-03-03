@@ -1,16 +1,20 @@
-﻿namespace Subliminal
+﻿using System;
+
+namespace Subliminal
 {
     public class ProcessorUsage
     {
-        public ProcessorUsage(double fraction, int processorCount)
+        public ProcessorUsage(TimeSpan processorTime, TimeSpan interval, int processorCount)
         {
-            Fraction = fraction;
+            ProcessorTime = processorTime;
+            Interval = interval;
             ProcessorCount = processorCount;
         }
 
-        public double Fraction { get; }
+        public TimeSpan ProcessorTime { get; }
+        public TimeSpan Interval { get; }
         public int ProcessorCount { get; }
-
+        public double Fraction => ProcessorTime.TotalMilliseconds / Interval.TotalMilliseconds;
         public double Percentage => Fraction * 100;
     }
 }

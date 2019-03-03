@@ -7,19 +7,19 @@ namespace Subliminal.Serilog.TestApp
     internal class DataStore
     {
         private readonly Random _random;
-        private readonly DiscreteGauge _randomGauge;
+        private readonly Metric<int> _randomMetric;
 
         public DataStore()
         {
             _random = new Random();
-            _randomGauge = new DiscreteGauge();
+            _randomMetric = new Metric<int>();
 
             ReadRandomBytesOperation = new Operation();
             ReadRandomByteOperation = new Operation();
             BytesReadCounter = new Counter();
         }
 
-        public ISource<int> RandomGauge => _randomGauge.AsSource();
+        public IMetric<int> RandomMetric { get; }
         public Operation ReadRandomBytesOperation { get; }
         public Operation ReadRandomByteOperation { get; }
         public Counter BytesReadCounter { get; }
@@ -42,7 +42,7 @@ namespace Subliminal.Serilog.TestApp
                 var buffer = new byte[1];
                 _random.NextBytes(buffer);
                 await Task.Delay(TimeSpan.FromSeconds(_random.NextDouble())).ConfigureAwait(false);
-                _randomGauge.OnNext(_random.Next());
+                _randomMetric.RecordValue(_random.Next());
                 return buffer[0];
             }
         }

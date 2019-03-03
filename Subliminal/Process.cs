@@ -4,7 +4,9 @@ namespace Subliminal
 {
     public class Process
     {
-        public Process(TimeSpan totalProcessorTime, long workingSet, long privateMemorySize, long virtualMemorySize)
+        public Process(
+            TimeSpan totalProcessorTime, SizeBytes workingSet,
+            SizeBytes privateMemorySize, SizeBytes virtualMemorySize)
         {
             TotalProcessorTime = totalProcessorTime;
             WorkingSet = workingSet;
@@ -12,20 +14,9 @@ namespace Subliminal
             VirtualMemorySize = virtualMemorySize;
         }
 
-        public static Process FromCurrentProcess()
-        {
-            var process = System.Diagnostics.Process.GetCurrentProcess();
-
-            return new Process(
-                process.TotalProcessorTime,
-                process.WorkingSet64,
-                process.PrivateMemorySize64,
-                process.VirtualMemorySize64);
-        }
-
         public TimeSpan TotalProcessorTime { get; }
-        public long WorkingSet { get; }
-        public long PrivateMemorySize { get; }
-        public long VirtualMemorySize { get; }
+        public SizeBytes WorkingSet { get; }
+        public SizeBytes PrivateMemorySize { get; }
+        public SizeBytes VirtualMemorySize { get; }
     }
 }
