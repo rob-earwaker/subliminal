@@ -4,11 +4,11 @@ namespace Subliminal
 {
     public class Counter : ICounter
     {
-        private readonly Log<int> _log;
+        private readonly Metric<int> _metric;
 
         public Counter()
         {
-            _log = new Log<int>();
+            _metric = new Metric<int>();
         }
 
         public void Increment()
@@ -21,17 +21,17 @@ namespace Subliminal
             if (increment <= 0)
                 return;
 
-            _log.Append(increment);
+            _metric.RecordValue(increment);
         }
 
         public void Stop()
         {
-            _log.Close();
+            _metric.Stop();
         }
 
         public IDisposable Subscribe(IObserver<int> observer)
         {
-            return _log.Subscribe(observer);
+            return _metric.Subscribe(observer);
         }
     }
 }

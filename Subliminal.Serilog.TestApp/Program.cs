@@ -23,7 +23,7 @@ namespace Subliminal.Serilog.TestApp
 
             var currentProcessMonitor = ProcessMonitor.ForCurrentProcess(TimeSpan.FromSeconds(5));
 
-            currentProcessMonitor.ProcessorUsageMetric
+            currentProcessMonitor.ProcessorUsage
                 .Subscribe(processorUsage =>
                     Log.Information(
                         "CPU usage over the last {Interval} was {Percentage}%",

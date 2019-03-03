@@ -5,9 +5,9 @@ namespace Subliminal
 {
     public class ProcessMonitor
     {
-        private ProcessMonitor(IMetric<Process> processMetric)
+        private ProcessMonitor(IMetric<Process> metric)
         {
-            ProcessMetric = processMetric;
+            Process = metric;
         }
 
         public static ProcessMonitor ForProcess(System.Diagnostics.Process process, TimeSpan samplingInterval)
@@ -34,18 +34,18 @@ namespace Subliminal
                 virtualMemorySize: new SizeBytes(process.VirtualMemorySize64));
         }
 
-        public IMetric<Process> ProcessMetric { get; }
+        public IMetric<Process> Process { get; }
 
-        public IMetric<SizeBytes> PrivateMemorySizeMetric => ProcessMetric.Select(process => process.PrivateMemorySize).AsMetric();
-        public IMetric<TimeSpan> TotalProcessorTimeMetric => ProcessMetric.Select(process => process.TotalProcessorTime).AsMetric();
-        public IMetric<SizeBytes> VirtualMemorySizeMetric => ProcessMetric.Select(process => process.VirtualMemorySize).AsMetric();
-        public IMetric<SizeBytes> WorkingSetMetric => ProcessMetric.Select(process => process.WorkingSet).AsMetric();
+        public IMetric<SizeBytes> PrivateMemorySize => Process.Select(process => process.PrivateMemorySize).AsMetric();
+        public IMetric<TimeSpan> TotalProcessorTime => Process.Select(process => process.TotalProcessorTime).AsMetric();
+        public IMetric<SizeBytes> VirtualMemorySize => Process.Select(process => process.VirtualMemorySize).AsMetric();
+        public IMetric<SizeBytes> WorkingSet => Process.Select(process => process.WorkingSet).AsMetric();
 
-        public IMetric<ProcessorUsage> ProcessorUsageMetric
+        public IMetric<ProcessorUsage> ProcessorUsage
         {
             get
             {
-                return ProcessMetric
+                return Process
                     .TimeInterval()
                     .Buffer(count: 2, skip: 1)
                     .Select(buffer => new ProcessorUsage(
