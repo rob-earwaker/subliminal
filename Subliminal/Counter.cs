@@ -24,6 +24,11 @@ namespace Subliminal
             _log.Append(increment);
         }
 
+        public void Stop()
+        {
+            _log.Close();
+        }
+
         public IDisposable Subscribe(IObserver<int> observer)
         {
             return _log.Subscribe(observer);

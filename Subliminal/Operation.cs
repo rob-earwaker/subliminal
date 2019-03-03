@@ -4,48 +4,48 @@ namespace Subliminal
 {
     public class Operation
     {
-        private readonly EventLog<OperationStarted> _started;
+        private readonly EventLog<OperationStarted> _startedEventLog;
 
         public Operation()
         {
-            _started = new EventLog<OperationStarted>();
+            _startedEventLog = new EventLog<OperationStarted>();
         }
 
         public OperationScope StartNew()
         {
             var operationScope = OperationScope.StartNew();
-            _started.Log(new OperationStarted(operationScope.OperationId, operationScope.Ended));
+            _startedEventLog.Log(new OperationStarted(operationScope.OperationId, operationScope.EndedEvent));
             return operationScope;
         }
 
-        public IEventLog<OperationStarted> Started => _started;
+        public IEventLog<OperationStarted> StartedEventLog => _startedEventLog;
 
-        public IEventLog<OperationEnded> Ended
+        public IEventLog<OperationEnded> EndedEventLog
         {
             get
             {
-                return Started
-                    .SelectMany(operationStarted => operationStarted.Ended)
+                return StartedEventLog
+                    .SelectMany(operationStarted => operationStarted.EndedEvent)
                     .AsEventLog();
             }
         }
 
-        public IEventLog<OperationCompleted> Completed
+        public IEventLog<OperationCompleted> CompletedEventLog
         {
             get
             {
-                return Ended
+                return EndedEventLog
                     .Where(operationEnded => !operationEnded.WasCanceled)
                     .Select(operationEnded => new OperationCompleted(operationEnded.OperationId, operationEnded.Duration))
                     .AsEventLog();
             }
         }
 
-        public IEventLog<OperationCanceled> Canceled
+        public IEventLog<OperationCanceled> CanceledEventLog
         {
             get
             {
-                return Ended
+                return EndedEventLog
                     .Where(operationEnded => operationEnded.WasCanceled)
                     .Select(operationEnded => new OperationCanceled(operationEnded.OperationId, operationEnded.Duration))
                     .AsEventLog();

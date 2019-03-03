@@ -6,7 +6,7 @@ namespace Subliminal
     public class OperationScope : IDisposable
     {
         private readonly Stopwatch _stopwatch;
-        private readonly Event<OperationEnded> _ended;
+        private readonly Event<OperationEnded> _endedEvent;
         private bool _hasStarted;
         private bool _hasEnded;
 
@@ -15,7 +15,7 @@ namespace Subliminal
             OperationId = OperationId.New();
 
             _stopwatch = new Stopwatch();
-            _ended = new Event<OperationEnded>();
+            _endedEvent = new Event<OperationEnded>();
             _hasStarted = false;
             _hasEnded = false;
         }
@@ -29,9 +29,9 @@ namespace Subliminal
             return operationTimer;
         }
 
-        public IEvent<OperationEnded> Ended => _ended;
+        public IEvent<OperationEnded> EndedEvent => _endedEvent;
 
-        public void Start()
+        private void Start()
         {
             if (_hasStarted)
                 return;
@@ -63,7 +63,7 @@ namespace Subliminal
 
             _stopwatch.Stop();
 
-            _ended.LogAndClose(new OperationEnded(OperationId, _stopwatch.Elapsed, wasCanceled));
+            _endedEvent.Log(new OperationEnded(OperationId, _stopwatch.Elapsed, wasCanceled));
 
             _hasEnded = true;
         }

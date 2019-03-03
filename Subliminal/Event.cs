@@ -13,11 +13,12 @@ namespace Subliminal
             _counter = new Counter();
         }
 
-        public void LogAndClose(TEvent @event)
+        public void Log(TEvent @event)
         {
             _log.Append(@event);
-            _counter.Increment();
             _log.Close();
+            _counter.Increment();
+            _counter.Stop();
         }
 
         public ICounter Counter => _counter;

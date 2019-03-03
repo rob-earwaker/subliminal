@@ -28,7 +28,7 @@ namespace Subliminal
 
         public static IObservable<IList<TSource>> Buffer<TSource>(this IObservable<TSource> source, Operation operation)
         {
-            return source.Buffer(operation.Started, operationStarted => operationStarted.Ended);
+            return source.Buffer(operation.StartedEventLog, operationStarted => operationStarted.EndedEvent);
         }
     }
 }
