@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 
 namespace Subliminal
 {
     public class OperationScope : IDisposable
     {
         private readonly Stopwatch _stopwatch;
-        private readonly Subject<OperationEnded> _ended;
+        private readonly Event<OperationEnded> _ended;
         private bool _hasStarted;
         private bool _hasEnded;
 
@@ -17,7 +15,7 @@ namespace Subliminal
             OperationId = OperationId.New();
 
             _stopwatch = new Stopwatch();
-            _ended = new Subject<OperationEnded>();
+            _ended = new Event<OperationEnded>();
             _hasStarted = false;
             _hasEnded = false;
         }
@@ -31,7 +29,7 @@ namespace Subliminal
             return operationTimer;
         }
 
-        public IObservable<OperationEnded> Ended => _ended.AsObservable();
+        public IEvent<OperationEnded> Ended => _ended;
 
         public void Start()
         {
@@ -65,8 +63,7 @@ namespace Subliminal
 
             _stopwatch.Stop();
 
-            _ended.OnNext(new OperationEnded(OperationId, _stopwatch.Elapsed, wasCanceled));
-            _ended.OnCompleted();
+            _ended.LogAndClose(new OperationEnded(OperationId, _stopwatch.Elapsed, wasCanceled));
 
             _hasEnded = true;
         }

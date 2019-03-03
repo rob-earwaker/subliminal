@@ -16,6 +16,16 @@ namespace Subliminal
             return DerivedMetric<TValue>.FromObservable(observable);
         }
 
+        public static IEventLog<TEvent> AsEventLog<TEvent>(this IObservable<TEvent> observable)
+        {
+            return DerivedEventLog<TEvent>.FromObservable(observable);
+        }
+
+        public static ICounter AsCounter(this IObservable<int> observable)
+        {
+            return DerivedCounter.FromObservable(observable);
+        }
+
         public static IObservable<IList<TSource>> Buffer<TSource>(this IObservable<TSource> source, Operation operation)
         {
             return source.Buffer(operation.Started, operationStarted => operationStarted.Ended);

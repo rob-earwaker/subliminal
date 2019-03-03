@@ -1,46 +1,54 @@
-﻿using System;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+﻿using System.Reactive.Linq;
 
 namespace Subliminal
 {
     public class Operation
     {
-        private readonly Subject<OperationStarted> _started;
+        private readonly EventLog<OperationStarted> _started;
 
         public Operation()
         {
-            _started = new Subject<OperationStarted>();
+            _started = new EventLog<OperationStarted>();
         }
 
         public OperationScope StartNew()
         {
             var operationScope = OperationScope.StartNew();
-            _started.OnNext(new OperationStarted(operationScope.OperationId, operationScope.Ended));
+            _started.Log(new OperationStarted(operationScope.OperationId, operationScope.Ended));
             return operationScope;
         }
 
-        public IObservable<OperationStarted> Started => _started.AsObservable();
+        public IEventLog<OperationStarted> Started => _started;
 
-        public IObservable<OperationEnded> Ended => Started.SelectMany(operationStarted => operationStarted.Ended);
+        public IEventLog<OperationEnded> Ended
+        {
+            get
+            {
+                return Started
+                    .SelectMany(operationStarted => operationStarted.Ended)
+                    .AsEventLog();
+            }
+        }
 
-        public IObservable<OperationCompleted> Completed
+        public IEventLog<OperationCompleted> Completed
         {
             get
             {
                 return Ended
                     .Where(operationEnded => !operationEnded.WasCanceled)
-                    .Select(operationEnded => new OperationCompleted(operationEnded.OperationId, operationEnded.Duration));
+                    .Select(operationEnded => new OperationCompleted(operationEnded.OperationId, operationEnded.Duration))
+                    .AsEventLog();
             }
         }
 
-        public IObservable<OperationCanceled> Canceled
+        public IEventLog<OperationCanceled> Canceled
         {
             get
             {
                 return Ended
                     .Where(operationEnded => operationEnded.WasCanceled)
-                    .Select(operationEnded => new OperationCanceled(operationEnded.OperationId, operationEnded.Duration));
+                    .Select(operationEnded => new OperationCanceled(operationEnded.OperationId, operationEnded.Duration))
+                    .AsEventLog();
             }
         }
     }

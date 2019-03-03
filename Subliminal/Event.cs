@@ -2,21 +2,22 @@
 
 namespace Subliminal
 {
-    public class EventLog<TEvent> : IEventLog<TEvent>
+    public class Event<TEvent> : IEvent<TEvent>
     {
         private readonly Log<TEvent> _log;
         private readonly Counter _counter;
 
-        public EventLog()
+        public Event()
         {
             _log = new Log<TEvent>();
             _counter = new Counter();
         }
 
-        public void Log(TEvent @event)
+        public void LogAndClose(TEvent @event)
         {
             _log.Append(@event);
             _counter.Increment();
+            _log.Close();
         }
 
         public ICounter Counter => _counter;

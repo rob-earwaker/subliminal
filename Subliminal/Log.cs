@@ -17,6 +17,11 @@ namespace Subliminal
             _log.OnNext(value);
         }
 
+        public void Close()
+        {
+            _log.OnCompleted();
+        }
+
         public IDisposable Subscribe(IObserver<TValue> observer)
         {
             return _log.Subscribe(observer);
