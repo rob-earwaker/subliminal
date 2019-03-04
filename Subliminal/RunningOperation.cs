@@ -18,13 +18,13 @@ namespace Subliminal
 
         public Guid OperationId { get; }
 
-        public IEvent<OperationEnded> Ended
+        public ITimingEvent<OperationEnded> Ended
         {
             get
             {
                 return _runningTimer.Ended
                     .Select(timerEnded => new OperationEnded(OperationId, timerEnded.Duration, _canceled))
-                    .AsEvent();
+                    .AsTimingEvent();
             }
         }
 

@@ -11,7 +11,7 @@ namespace Subliminal
             _eventLog = new EventLog<TEvent>();
         }
 
-        public void Log(TEvent @event)
+        public void LogAndClose(TEvent @event)
         {
             _eventLog.Log(@event);
             _eventLog.Close();

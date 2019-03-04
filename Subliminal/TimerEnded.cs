@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public class TimerEnded
+    public class TimerEnded : ITiming
     {
         public TimerEnded(TimeSpan duration)
         {

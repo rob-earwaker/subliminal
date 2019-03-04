@@ -1,14 +1,12 @@
-﻿using System;
-
-namespace Subliminal
+﻿namespace Subliminal
 {
     public class TimerStarted
     {
-        public TimerStarted(IEvent<TimerEnded> ended)
+        public TimerStarted(ITimingEvent<TimerEnded> ended)
         {
             Ended = ended;
         }
         
-        public IEvent<TimerEnded> Ended { get; }
+        public ITimingEvent<TimerEnded> Ended { get; }
     }
 }
