@@ -5,21 +5,23 @@ namespace Subliminal
 {
     public class Log<TEntry> : ILog<TEntry>
     {
-        private readonly Subject<TEntry> _log;
+        private readonly Subject<TEntry> _logSubject;
+        private readonly ILog<TEntry> _log;
 
         public Log()
         {
-            _log = new Subject<TEntry>();
+            _logSubject = new Subject<TEntry>();
+            _log = _logSubject.AsLog();
         }
 
         public void Append(TEntry value)
         {
-            _log.OnNext(value);
+            _logSubject.OnNext(value);
         }
 
         public void Close()
         {
-            _log.OnCompleted();
+            _logSubject.OnCompleted();
         }
 
         public IDisposable Subscribe(IObserver<TEntry> observer)
