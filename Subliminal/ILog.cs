@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public interface ILog<TValue> : IObservable<TValue>
+    public interface ILog<TEntry> : IObservable<TEntry>
     {
     }
 }

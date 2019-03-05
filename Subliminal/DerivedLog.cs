@@ -3,21 +3,21 @@ using System.Reactive.Linq;
 
 namespace Subliminal
 {
-    public class DerivedLog<TValue> : ILog<TValue>
+    public class DerivedLog<TEntry> : ILog<TEntry>
     {
-        private readonly IObservable<TValue> _log;
+        private readonly IObservable<TEntry> _log;
 
-        private DerivedLog(IObservable<TValue> log)
+        private DerivedLog(IObservable<TEntry> log)
         {
             _log = log;
         }
 
-        public static DerivedLog<TValue> FromObservable(IObservable<TValue> observable)
+        public static DerivedLog<TEntry> FromObservable(IObservable<TEntry> observable)
         {
-            return new DerivedLog<TValue>(observable.Publish().AutoConnect());
+            return new DerivedLog<TEntry>(observable.Publish().AutoConnect());
         }
 
-        public IDisposable Subscribe(IObserver<TValue> observer)
+        public IDisposable Subscribe(IObserver<TEntry> observer)
         {
             return _log.Subscribe(observer);
         }
