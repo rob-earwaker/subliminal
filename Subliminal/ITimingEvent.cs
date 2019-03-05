@@ -1,6 +1,6 @@
 ﻿namespace Subliminal
 {
-    public interface ITimingEvent<TTimingEvent> : ITimingEventLog<TTimingEvent>
+    public interface ITimingEvent<TTimingEvent> : IEvent<TTimingEvent>, ITimingEventLog<TTimingEvent>
         where TTimingEvent : ITiming
     {
     }

@@ -2,11 +2,11 @@
 {
     public class TimerStarted
     {
-        public TimerStarted(ITimingEvent<TimerEnded> ended)
+        public TimerStarted(IEvent<TimerEnded> ended)
         {
             Ended = ended;
         }
         
-        public ITimingEvent<TimerEnded> Ended { get; }
+        public IEvent<TimerEnded> Ended { get; }
     }
 }
