@@ -20,35 +20,30 @@ namespace Subliminal
 
         public IEventLog<OperationStarted> Started => _started;
 
-        public ITimingEventLog<OperationEnded> Ended
+        public IEventLog<OperationEnded> Ended
         {
-            get
-            {
-                return Started
-                    .SelectMany(operationStarted => operationStarted.Ended)
-                    .AsTimingEventLog();
-            }
+            get { return Started.SelectMany(operationStarted => operationStarted.Ended).AsEventLog(); }
         }
 
-        public ITimingEventLog<OperationCompleted> Completed
+        public IEventLog<OperationCompleted> Completed
         {
             get
             {
                 return Ended
                     .Where(operationEnded => !operationEnded.WasCanceled)
                     .Select(operationEnded => new OperationCompleted(operationEnded.OperationId, operationEnded.Duration))
-                    .AsTimingEventLog();
+                    .AsEventLog();
             }
         }
 
-        public ITimingEventLog<OperationCanceled> Canceled
+        public IEventLog<OperationCanceled> Canceled
         {
             get
             {
                 return Ended
                     .Where(operationEnded => operationEnded.WasCanceled)
                     .Select(operationEnded => new OperationCanceled(operationEnded.OperationId, operationEnded.Duration))
-                    .AsTimingEventLog();
+                    .AsEventLog();
             }
         }
     }

@@ -19,10 +19,7 @@ namespace Subliminal
             _logSubject.OnNext(value);
         }
 
-        public void Close()
-        {
-            _logSubject.OnCompleted();
-        }
+        public Guid LogId => _log.LogId;
 
         public IDisposable Subscribe(IObserver<TEntry> observer)
         {

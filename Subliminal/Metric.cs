@@ -5,10 +5,12 @@ namespace Subliminal
     public class Metric<TValue> : IMetric<TValue>
     {
         private Log<TValue> _log;
+        private IMetric<TValue> _metric;
 
         public Metric()
         {
             _log = new Log<TValue>();
+            _metric = _log.AsMetric();
         }
 
         public void RecordValue(TValue value)
@@ -16,14 +18,11 @@ namespace Subliminal
             _log.Append(value);
         }
 
-        public void Stop()
-        {
-            _log.Close();
-        }
+        public Guid MetricId => _metric.MetricId;
 
         public IDisposable Subscribe(IObserver<TValue> observer)
         {
-            return _log.Subscribe(observer);
+            return _metric.Subscribe(observer);
         }
     }
 }

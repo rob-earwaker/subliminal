@@ -1,6 +1,9 @@
-﻿namespace Subliminal
+﻿using System;
+
+namespace Subliminal
 {
-    public interface ICounter : IMetric<int>
+    public interface ICounter : IObservable<int>
     {
+        Guid CounterId { get; }
     }
 }

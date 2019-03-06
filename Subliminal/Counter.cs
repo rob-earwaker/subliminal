@@ -5,10 +5,12 @@ namespace Subliminal
     public class Counter : ICounter
     {
         private readonly Metric<int> _metric;
+        private readonly ICounter _counter;
 
         public Counter()
         {
             _metric = new Metric<int>();
+            _counter = _metric.AsCounter();
         }
 
         public void Increment()
@@ -24,14 +26,11 @@ namespace Subliminal
             _metric.RecordValue(increment);
         }
 
-        public void Stop()
-        {
-            _metric.Stop();
-        }
+        public Guid CounterId => _counter.CounterId;
 
         public IDisposable Subscribe(IObserver<int> observer)
         {
-            return _metric.Subscribe(observer);
+            return _counter.Subscribe(observer);
         }
     }
 }

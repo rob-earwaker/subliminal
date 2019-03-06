@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public class OperationCanceled : ITiming
+    public class OperationCanceled
     {
         public OperationCanceled(Guid operationId, TimeSpan duration)
         {

@@ -4,5 +4,6 @@ namespace Subliminal
 {
     public interface ILog<TEntry> : IObservable<TEntry>
     {
+        Guid LogId { get; }
     }
 }

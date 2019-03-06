@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public class OperationCompleted : ITiming
+    public class OperationCompleted
     {
         public OperationCompleted(Guid operationId, TimeSpan duration)
         {

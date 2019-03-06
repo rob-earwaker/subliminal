@@ -17,7 +17,9 @@ namespace Subliminal
             return new DerivedEventLog<TEvent>(observable.AsLog());
         }
 
-        public ICounter Counter => _log.Select(_ => 1).AsCounter();
+        public Guid EventLogId => _log.LogId;
+
+        public ICounter EventCounter => _log.Select(_ => 1).AsCounter();
 
         public IDisposable Subscribe(IObserver<TEvent> observer)
         {

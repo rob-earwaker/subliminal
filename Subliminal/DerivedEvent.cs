@@ -5,23 +5,24 @@ namespace Subliminal
 {
     public class DerivedEvent<TEvent> : IEvent<TEvent>
     {
-        private readonly IEventLog<TEvent> _eventLog;
+        private readonly IObservable<TEvent> _event;
 
-        private DerivedEvent(IEventLog<TEvent> eventLog)
+        private DerivedEvent(IObservable<TEvent> @event)
         {
-            _eventLog = eventLog;
+            _event = @event;
+            EventId = Guid.NewGuid();
         }
 
         public static DerivedEvent<TEvent> FromObservable(IObservable<TEvent> observable)
         {
-            return new DerivedEvent<TEvent>(observable.Take(1).AsEventLog());
+            return new DerivedEvent<TEvent>(observable.Take(1));
         }
 
-        public ICounter Counter => _eventLog.Counter;
+        public Guid EventId { get; }
 
         public IDisposable Subscribe(IObserver<TEvent> observer)
         {
-            return _eventLog.Subscribe(observer);
+            return _event.Subscribe(observer);
         }
     }
 }

@@ -21,21 +21,9 @@ namespace Subliminal
             return DerivedEventLog<TEvent>.FromObservable(observable);
         }
 
-        public static ITimingEventLog<TTimingEvent> AsTimingEventLog<TTimingEvent>(this IObservable<TTimingEvent> observable)
-            where TTimingEvent : ITiming
-        {
-            return DerivedTimingEventLog<TTimingEvent>.FromObservable(observable);
-        }
-
         public static IEvent<TEvent> AsEvent<TEvent>(this IObservable<TEvent> observable)
         {
             return DerivedEvent<TEvent>.FromObservable(observable);
-        }
-
-        public static ITimingEvent<TTimingEvent> AsTimingEvent<TTimingEvent>(this IObservable<TTimingEvent> observable)
-            where TTimingEvent : ITiming
-        {
-            return DerivedTimingEvent<TTimingEvent>.FromObservable(observable);
         }
 
         public static ICounter AsCounter(this IObservable<int> observable)

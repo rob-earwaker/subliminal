@@ -10,7 +10,10 @@ namespace Subliminal
         private DerivedLog(IObservable<TEntry> log)
         {
             _log = log;
+            LogId = Guid.NewGuid();
         }
+
+        public Guid LogId { get; }
 
         public static DerivedLog<TEntry> FromObservable(IObservable<TEntry> observable)
         {

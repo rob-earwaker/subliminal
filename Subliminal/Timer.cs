@@ -6,10 +6,15 @@ namespace Subliminal
     public class Timer : ITimer
     {
         private readonly EventLog<TimerStarted> _timerStarted;
+        private readonly ITimer _timer;
 
         public Timer()
         {
             _timerStarted = new EventLog<TimerStarted>();
+            _timer = _timerStarted
+                .SelectMany(timerStarted => timerStarted.Ended)
+                .Select(timerEnded => timerEnded.Duration)
+                .AsTimer();
         }
 
         public RunningTimer StartNew()
@@ -19,12 +24,11 @@ namespace Subliminal
             return runningTimer;
         }
 
+        public Guid TimerId => _timer.TimerId;
+
         public IDisposable Subscribe(IObserver<TimeSpan> observer)
         {
-            return _timerStarted
-                .SelectMany(timerStarted => timerStarted.Ended)
-                .Select(timerEnded => timerEnded.Duration)
-                .Subscribe(observer);
+            return _timer.Subscribe(observer);
         }
     }
 }

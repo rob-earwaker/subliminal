@@ -16,6 +16,8 @@ namespace Subliminal
             return new DerivedTimer(observable.AsMetric());
         }
 
+        public Guid TimerId => _metric.MetricId;
+
         public IDisposable Subscribe(IObserver<TimeSpan> observer)
         {
             return _metric.Subscribe(observer);

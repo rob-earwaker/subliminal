@@ -1,6 +1,9 @@
-﻿namespace Subliminal
+﻿using System;
+
+namespace Subliminal
 {
-    public interface IEvent<TEvent> : IEventLog<TEvent>
+    public interface IEvent<TEvent> : IObservable<TEvent>
     {
+        Guid EventId { get; }
     }
 }

@@ -1,27 +1,30 @@
 ﻿using System;
+using System.Reactive.Subjects;
 
 namespace Subliminal
 {
     public class Event<TEvent> : IEvent<TEvent>
     {
-        private readonly EventLog<TEvent> _eventLog;
+        private readonly Subject<TEvent> _eventSubject;
+        private readonly IEvent<TEvent> _event;
 
         public Event()
         {
-            _eventLog = new EventLog<TEvent>();
+            _eventSubject = new Subject<TEvent>();
+            _event = _eventSubject.AsEvent();
         }
 
-        public void LogAndClose(TEvent @event)
+        public void Raise(TEvent @event)
         {
-            _eventLog.Log(@event);
-            _eventLog.Close();
+            _eventSubject.OnNext(@event);
+            _eventSubject.OnCompleted();
         }
 
-        public ICounter Counter => _eventLog.Counter;
+        public Guid EventId => _event.EventId;
 
         public IDisposable Subscribe(IObserver<TEvent> observer)
         {
-            return _eventLog.Subscribe(observer);
+            return _event.Subscribe(observer);
         }
     }
 }

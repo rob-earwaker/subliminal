@@ -1,6 +1,9 @@
-﻿namespace Subliminal
+﻿using System;
+
+namespace Subliminal
 {
-    public interface IMetric<TValue> : ILog<TValue>
+    public interface IMetric<TValue> : IObservable<TValue>
     {
+        Guid MetricId { get; }
     }
 }

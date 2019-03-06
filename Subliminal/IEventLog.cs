@@ -1,7 +1,10 @@
-﻿namespace Subliminal
+﻿using System;
+
+namespace Subliminal
 {
-    public interface IEventLog<TEvent> : ILog<TEvent>
+    public interface IEventLog<TEvent> : IObservable<TEvent>
     {
-        ICounter Counter { get; }
+        Guid EventLogId { get; }
+        ICounter EventCounter { get; }
     }
 }
