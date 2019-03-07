@@ -34,9 +34,9 @@ namespace Subliminal
 
         public void Time(Action<RunningTimer> operation)
         {
-            using (var timer = StartNew())
+            using (var runningTimer = StartNew())
             {
-                operation(timer);
+                operation(runningTimer);
             }
         }
 
@@ -47,9 +47,9 @@ namespace Subliminal
 
         public TResult Time<TResult>(Func<RunningTimer, TResult> operation)
         {
-            using (var timer = StartNew())
+            using (var runningTimer = StartNew())
             {
-                return operation(timer);
+                return operation(runningTimer);
             }
         }
 
@@ -60,22 +60,22 @@ namespace Subliminal
 
         public async Task TimeAsync(Func<RunningTimer, Task> operation)
         {
-            using (var timer = StartNew())
+            using (var runningTimer = StartNew())
             {
-                await operation(timer);
+                await operation(runningTimer);
             }
         }
 
-        public Task TimeAsync<TResult>(Func<Task> operation)
+        public Task TimeAsync(Func<Task> operation)
         {
             return TimeAsync(_ => operation());
         }
 
         public async Task<TResult> TimeAsync<TResult>(Func<RunningTimer, Task<TResult>> operation)
         {
-            using (var timer = StartNew())
+            using (var runningTimer = StartNew())
             {
-                return await operation(timer);
+                return await operation(runningTimer);
             }
         }
 
