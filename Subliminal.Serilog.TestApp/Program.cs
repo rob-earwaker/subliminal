@@ -29,6 +29,12 @@ namespace Subliminal.Serilog.TestApp
                         "CPU usage over the last {Interval} was {Percentage}%",
                         processorUsage.Interval, processorUsage.Percentage));
 
+            var threadPoolMonitor = ThreadPoolMonitor.ForManagedThreadPool(TimeSpan.FromSeconds(5));
+
+            threadPoolMonitor.ActiveWorkerThreads
+                .Subscribe(activeWorkerThreads =>
+                    Log.Information("Active worker thread count is {ActiveWorkerThreads}", activeWorkerThreads));
+
             var dataStore = new DataStore();
 
             var dataStoreLogger = Log.Logger.ForContext(dataStore.GetType());
