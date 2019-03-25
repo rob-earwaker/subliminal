@@ -5,17 +5,29 @@ namespace Subliminal
 {
     public class ProcessMonitor
     {
-        private ProcessMonitor(IMetric<Process> process)
+        private ProcessMonitor(IMetric<Process> process, IEvent<ProcessExited> exited)
         {
             Process = process;
+            Exited = exited;
         }
 
         public static ProcessMonitor ForProcess(System.Diagnostics.Process process, TimeSpan samplingInterval)
         {
-            return new ProcessMonitor(Observable
-                .Timer(DateTimeOffset.UtcNow, samplingInterval)
-                .Select(_ => GetProcessSnapshot(process))
-                .AsMetric());
+            process.EnableRaisingEvents = true;
+
+            return new ProcessMonitor(
+                process: Observable
+                    .Timer(DateTimeOffset.UtcNow, samplingInterval)
+                    .TakeWhile(_ => !process.HasExited)
+                    .Select(_ => GetProcessSnapshot(process))
+                    .AsMetric(),
+                exited: Observable
+                    .FromEventPattern(
+                        eventHandler => process.Exited += eventHandler,
+                        eventHandler => process.Exited -= eventHandler)
+                    .Take(1)
+                    .Select(_ => new ProcessExited(process.Id, process.ExitTime, process.ExitCode))
+                    .AsEvent());
         }
 
         public static ProcessMonitor ForCurrentProcess(TimeSpan samplingInterval)
@@ -35,6 +47,7 @@ namespace Subliminal
         }
 
         public IMetric<Process> Process { get; }
+        public IEvent<ProcessExited> Exited { get; }
 
         public IMetric<SizeBytes> PrivateMemorySize => Process.Select(process => process.PrivateMemorySize).AsMetric();
         public IMetric<TimeSpan> TotalProcessorTime => Process.Select(process => process.TotalProcessorTime).AsMetric();
