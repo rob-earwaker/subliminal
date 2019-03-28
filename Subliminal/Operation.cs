@@ -29,24 +29,12 @@ namespace Subliminal
 
         public IEventLog<OperationCompleted> Completed
         {
-            get
-            {
-                return Ended
-                    .Where(operationEnded => !operationEnded.WasCanceled)
-                    .Select(operationEnded => new OperationCompleted(operationEnded.OperationId, operationEnded.Duration))
-                    .AsEventLog();
-            }
+            get { return Started.SelectMany(operationStarted => operationStarted.Completed).AsEventLog(); }
         }
 
         public IEventLog<OperationCanceled> Canceled
         {
-            get
-            {
-                return Ended
-                    .Where(operationEnded => operationEnded.WasCanceled)
-                    .Select(operationEnded => new OperationCanceled(operationEnded.OperationId, operationEnded.Duration))
-                    .AsEventLog();
-            }
+            get { return Started.SelectMany(operationStarted => operationStarted.Canceled).AsEventLog(); }
         }
 
         public void Execute(Action<RunningOperation> operation)
