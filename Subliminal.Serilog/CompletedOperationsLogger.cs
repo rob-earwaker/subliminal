@@ -22,6 +22,9 @@ namespace Subliminal.Serilog
 
         public void OnNext(TimeInterval<IList<OperationCompleted>> buffer)
         {
+            if (!buffer.Value.Any())
+                return;
+
             var averageDurationSeconds = buffer.Value.Average(completed => completed.Duration.TotalSeconds);
 
             _logger.ForContext("AverageDurationSeconds", averageDurationSeconds)
@@ -31,12 +34,10 @@ namespace Subliminal.Serilog
 
         public void OnCompleted()
         {
-            throw new NotImplementedException();
         }
 
         public void OnError(Exception error)
         {
-            throw new NotImplementedException();
         }
     }
 }

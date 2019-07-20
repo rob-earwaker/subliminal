@@ -70,6 +70,7 @@ namespace Subliminal.Serilog.TestApp
 
             dataStore.BytesReadCounter
                 .Buffer(TimeSpan.FromSeconds(8))
+                .Where(buffer => buffer.Any())
                 .TimeInterval()
                 .Subscribe(buffer =>
                     dataStoreLogger
