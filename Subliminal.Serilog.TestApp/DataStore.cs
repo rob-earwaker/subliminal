@@ -32,7 +32,6 @@ namespace Subliminal.Serilog.TestApp
             {
                 var readRandomByteTasks = new object[bufferSize].Select(_ => ReadRandomByteAsync()).ToArray();
                 var buffer = await Task.WhenAll(readRandomByteTasks).ConfigureAwait(false);
-                _bytesReadCounter.IncrementBy(bufferSize);
                 return buffer;
             }
         }
@@ -43,8 +42,12 @@ namespace Subliminal.Serilog.TestApp
             {
                 var buffer = new byte[1];
                 _random.NextBytes(buffer);
+
                 await Task.Delay(TimeSpan.FromSeconds(_random.NextDouble())).ConfigureAwait(false);
+
                 _randomMetric.RecordValue(_random.Next());
+                _bytesReadCounter.Increment();
+
                 return buffer[0];
             }
         }
