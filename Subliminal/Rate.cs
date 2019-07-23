@@ -8,11 +8,10 @@ namespace Subliminal
         {
             Count = count;
             Interval = interval;
-            CountPerSecond = count / interval.TotalSeconds;
         }
 
         public long Count { get; }
         public TimeSpan Interval { get; }
-        public double CountPerSecond { get; }
+        public double CountPerSecond => Count / Interval.TotalSeconds;
     }
 }
