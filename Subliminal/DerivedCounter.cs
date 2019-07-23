@@ -5,23 +5,23 @@ namespace Subliminal
 {
     public class DerivedCounter : ICounter
     {
-        private readonly IMetric<int> _metric;
+        private readonly IMetric<long> _incrementMetric;
 
-        private DerivedCounter(IMetric<int> metric)
+        private DerivedCounter(IMetric<long> incrementMetric)
         {
-            _metric = metric;
-        }        
-
-        public static DerivedCounter FromObservable(IObservable<int> observable)
-        {
-            return new DerivedCounter(observable.Where(increment => increment > 0).AsMetric());
+            _incrementMetric = incrementMetric;
         }
 
-        public Guid CounterId => _metric.MetricId;
-
-        public IDisposable Subscribe(IObserver<int> observer)
+        public static DerivedCounter FromObservable(IObservable<long> observable)
         {
-            return _metric.Subscribe(observer);
+            return new DerivedCounter(observable.Where(increment => increment > 0L).AsMetric());
+        }
+
+        public Guid CounterId => _incrementMetric.MetricId;
+
+        public IDisposable Subscribe(IObserver<long> observer)
+        {
+            return _incrementMetric.Subscribe(observer);
         }
     }
 }

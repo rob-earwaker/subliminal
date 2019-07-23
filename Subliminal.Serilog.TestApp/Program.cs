@@ -62,25 +62,28 @@ namespace Subliminal.Serilog.TestApp
                     "Average time taken to complete {OperationName} operations was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
 
             dataStore.RandomMetric
-                .Subscribe(randomValue =>
+                .Buffer(100)
+                .Select(values => values.Average())
+                .TimeInterval()
+                .Subscribe(averageValue =>
                     dataStoreLogger
                         .ForContext("MetricName", "RandomMetric")
-                        .ForContext("Value", randomValue)
-                        .Information("{MetricName} value is {Value}"));
+                        .ForContext("AverageValue", averageValue.Value)
+                        .ForContext("SampleInterval", averageValue.Interval)
+                        .Information("Average {MetricName} value was {AverageValue} over the last {SampleInterval}"));
 
             dataStore.BytesReadCounter
-                .Buffer(TimeSpan.FromSeconds(8))
-                .Where(buffer => buffer.Any())
-                .TimeInterval()
-                .Subscribe(buffer =>
+                .Buffer(TimeSpan.FromSeconds(5))
+                .AsRateMetric()
+                .Subscribe(rate =>
                     dataStoreLogger
-                        .ForContext("SamplePeriodDurationSeconds", buffer.Interval.TotalSeconds)
-                        .ForContext("TotalCount", buffer.Value.Sum())
-                        .Information("Total number of bytes read over the last {SamplePeriodDurationSeconds}s was {TotalCount}"));
+                        .ForContext("ByteRate", rate.CountPerSecond)
+                        .ForContext("RateInterval", rate.Interval)
+                        .Information("Read speed was {ByteRate}B/s over the last {RateInterval}"));
 
             while (true)
             {
-                var buffer = await dataStore.ReadRandomBytesAsync(4).ConfigureAwait(false);
+                var buffer = await dataStore.ReadRandomBytesAsync(32).ConfigureAwait(false);
                 Log.Information("Read random bytes from data store: {Base64Bytes}", Convert.ToBase64String(buffer));
             }
         }

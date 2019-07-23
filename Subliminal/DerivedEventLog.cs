@@ -19,7 +19,7 @@ namespace Subliminal
 
         public Guid EventLogId => _log.LogId;
 
-        public ICounter EventCounter => _log.Select(_ => 1).AsCounter();
+        public ICounter EventCounter => _log.Select(_ => 1L).AsCounter();
 
         public IDisposable Subscribe(IObserver<TEvent> observer)
         {

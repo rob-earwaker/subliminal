@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public interface ICounter : IObservable<int>
+    public interface ICounter : IObservable<long>
     {
         Guid CounterId { get; }
     }
