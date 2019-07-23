@@ -4,18 +4,18 @@ namespace Subliminal
 {
     public class Metric<TValue> : IMetric<TValue>
     {
-        private Log<TValue> _log;
+        private Log<TValue> _valueLog;
         private IMetric<TValue> _metric;
 
         public Metric()
         {
-            _log = new Log<TValue>();
-            _metric = _log.AsMetric();
+            _valueLog = new Log<TValue>();
+            _metric = _valueLog.AsMetric();
         }
 
         public void RecordValue(TValue value)
         {
-            _log.Append(value);
+            _valueLog.Append(value);
         }
 
         public Guid MetricId => _metric.MetricId;
