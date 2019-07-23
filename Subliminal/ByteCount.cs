@@ -1,19 +1,19 @@
 ﻿namespace Subliminal
 {
-    public class SizeBytes
+    public class ByteCount
     {
         private const double DecimalMultiple = 1000.0;
         private const double BinaryMultiple = 1024.0;
 
-        public SizeBytes(long bytes)
+        public ByteCount(long byteCount)
         {
-            Bytes = bytes;
+            Bytes = byteCount;
 
-            Kilobytes = bytes / DecimalMultiple;
+            Kilobytes = byteCount / DecimalMultiple;
             Megabytes = Kilobytes / DecimalMultiple;
             Gigabytes = Megabytes / DecimalMultiple;
 
-            Kibibytes = bytes / BinaryMultiple;
+            Kibibytes = byteCount / BinaryMultiple;
             Mebibytes = Kibibytes / BinaryMultiple;
             Gibibytes = Mebibytes / BinaryMultiple;
         }
