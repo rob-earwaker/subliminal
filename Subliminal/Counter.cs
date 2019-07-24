@@ -15,7 +15,7 @@ namespace Subliminal
 
         public void Increment()
         {
-            IncrementBy(1);
+            IncrementBy(1L);
         }
 
         public void IncrementBy(long increment)
