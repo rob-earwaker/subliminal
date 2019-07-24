@@ -5,11 +5,11 @@ namespace Subliminal
 {
     public class DerivedLog<TEntry> : ILog<TEntry>
     {
-        private readonly IObservable<TEntry> _log;
+        private readonly IObservable<TEntry> _entries;
 
-        private DerivedLog(IObservable<TEntry> log)
+        private DerivedLog(IObservable<TEntry> entries)
         {
-            _log = log;
+            _entries = entries;
             LogId = Guid.NewGuid();
         }
 
@@ -22,7 +22,7 @@ namespace Subliminal
 
         public IDisposable Subscribe(IObserver<TEntry> observer)
         {
-            return _log.Subscribe(observer);
+            return _entries.Subscribe(observer);
         }
     }
 }

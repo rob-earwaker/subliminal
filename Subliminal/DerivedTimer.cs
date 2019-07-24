@@ -4,23 +4,23 @@ namespace Subliminal
 {
     public class DerivedTimer : ITimer
     {
-        private readonly IMetric<TimeSpan> _metric;
+        private readonly ILog<TimeSpan> _durationLog;
 
-        private DerivedTimer(IMetric<TimeSpan> metric)
+        private DerivedTimer(ILog<TimeSpan> durationLog)
         {
-            _metric = metric;
+            _durationLog = durationLog;
         }
 
         public static DerivedTimer FromObservable(IObservable<TimeSpan> observable)
         {
-            return new DerivedTimer(observable.AsMetric());
+            return new DerivedTimer(observable.AsLog());
         }
 
-        public Guid TimerId => _metric.MetricId;
+        public Guid TimerId => _durationLog.LogId;
 
         public IDisposable Subscribe(IObserver<TimeSpan> observer)
         {
-            return _metric.Subscribe(observer);
+            return _durationLog.Subscribe(observer);
         }
     }
 }

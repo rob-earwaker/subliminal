@@ -6,12 +6,12 @@ namespace Subliminal
     public class Log<TEntry> : ILog<TEntry>
     {
         private readonly Subject<TEntry> _logSubject;
-        private readonly ILog<TEntry> _log;
+        private readonly ILog<TEntry> _derivedLog;
 
         public Log()
         {
             _logSubject = new Subject<TEntry>();
-            _log = _logSubject.AsLog();
+            _derivedLog = _logSubject.AsLog();
         }
 
         public void Append(TEntry value)
@@ -19,11 +19,11 @@ namespace Subliminal
             _logSubject.OnNext(value);
         }
 
-        public Guid LogId => _log.LogId;
+        public Guid LogId => _derivedLog.LogId;
 
         public IDisposable Subscribe(IObserver<TEntry> observer)
         {
-            return _log.Subscribe(observer);
+            return _derivedLog.Subscribe(observer);
         }
     }
 }

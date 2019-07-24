@@ -6,12 +6,12 @@ namespace Subliminal
     public class Event<TEvent> : IEvent<TEvent>
     {
         private readonly Subject<TEvent> _eventSubject;
-        private readonly IEvent<TEvent> _event;
+        private readonly IEvent<TEvent> _derivedEvent;
 
         public Event()
         {
             _eventSubject = new Subject<TEvent>();
-            _event = _eventSubject.AsEvent();
+            _derivedEvent = _eventSubject.AsEvent();
         }
 
         public void Raise(TEvent @event)
@@ -20,11 +20,11 @@ namespace Subliminal
             _eventSubject.OnCompleted();
         }
 
-        public Guid EventId => _event.EventId;
+        public Guid EventId => _derivedEvent.EventId;
 
         public IDisposable Subscribe(IObserver<TEvent> observer)
         {
-            return _event.Subscribe(observer);
+            return _derivedEvent.Subscribe(observer);
         }
     }
 }
