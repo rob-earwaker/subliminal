@@ -11,21 +11,21 @@ namespace Subliminal
             _valueLog = valueLog;
         }
 
-        public static DerivedMetric<TValue> FromLog(ILog<TValue> log)
+        public static DerivedMetric<TValue> FromLog(ILog<TValue> valueLog)
         {
-            return new DerivedMetric<TValue>(log);
+            return new DerivedMetric<TValue>(valueLog);
         }
 
-        public static DerivedMetric<TValue> FromObservable(IObservable<TValue> observable)
+        public static DerivedMetric<TValue> FromObservable(IObservable<TValue> values)
         {
-            return FromLog(observable.AsLog());
+            return FromLog(values.AsLog());
         }
 
         public Guid MetricId => _valueLog.LogId;
 
         public IDisposable Subscribe(IObserver<TValue> observer)
         {
-            return _valueLog.Subscribe(observer);
+            return _valueLog.Entries.Subscribe(observer);
         }
     }
 }

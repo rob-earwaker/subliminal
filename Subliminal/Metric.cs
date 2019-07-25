@@ -10,7 +10,7 @@ namespace Subliminal
         public Metric()
         {
             _valueLog = new Log<TValue>();
-            _derivedMetric = _valueLog.AsMetric();
+            _derivedMetric = _valueLog.Entries.AsMetric();
         }
 
         public void RecordValue(TValue value)

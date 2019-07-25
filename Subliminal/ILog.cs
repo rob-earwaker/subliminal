@@ -2,8 +2,9 @@
 
 namespace Subliminal
 {
-    public interface ILog<TEntry> : IObservable<TEntry>
+    public interface ILog<TEntry>
     {
         Guid LogId { get; }
+        IObservable<TEntry> Entries { get; }
     }
 }

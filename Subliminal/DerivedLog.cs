@@ -5,24 +5,25 @@ namespace Subliminal
 {
     public class DerivedLog<TEntry> : ILog<TEntry>
     {
-        private readonly IObservable<TEntry> _entries;
-
         private DerivedLog(IObservable<TEntry> entries)
         {
-            _entries = entries;
+            Entries = entries;
             LogId = Guid.NewGuid();
+        }
+
+        public static DerivedLog<TEntry> FromObservable(IObservable<TEntry> entries)
+        {
+            // Publish the observable to ensure that all future subscribers to
+            // the log receive the same entries.
+            var publishedEntries = entries.Publish();
+            // Connect to the published observable to start emitting entries
+            // from the underlying source immediately.
+            publishedEntries.Connect();
+            return new DerivedLog<TEntry>(publishedEntries);
         }
 
         public Guid LogId { get; }
 
-        public static DerivedLog<TEntry> FromObservable(IObservable<TEntry> observable)
-        {
-            return new DerivedLog<TEntry>(observable.Publish().AutoConnect());
-        }
-
-        public IDisposable Subscribe(IObserver<TEntry> observer)
-        {
-            return _entries.Subscribe(observer);
-        }
+        public IObservable<TEntry> Entries { get; }
     }
 }

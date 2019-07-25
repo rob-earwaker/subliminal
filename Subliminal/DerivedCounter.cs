@@ -12,16 +12,16 @@ namespace Subliminal
             _incrementLog = incrementLog;
         }
 
-        public static DerivedCounter FromObservable(IObservable<long> observable)
+        public static DerivedCounter FromObservable(IObservable<long> increments)
         {
-            return new DerivedCounter(observable.Where(increment => increment > 0L).AsLog());
+            return new DerivedCounter(increments.Where(increment => increment > 0L).AsLog());
         }
 
         public Guid CounterId => _incrementLog.LogId;
 
         public IDisposable Subscribe(IObserver<long> observer)
         {
-            return _incrementLog.Subscribe(observer);
+            return _incrementLog.Entries.Subscribe(observer);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Subliminal
         public Counter()
         {
             _incrementLog = new Log<long>();
-            _derivedCounter = _incrementLog.AsCounter();
+            _derivedCounter = _incrementLog.Entries.AsCounter();
         }
 
         public void Increment()

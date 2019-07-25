@@ -14,16 +14,13 @@ namespace Subliminal
             _derivedLog = _logSubject.AsLog();
         }
 
+        public Guid LogId => _derivedLog.LogId;
+
+        public IObservable<TEntry> Entries => _derivedLog.Entries;
+
         public void Append(TEntry value)
         {
             _logSubject.OnNext(value);
-        }
-
-        public Guid LogId => _derivedLog.LogId;
-
-        public IDisposable Subscribe(IObserver<TEntry> observer)
-        {
-            return _derivedLog.Subscribe(observer);
         }
     }
 }

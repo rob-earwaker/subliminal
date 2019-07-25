@@ -10,7 +10,7 @@ namespace Subliminal
         public EventLog()
         {
             _eventLog = new Log<TEvent>();
-            _derivedEventLog = _eventLog.AsEventLog();
+            _derivedEventLog = _eventLog.Entries.AsEventLog();
         }
 
         public void Log(TEvent @event)

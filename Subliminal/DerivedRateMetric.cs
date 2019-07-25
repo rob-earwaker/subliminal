@@ -14,17 +14,17 @@ namespace Subliminal
             _rateMetric = rateMetric;
         }
 
-        public static DerivedRateMetric FromObservable(IObservable<long> observable)
+        public static DerivedRateMetric FromObservable(IObservable<long> counts)
         {
-            return new DerivedRateMetric(observable
+            return new DerivedRateMetric(counts
                 .TimeInterval()
                 .Select(count => new Rate(count.Value, count.Interval))
                 .AsMetric());
         }
 
-        public static DerivedRateMetric FromObservable(IObservable<IEnumerable<long>> observable)
+        public static DerivedRateMetric FromObservable(IObservable<IEnumerable<long>> aggregatedCounts)
         {
-            return FromObservable(observable.Select(counts => counts.Sum()));
+            return FromObservable(aggregatedCounts.Select(counts => counts.Sum()));
         }
 
         public Guid MetricId => _rateMetric.MetricId;

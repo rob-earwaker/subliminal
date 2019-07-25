@@ -12,18 +12,18 @@ namespace Subliminal
             _eventLog = eventLog;
         }
 
-        public static DerivedEventLog<TEvent> FromObservable(IObservable<TEvent> observable)
+        public static DerivedEventLog<TEvent> FromObservable(IObservable<TEvent> events)
         {
-            return new DerivedEventLog<TEvent>(observable.AsLog());
+            return new DerivedEventLog<TEvent>(events.AsLog());
         }
 
         public Guid EventLogId => _eventLog.LogId;
 
-        public ICounter EventCounter => _eventLog.Select(_ => 1L).AsCounter();
+        public ICounter EventCounter => _eventLog.Entries.Select(_ => 1L).AsCounter();
 
         public IDisposable Subscribe(IObserver<TEvent> observer)
         {
-            return _eventLog.Subscribe(observer);
+            return _eventLog.Entries.Subscribe(observer);
         }
     }
 }

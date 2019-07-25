@@ -13,9 +13,9 @@ namespace Subliminal
             EventId = Guid.NewGuid();
         }
 
-        public static DerivedEvent<TEvent> FromObservable(IObservable<TEvent> observable)
+        public static DerivedEvent<TEvent> FromObservable(IObservable<TEvent> events)
         {
-            return new DerivedEvent<TEvent>(observable.Take(1));
+            return new DerivedEvent<TEvent>(events.Take(1));
         }
 
         public Guid EventId { get; }
