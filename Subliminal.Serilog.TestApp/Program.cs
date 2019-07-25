@@ -72,7 +72,7 @@ namespace Subliminal.Serilog.TestApp
                         .ForContext("SampleInterval", averageValue.Interval)
                         .Information("Average {MetricName} value was {AverageValue} over the last {SampleInterval}"));
 
-            dataStore.BytesReadCounter
+            dataStore.BytesReadCounter.Increments
                 .Buffer(TimeSpan.FromSeconds(5))
                 .AsRateMetric()
                 .Subscribe(rate =>

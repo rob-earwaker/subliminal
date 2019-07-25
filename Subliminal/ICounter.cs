@@ -2,8 +2,9 @@
 
 namespace Subliminal
 {
-    public interface ICounter : IObservable<long>
+    public interface ICounter
     {
         Guid CounterId { get; }
+        IObservable<long> Increments { get; }
     }
 }

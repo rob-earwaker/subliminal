@@ -19,9 +19,6 @@ namespace Subliminal
 
         public Guid CounterId => _incrementLog.LogId;
 
-        public IDisposable Subscribe(IObserver<long> observer)
-        {
-            return _incrementLog.Entries.Subscribe(observer);
-        }
+        public IObservable<long> Increments => _incrementLog.Entries;
     }
 }

@@ -13,6 +13,10 @@ namespace Subliminal
             _derivedCounter = _incrementLog.Entries.AsCounter();
         }
 
+        public Guid CounterId => _derivedCounter.CounterId;
+
+        public IObservable<long> Increments => _derivedCounter.Increments;
+
         public void Increment()
         {
             IncrementBy(1L);
@@ -24,13 +28,6 @@ namespace Subliminal
                 return;
 
             _incrementLog.Append(increment);
-        }
-
-        public Guid CounterId => _derivedCounter.CounterId;
-
-        public IDisposable Subscribe(IObserver<long> observer)
-        {
-            return _derivedCounter.Subscribe(observer);
         }
     }
 }
