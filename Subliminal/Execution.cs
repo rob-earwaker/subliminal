@@ -1,50 +1,55 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reactive.Linq;
 
 namespace Subliminal
 {
     public class Execution : IDisposable
     {
-        private readonly RunningTimer _runningTimer;
-        private bool _canceled;
+        private readonly Stopwatch _stopwatch;
+        private readonly Event<OperationEnded> _ended;
+        private bool _hasEnded;
+        private bool _wasCanceled;
 
         public Execution(Guid operationId)
         {
             OperationId = operationId;
             ExecutionId = Guid.NewGuid();
 
-            _runningTimer = new RunningTimer();
-            _canceled = false;
+            _stopwatch = Stopwatch.StartNew();
+            _ended = new Event<OperationEnded>();
+            _hasEnded = false;
+            _wasCanceled = false;
 
         }
 
         public Guid OperationId { get; }
         public Guid ExecutionId { get; }
 
-        public IEvent<OperationEnded> Ended
-        {
-            get
-            {
-                return _runningTimer.Ended
-                    .Select(timerEnded => new OperationEnded(OperationId, ExecutionId, timerEnded.Duration, _canceled))
-                    .AsEvent();
-            }
-        }
+        public IEvent<OperationEnded> Ended => _ended;
 
         public void Cancel()
         {
-            _canceled = true;
+            _wasCanceled = true;
+
             End();
         }
 
         public void End()
         {
-            _runningTimer.End();
+            if (_hasEnded)
+                return;
+
+            _stopwatch.Stop();
+
+            _ended.Raise(new OperationEnded(OperationId, ExecutionId, _stopwatch.Elapsed, _wasCanceled));
+
+            _hasEnded = true;
         }
 
         public void Dispose()
         {
-            _runningTimer.Dispose();
+            End();
         }
     }
 }

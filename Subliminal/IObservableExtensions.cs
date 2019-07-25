@@ -41,11 +41,6 @@ namespace Subliminal
             return DerivedCounter.FromObservable(observable);
         }
 
-        public static ITimer AsTimer(this IObservable<TimeSpan> observable)
-        {
-            return DerivedTimer.FromObservable(observable);
-        }
-
         public static IObservable<IList<TSource>> Buffer<TSource>(this IObservable<TSource> source, IOperation operation)
         {
             return source.Buffer(operation.Started.Events, operationStarted => operationStarted.Ended);

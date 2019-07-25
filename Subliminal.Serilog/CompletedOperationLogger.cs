@@ -20,6 +20,7 @@ namespace Subliminal.Serilog
         public void OnNext(OperationCompleted completed)
         {
             _logger.ForContext("OperationId", completed.OperationId)
+                .ForContext("ExecutionId", completed.ExecutionId)
                 .ForContext("DurationSeconds", completed.Duration.TotalSeconds)
                 .Write(_level, _messageTemplate);
         }

@@ -43,7 +43,7 @@ namespace Subliminal.Serilog.TestApp
                 .Subscribe(new CompletedOperationLogger(
                     dataStoreLogger.ForContext("OperationName", "ReadRandomBytes"),
                     LogEventLevel.Information,
-                    "{OperationName} operation {OperationId} completed in {DurationSeconds}s"));
+                    "{OperationName} operation {ExecutionId} completed in {DurationSeconds}s"));
 
             dataStore.ReadRandomByteOperation.Completed.Events
                 .Buffer(TimeSpan.FromSeconds(10))
