@@ -37,7 +37,7 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage
+                return ThreadPoolUsage.Values
                     .Select(threadPoolUsage => threadPoolUsage.MinWorkerThreads)
                     .AsMetric();
             }
@@ -47,7 +47,7 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage
+                return ThreadPoolUsage.Values
                     .Select(threadPoolUsage => threadPoolUsage.MinCompletionPortThreads)
                     .AsMetric();
             }
@@ -57,7 +57,7 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage
+                return ThreadPoolUsage.Values
                     .Select(threadPoolUsage => threadPoolUsage.MaxWorkerThreads)
                     .AsMetric();
             }
@@ -67,7 +67,7 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage
+                return ThreadPoolUsage.Values
                     .Select(threadPoolUsage => threadPoolUsage.MaxCompletionPortThreads)
                     .AsMetric();
             }
@@ -77,7 +77,7 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage
+                return ThreadPoolUsage.Values
                     .Select(threadPoolUsage => threadPoolUsage.AvailableWorkerThreads)
                     .AsMetric();
             }
@@ -87,7 +87,7 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage
+                return ThreadPoolUsage.Values
                     .Select(threadPoolUsage => threadPoolUsage.AvailableCompletionPortThreads)
                     .AsMetric();
             }
@@ -97,7 +97,7 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage
+                return ThreadPoolUsage.Values
                     .Select(threadPoolUsage => threadPoolUsage.ActiveWorkerThreads)
                     .AsMetric();
             }
@@ -107,7 +107,7 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage
+                return ThreadPoolUsage.Values
                     .Select(threadPoolUsage => threadPoolUsage.ActiveCompletionPortThreads)
                     .AsMetric();
             }

@@ -23,9 +23,6 @@ namespace Subliminal
 
         public Guid MetricId => _valueLog.LogId;
 
-        public IDisposable Subscribe(IObserver<TValue> observer)
-        {
-            return _valueLog.Entries.Subscribe(observer);
-        }
+        public IObservable<TValue> Values => _valueLog.Entries;
     }
 }

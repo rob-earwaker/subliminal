@@ -2,8 +2,9 @@
 
 namespace Subliminal
 {
-    public interface IMetric<TValue> : IObservable<TValue>
+    public interface IMetric<TValue>
     {
         Guid MetricId { get; }
+        IObservable<TValue> Values { get; }
     }
 }

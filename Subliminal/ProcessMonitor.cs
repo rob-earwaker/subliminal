@@ -49,16 +49,16 @@ namespace Subliminal
         public IMetric<Process> Process { get; }
         public IEvent<ProcessExited> Exited { get; }
 
-        public IMetric<ByteCount> PrivateMemorySize => Process.Select(process => process.PrivateMemorySize).AsMetric();
-        public IMetric<TimeSpan> TotalProcessorTime => Process.Select(process => process.TotalProcessorTime).AsMetric();
-        public IMetric<ByteCount> VirtualMemorySize => Process.Select(process => process.VirtualMemorySize).AsMetric();
-        public IMetric<ByteCount> WorkingSet => Process.Select(process => process.WorkingSet).AsMetric();
+        public IMetric<ByteCount> PrivateMemorySize => Process.Values.Select(process => process.PrivateMemorySize).AsMetric();
+        public IMetric<TimeSpan> TotalProcessorTime => Process.Values.Select(process => process.TotalProcessorTime).AsMetric();
+        public IMetric<ByteCount> VirtualMemorySize => Process.Values.Select(process => process.VirtualMemorySize).AsMetric();
+        public IMetric<ByteCount> WorkingSet => Process.Values.Select(process => process.WorkingSet).AsMetric();
 
         public IMetric<ProcessorUsage> ProcessorUsage
         {
             get
             {
-                return Process
+                return Process.Values
                     .TimeInterval()
                     .Buffer(count: 2, skip: 1)
                     .Select(buffer => new ProcessorUsage(

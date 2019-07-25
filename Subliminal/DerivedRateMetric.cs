@@ -29,9 +29,6 @@ namespace Subliminal
 
         public Guid MetricId => _rateMetric.MetricId;
 
-        public IDisposable Subscribe(IObserver<Rate> observer)
-        {
-            return _rateMetric.Subscribe(observer);
-        }
+        public IObservable<Rate> Values => _rateMetric.Values;
     }
 }

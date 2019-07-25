@@ -13,16 +13,13 @@ namespace Subliminal
             _derivedMetric = _valueLog.Entries.AsMetric();
         }
 
+        public Guid MetricId => _derivedMetric.MetricId;
+
+        public IObservable<TValue> Values => _derivedMetric.Values;
+
         public void RecordValue(TValue value)
         {
             _valueLog.Append(value);
-        }
-
-        public Guid MetricId => _derivedMetric.MetricId;
-
-        public IDisposable Subscribe(IObserver<TValue> observer)
-        {
-            return _derivedMetric.Subscribe(observer);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Subliminal.Serilog.TestApp
 
             var currentProcessMonitor = ProcessMonitor.ForCurrentProcess(TimeSpan.FromSeconds(5));
 
-            currentProcessMonitor.ProcessorUsage
+            currentProcessMonitor.ProcessorUsage.Values
                 .Subscribe(processorUsage =>
                     Log.Information(
                         "CPU usage over the last {Interval} was {Percentage}%",
@@ -31,7 +31,7 @@ namespace Subliminal.Serilog.TestApp
 
             var threadPoolMonitor = ThreadPoolMonitor.ForManagedThreadPool(TimeSpan.FromSeconds(5));
 
-            threadPoolMonitor.ActiveWorkerThreads
+            threadPoolMonitor.ActiveWorkerThreads.Values
                 .Subscribe(activeWorkerThreads =>
                     Log.Information("Active worker thread count is {ActiveWorkerThreads}", activeWorkerThreads));
 
@@ -61,7 +61,7 @@ namespace Subliminal.Serilog.TestApp
                     LogEventLevel.Information,
                     "Average time taken to complete {OperationName} operations was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
 
-            dataStore.RandomMetric
+            dataStore.RandomMetric.Values
                 .Buffer(100)
                 .Select(values => values.Average())
                 .TimeInterval()
@@ -74,7 +74,7 @@ namespace Subliminal.Serilog.TestApp
 
             dataStore.BytesReadCounter.Increments
                 .Buffer(TimeSpan.FromSeconds(5))
-                .AsRateMetric()
+                .AsRateMetric().Values
                 .Subscribe(rate =>
                     dataStoreLogger
                         .ForContext("ByteRate", rate.CountPerSecond)
