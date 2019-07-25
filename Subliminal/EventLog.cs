@@ -13,18 +13,15 @@ namespace Subliminal
             _derivedEventLog = _eventLog.Entries.AsEventLog();
         }
 
-        public void Log(TEvent @event)
-        {
-            _eventLog.Append(@event);
-        }
-
         public Guid EventLogId => _derivedEventLog.EventLogId;
+
+        public IObservable<TEvent> Events => _derivedEventLog.Events;
 
         public ICounter EventCounter => _derivedEventLog.EventCounter;
 
-        public IDisposable Subscribe(IObserver<TEvent> observer)
+        public void Log(TEvent @event)
         {
-            return _derivedEventLog.Subscribe(observer);
+            _eventLog.Append(@event);
         }
     }
 }

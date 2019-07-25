@@ -12,7 +12,7 @@ namespace Subliminal
         public Timer()
         {
             _timerStarted = new EventLog<TimerStarted>();
-            _derivedTimer = _timerStarted
+            _derivedTimer = _timerStarted.Events
                 .SelectMany(timerStarted => timerStarted.Ended)
                 .Select(timerEnded => timerEnded.Duration)
                 .AsTimer();

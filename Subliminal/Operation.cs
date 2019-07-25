@@ -24,17 +24,17 @@ namespace Subliminal
 
         public IEventLog<OperationEnded> Ended
         {
-            get { return Started.SelectMany(operationStarted => operationStarted.Ended).AsEventLog(); }
+            get { return Started.Events.SelectMany(operationStarted => operationStarted.Ended).AsEventLog(); }
         }
 
         public IEventLog<OperationCompleted> Completed
         {
-            get { return Started.SelectMany(operationStarted => operationStarted.Completed).AsEventLog(); }
+            get { return Started.Events.SelectMany(operationStarted => operationStarted.Completed).AsEventLog(); }
         }
 
         public IEventLog<OperationCanceled> Canceled
         {
-            get { return Started.SelectMany(operationStarted => operationStarted.Canceled).AsEventLog(); }
+            get { return Started.Events.SelectMany(operationStarted => operationStarted.Canceled).AsEventLog(); }
         }
 
         public void Execute(Action<RunningOperation> operation)
