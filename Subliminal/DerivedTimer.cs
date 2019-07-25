@@ -18,9 +18,6 @@ namespace Subliminal
 
         public Guid TimerId => _durationLog.LogId;
 
-        public IDisposable Subscribe(IObserver<TimeSpan> observer)
-        {
-            return _durationLog.Entries.Subscribe(observer);
-        }
+        public IObservable<TimeSpan> Durations => _durationLog.Entries;
     }
 }

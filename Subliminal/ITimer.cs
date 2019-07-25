@@ -2,8 +2,9 @@
 
 namespace Subliminal
 {
-    public interface ITimer : IObservable<TimeSpan>
+    public interface ITimer
     {
         Guid TimerId { get; }
+        IObservable<TimeSpan> Durations { get; }
     }
 }

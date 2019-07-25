@@ -18,18 +18,15 @@ namespace Subliminal
                 .AsTimer();
         }
 
+        public Guid TimerId => _derivedTimer.TimerId;
+
+        public IObservable<TimeSpan> Durations => _derivedTimer.Durations;
+
         public RunningTimer StartNew()
         {
             var runningTimer = new RunningTimer();
             _timerStarted.Log(new TimerStarted(runningTimer.Ended));
             return runningTimer;
-        }
-
-        public Guid TimerId => _derivedTimer.TimerId;
-
-        public IDisposable Subscribe(IObserver<TimeSpan> observer)
-        {
-            return _derivedTimer.Subscribe(observer);
         }
 
         public void Time(Action<RunningTimer> operation)
