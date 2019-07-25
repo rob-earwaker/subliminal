@@ -3,27 +3,30 @@ using System.Reactive.Linq;
 
 namespace Subliminal
 {
-    public class RunningOperation : IDisposable
+    public class Execution : IDisposable
     {
         private readonly RunningTimer _runningTimer;
         private bool _canceled;
 
-        public RunningOperation()
+        public Execution(Guid operationId)
         {
+            OperationId = operationId;
+            ExecutionId = Guid.NewGuid();
+
             _runningTimer = new RunningTimer();
             _canceled = false;
 
-            OperationId = Guid.NewGuid();
         }
 
         public Guid OperationId { get; }
+        public Guid ExecutionId { get; }
 
         public IEvent<OperationEnded> Ended
         {
             get
             {
                 return _runningTimer.Ended
-                    .Select(timerEnded => new OperationEnded(OperationId, timerEnded.Duration, _canceled))
+                    .Select(timerEnded => new OperationEnded(OperationId, ExecutionId, timerEnded.Duration, _canceled))
                     .AsEvent();
             }
         }

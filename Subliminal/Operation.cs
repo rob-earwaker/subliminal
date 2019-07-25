@@ -10,14 +10,17 @@ namespace Subliminal
 
         public Operation()
         {
+            OperationId = Guid.NewGuid();
             _started = new EventLog<OperationStarted>();
         }
 
-        public RunningOperation StartNew()
+        public Guid OperationId { get; }
+
+        public Execution StartNew()
         {
-            var runningOperation = new RunningOperation();
-            _started.Log(new OperationStarted(runningOperation.OperationId, runningOperation.Ended));
-            return runningOperation;
+            var execution = new Execution(OperationId);
+            _started.Log(new OperationStarted(execution.OperationId, execution.ExecutionId, execution.Ended));
+            return execution;
         }
 
         public IEventLog<OperationStarted> Started => _started;
@@ -37,11 +40,11 @@ namespace Subliminal
             get { return Started.Events.SelectMany(operationStarted => operationStarted.Canceled).AsEventLog(); }
         }
 
-        public void Execute(Action<RunningOperation> operation)
+        public void Execute(Action<Execution> operation)
         {
-            using (var runningOperation = StartNew())
+            using (var execution = StartNew())
             {
-                operation(runningOperation);
+                operation(execution);
             }
         }
 
@@ -50,11 +53,11 @@ namespace Subliminal
             Execute(_ => operation());
         }
 
-        public TResult Execute<TResult>(Func<RunningOperation, TResult> operation)
+        public TResult Execute<TResult>(Func<Execution, TResult> operation)
         {
-            using (var runningOperation = StartNew())
+            using (var execution = StartNew())
             {
-                return operation(runningOperation);
+                return operation(execution);
             }
         }
 
@@ -63,11 +66,11 @@ namespace Subliminal
             return Execute(_ => operation());
         }
 
-        public async Task ExecuteAsync(Func<RunningOperation, Task> operation)
+        public async Task ExecuteAsync(Func<Execution, Task> operation)
         {
-            using (var runningOperation = StartNew())
+            using (var execution = StartNew())
             {
-                await operation(runningOperation);
+                await operation(execution);
             }
         }
 
@@ -76,11 +79,11 @@ namespace Subliminal
             return ExecuteAsync(_ => operation());
         }
 
-        public async Task<TResult> ExecuteAsync<TResult>(Func<RunningOperation, Task<TResult>> operation)
+        public async Task<TResult> ExecuteAsync<TResult>(Func<Execution, Task<TResult>> operation)
         {
-            using (var runningOperation = StartNew())
+            using (var execution = StartNew())
             {
-                return await operation(runningOperation);
+                return await operation(execution);
             }
         }
 
