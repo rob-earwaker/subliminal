@@ -3,13 +3,13 @@ using System.Diagnostics;
 
 namespace Subliminal
 {
-    public class Execution : IDisposable
+    public class ExecutionTimer : IDisposable
     {
         private readonly Stopwatch _stopwatch;
         private readonly Event<OperationEnded> _ended;
         private bool _hasEnded;
 
-        public Execution(Guid operationId)
+        public ExecutionTimer(Guid operationId)
         {
             OperationId = operationId;
             ExecutionId = Guid.NewGuid();
@@ -17,7 +17,6 @@ namespace Subliminal
             _stopwatch = Stopwatch.StartNew();
             _ended = new Event<OperationEnded>();
             _hasEnded = false;
-
         }
 
         public Guid OperationId { get; }
@@ -27,6 +26,16 @@ namespace Subliminal
         public void Dispose()
         {
             Complete();
+        }
+
+        public void Pause()
+        {
+            _stopwatch.Stop();
+        }
+
+        public void Resume()
+        {
+            _stopwatch.Start();
         }
 
         public void Complete()

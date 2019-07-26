@@ -16,11 +16,11 @@ namespace Subliminal
 
         public Guid OperationId { get; }
 
-        public Execution StartNew()
+        public ExecutionTimer StartNew()
         {
-            var execution = new Execution(OperationId);
-            _started.Log(new OperationStarted(execution.OperationId, execution.ExecutionId, execution.Ended));
-            return execution;
+            var executionTimer = new ExecutionTimer(OperationId);
+            _started.Log(new OperationStarted(executionTimer.OperationId, executionTimer.ExecutionId, executionTimer.Ended));
+            return executionTimer;
         }
 
         public IEventLog<OperationStarted> Started => _started;
@@ -40,11 +40,11 @@ namespace Subliminal
             get { return Started.Events.SelectMany(operationStarted => operationStarted.Canceled).AsEventLog(); }
         }
 
-        public void Execute(Action<Execution> operation)
+        public void Execute(Action<ExecutionTimer> operation)
         {
-            using (var execution = StartNew())
+            using (var executionTimer = StartNew())
             {
-                operation(execution);
+                operation(executionTimer);
             }
         }
 
@@ -53,11 +53,11 @@ namespace Subliminal
             Execute(_ => operation());
         }
 
-        public TResult Execute<TResult>(Func<Execution, TResult> operation)
+        public TResult Execute<TResult>(Func<ExecutionTimer, TResult> operation)
         {
-            using (var execution = StartNew())
+            using (var executionTimer = StartNew())
             {
-                return operation(execution);
+                return operation(executionTimer);
             }
         }
 
@@ -66,11 +66,11 @@ namespace Subliminal
             return Execute(_ => operation());
         }
 
-        public async Task ExecuteAsync(Func<Execution, Task> operation)
+        public async Task ExecuteAsync(Func<ExecutionTimer, Task> operation)
         {
-            using (var execution = StartNew())
+            using (var executionTimer = StartNew())
             {
-                await operation(execution);
+                await operation(executionTimer);
             }
         }
 
@@ -79,11 +79,11 @@ namespace Subliminal
             return ExecuteAsync(_ => operation());
         }
 
-        public async Task<TResult> ExecuteAsync<TResult>(Func<Execution, Task<TResult>> operation)
+        public async Task<TResult> ExecuteAsync<TResult>(Func<ExecutionTimer, Task<TResult>> operation)
         {
-            using (var execution = StartNew())
+            using (var executionTimer = StartNew())
             {
-                return await operation(execution);
+                return await operation(executionTimer);
             }
         }
 
