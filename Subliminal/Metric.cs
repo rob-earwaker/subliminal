@@ -14,7 +14,6 @@ namespace Subliminal
         }
 
         public Guid MetricId => _derivedMetric.MetricId;
-
         public IObservable<TValue> Values => _derivedMetric.Values;
 
         public void RecordValue(TValue value)

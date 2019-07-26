@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
 namespace Subliminal
@@ -11,7 +12,7 @@ namespace Subliminal
         public Event()
         {
             _eventSubject = new Subject<TEvent>();
-            _derivedEvent = _eventSubject.AsEvent();
+            _derivedEvent = _eventSubject.AsObservable().AsEvent();
         }
 
         public void Raise(TEvent @event)

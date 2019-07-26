@@ -22,7 +22,6 @@ namespace Subliminal
         }
 
         public Guid MetricId => _valueLog.LogId;
-
         public IObservable<TValue> Values => _valueLog.Entries;
     }
 }

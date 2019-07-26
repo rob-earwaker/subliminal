@@ -18,7 +18,11 @@ namespace Subliminal
         }
 
         public Guid CounterId => _incrementLog.LogId;
-
         public IObservable<long> Increments => _incrementLog.Entries;
+
+        public IObservable<RateOfChange> RateOfChange
+        {
+            get { return Increments.TimeInterval().Select(Subliminal.RateOfChange.FromTimeInterval); }
+        }
     }
 }

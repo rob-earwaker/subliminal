@@ -23,7 +23,6 @@ namespace Subliminal
         }
 
         public Guid LogId { get; }
-
         public IObservable<TEntry> Entries { get; }
     }
 }

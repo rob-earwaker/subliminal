@@ -72,18 +72,18 @@ namespace Subliminal.Serilog.TestApp
                         .ForContext("SampleInterval", averageValue.Interval)
                         .Information("Average {MetricName} value was {AverageValue} over the last {SampleInterval}"));
 
-            dataStore.BytesReadCounter.Increments
+            dataStore.BytesReadCounter.RateOfChange
                 .Buffer(TimeSpan.FromSeconds(5))
-                .AsRateMetric().Values
-                .Subscribe(rate =>
+                .Select(ratesOfChange => ratesOfChange.Average())
+                .Subscribe(rateOfChange =>
                     dataStoreLogger
-                        .ForContext("ByteRate", rate.CountPerSecond)
-                        .ForContext("RateInterval", rate.Interval)
+                        .ForContext("ByteRate", rateOfChange.DeltaPerSecond)
+                        .ForContext("RateInterval", rateOfChange.Interval)
                         .Information("Read speed was {ByteRate}B/s over the last {RateInterval}"));
 
             while (true)
             {
-                var buffer = await dataStore.ReadRandomBytesAsync(32).ConfigureAwait(false);
+                var buffer = await dataStore.ReadRandomBytesAsync(1024).ConfigureAwait(false);
                 Log.Information("Read random bytes from data store: {Base64Bytes}", Convert.ToBase64String(buffer));
             }
         }

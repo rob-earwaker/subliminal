@@ -14,8 +14,8 @@ namespace Subliminal
         }
 
         public Guid CounterId => _derivedCounter.CounterId;
-
         public IObservable<long> Increments => _derivedCounter.Increments;
+        public IObservable<RateOfChange> RateOfChange => _derivedCounter.RateOfChange;
 
         public void Increment()
         {

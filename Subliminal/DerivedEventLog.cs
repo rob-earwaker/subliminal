@@ -18,9 +18,7 @@ namespace Subliminal
         }
 
         public Guid EventLogId => _eventLog.LogId;
-
         public IObservable<TEvent> Events => _eventLog.Entries;
-
         public ICounter EventCounter => _eventLog.Entries.Select(_ => 1L).AsCounter();
     }
 }

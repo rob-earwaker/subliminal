@@ -14,9 +14,7 @@ namespace Subliminal
         }
 
         public Guid EventLogId => _derivedEventLog.EventLogId;
-
         public IObservable<TEvent> Events => _derivedEventLog.Events;
-
         public ICounter EventCounter => _derivedEventLog.EventCounter;
 
         public void Log(TEvent @event)

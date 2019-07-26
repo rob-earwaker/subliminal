@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
 namespace Subliminal
@@ -11,7 +12,7 @@ namespace Subliminal
         public Log()
         {
             _logSubject = new Subject<TEntry>();
-            _derivedLog = _logSubject.AsLog();
+            _derivedLog = _logSubject.AsObservable().AsLog();
         }
 
         public Guid LogId => _derivedLog.LogId;

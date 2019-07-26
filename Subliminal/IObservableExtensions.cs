@@ -16,16 +16,6 @@ namespace Subliminal
             return DerivedMetric<TValue>.FromObservable(observable);
         }
 
-        public static IMetric<Rate> AsRateMetric(this IObservable<long> observable)
-        {
-            return DerivedRateMetric.FromObservable(observable);
-        }
-
-        public static IMetric<Rate> AsRateMetric(this IObservable<IEnumerable<long>> observable)
-        {
-            return DerivedRateMetric.FromObservable(observable);
-        }
-
         public static IEventLog<TEvent> AsEventLog<TEvent>(this IObservable<TEvent> observable)
         {
             return DerivedEventLog<TEvent>.FromObservable(observable);
