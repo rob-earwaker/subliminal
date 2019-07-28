@@ -6,29 +6,29 @@ namespace Subliminal
 {
     public static class IObservableExtensions
     {
-        public static ILog<TEntry> AsLog<TEntry>(this IObservable<TEntry> observable)
+        public static ILog<TValue> AsLog<TValue>(this IObservable<TValue> values)
         {
-            return DerivedLog<TEntry>.FromObservable(observable);
+            return DerivedLog<TValue>.FromValues(values);
         }
 
-        public static IMetric<TValue> AsMetric<TValue>(this IObservable<TValue> observable)
+        public static IGauge<TValue> AsGauge<TValue>(this IObservable<TValue> values)
         {
-            return DerivedMetric<TValue>.FromObservable(observable);
+            return DerivedGauge<TValue>.FromObservable(values);
         }
 
-        public static IEventLog<TEvent> AsEventLog<TEvent>(this IObservable<TEvent> observable)
+        public static IEventLog<TContext> AsEventLog<TContext>(this IObservable<TContext> context)
         {
-            return DerivedEventLog<TEvent>.FromObservable(observable);
+            return DerivedEventLog<TContext>.FromObservable(context);
         }
 
-        public static IEvent<TEvent> AsEvent<TEvent>(this IObservable<TEvent> observable)
+        public static ITrigger<TEvent> AsEvent<TEvent>(this IObservable<TEvent> observable)
         {
-            return DerivedEvent<TEvent>.FromObservable(observable);
+            return DerivedTrigger<TEvent>.FromObservable(observable);
         }
 
-        public static ICounter AsCounter(this IObservable<long> observable)
+        public static ICounter AsCounter(this IObservable<long> increments)
         {
-            return DerivedCounter.FromObservable(observable);
+            return DerivedCounter.FromIncrements(increments);
         }
 
         public static IObservable<IList<TSource>> Buffer<TSource>(this IObservable<TSource> source, IOperation operation)

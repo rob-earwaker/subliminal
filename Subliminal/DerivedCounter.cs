@@ -5,24 +5,29 @@ namespace Subliminal
 {
     public class DerivedCounter : ICounter
     {
-        private readonly ILog<long> _incrementLog;
-
-        private DerivedCounter(ILog<long> incrementLog)
+        private DerivedCounter(Guid counterId, IObservable<CounterIncrement> incremented)
         {
-            _incrementLog = incrementLog;
+            CounterId = counterId;
+            Incremented = incremented;
         }
 
-        public static DerivedCounter FromObservable(IObservable<long> increments)
+        public static DerivedCounter FromLog(ILog<long> incrementLog)
         {
-            return new DerivedCounter(increments.Where(increment => increment > 0L).AsLog());
+            var counterId = Guid.NewGuid();
+
+            var incremented = incrementLog.EntryLogged
+                .Where(entry => entry.Value > 0L)
+                .Select(entry => new CounterIncrement(counterId, entry.Value, entry.Timestamp, entry.Interval));
+
+            return new DerivedCounter(counterId, incremented);
         }
 
-        public Guid CounterId => _incrementLog.LogId;
-        public IObservable<long> Increments => _incrementLog.Entries;
-
-        public IObservable<RateOfChange> RateOfChange
+        public static DerivedCounter FromIncrements(IObservable<long> increments)
         {
-            get { return Increments.TimeInterval().Select(Subliminal.RateOfChange.FromTimeInterval); }
+            return FromLog(increments.AsLog());
         }
+
+        public Guid CounterId { get; }
+        public IObservable<CounterIncrement> Incremented { get; }
     }
 }

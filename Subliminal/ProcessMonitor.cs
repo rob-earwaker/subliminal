@@ -5,10 +5,23 @@ namespace Subliminal
 {
     public class ProcessMonitor
     {
-        private ProcessMonitor(IMetric<Process> process, IEvent<ProcessExited> exited)
+        private ProcessMonitor(IGauge<Process> process, ITrigger<ProcessExited> exited)
         {
             Process = process;
             Exited = exited;
+
+            PrivateMemorySize = process.Sampled.Select(processSample => processSample.Value.PrivateMemorySize).AsGauge();
+            TotalProcessorTime = process.Sampled.Select(processSample => processSample.Value.TotalProcessorTime).AsGauge();
+            VirtualMemorySize = process.Sampled.Select(processSample => processSample.Value.VirtualMemorySize).AsGauge();
+            WorkingSet = process.Sampled.Select(processSample => processSample.Value.WorkingSet).AsGauge();
+
+            CpuUsage = process.Sampled
+                .Buffer(count: 2, skip: 1)
+                .Select(buffer => new ProcessorUsage(
+                    timeUsed: buffer[1].Value.TotalProcessorTime - buffer[0].Value.TotalProcessorTime,
+                    maxTimeAvailablePerProcessor: buffer[1].Interval,
+                    processorCount: Environment.ProcessorCount))
+                .AsGauge();
         }
 
         public static ProcessMonitor ForProcess(System.Diagnostics.Process process, TimeSpan samplingInterval)
@@ -20,7 +33,7 @@ namespace Subliminal
                     .Timer(DateTimeOffset.UtcNow, samplingInterval)
                     .TakeWhile(_ => !process.HasExited)
                     .Select(_ => GetProcessSnapshot(process))
-                    .AsMetric(),
+                    .AsGauge(),
                 exited: Observable
                     .FromEventPattern(
                         eventHandler => process.Exited += eventHandler,
@@ -46,27 +59,12 @@ namespace Subliminal
                 virtualMemorySize: new ByteCount(process.VirtualMemorySize64));
         }
 
-        public IMetric<Process> Process { get; }
-        public IEvent<ProcessExited> Exited { get; }
-
-        public IMetric<ByteCount> PrivateMemorySize => Process.Values.Select(process => process.PrivateMemorySize).AsMetric();
-        public IMetric<TimeSpan> TotalProcessorTime => Process.Values.Select(process => process.TotalProcessorTime).AsMetric();
-        public IMetric<ByteCount> VirtualMemorySize => Process.Values.Select(process => process.VirtualMemorySize).AsMetric();
-        public IMetric<ByteCount> WorkingSet => Process.Values.Select(process => process.WorkingSet).AsMetric();
-
-        public IMetric<ProcessorUsage> ProcessorUsage
-        {
-            get
-            {
-                return Process.Values
-                    .TimeInterval()
-                    .Buffer(count: 2, skip: 1)
-                    .Select(buffer => new ProcessorUsage(
-                        processorTime: buffer[1].Value.TotalProcessorTime - buffer[0].Value.TotalProcessorTime,
-                        interval: buffer[1].Interval,
-                        processorCount: Environment.ProcessorCount))
-                    .AsMetric();
-            }
-        }
+        public IGauge<Process> Process { get; }
+        public ITrigger<ProcessExited> Exited { get; }
+        public IGauge<ByteCount> PrivateMemorySize { get; }
+        public IGauge<TimeSpan> TotalProcessorTime { get; }
+        public IGauge<ByteCount> VirtualMemorySize { get; }
+        public IGauge<ByteCount> WorkingSet { get; }
+        public IGauge<ProcessorUsage> CpuUsage { get; }
     }
 }

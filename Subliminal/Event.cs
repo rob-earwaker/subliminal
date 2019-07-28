@@ -1,31 +1,39 @@
 ﻿using System;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class Event<TEvent> : IEvent<TEvent>
+    public class Event
     {
-        private readonly Subject<TEvent> _eventSubject;
-        private readonly IEvent<TEvent> _derivedEvent;
-
-        public Event()
+        public Event(Guid eventLogId, DateTimeOffset timestamp, TimeSpan interval)
         {
-            _eventSubject = new Subject<TEvent>();
-            _derivedEvent = _eventSubject.AsObservable().AsEvent();
+            EventLogId = eventLogId;
+            Timestamp = timestamp;
+            Interval = interval;
         }
 
-        public void Raise(TEvent @event)
+        public static Event WithoutContext<TContext>(Event<TContext> @event)
         {
-            _eventSubject.OnNext(@event);
-            _eventSubject.OnCompleted();
+            return new Event(@event.EventLogId, @event.Timestamp, @event.Interval);
         }
 
-        public Guid EventId => _derivedEvent.EventId;
+        public Guid EventLogId { get; }
+        public DateTimeOffset Timestamp { get; }
+        public TimeSpan Interval { get; }
+    }
 
-        public IDisposable Subscribe(IObserver<TEvent> observer)
+    public class Event<TContext>
+    {
+        public Event(Guid eventLogId, TContext context, DateTimeOffset timestamp, TimeSpan interval)
         {
-            return _derivedEvent.Subscribe(observer);
+            EventLogId = eventLogId;
+            Context = context;
+            Timestamp = timestamp;
+            Interval = interval;
         }
+
+        public Guid EventLogId { get; }
+        public TContext Context { get; }
+        public DateTimeOffset Timestamp { get; }
+        public TimeSpan Interval { get; }
     }
 }

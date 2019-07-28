@@ -7,7 +7,7 @@ namespace Subliminal.Serilog.TestApp
     internal class DataStore
     {
         private readonly Random _random;
-        private readonly Metric<int> _randomMetric;
+        private readonly Gauge<int> _randomMetric;
         private readonly Counter _bytesReadCounter;
         private readonly Operation _readRandomBytesOperation;
         private readonly Operation _readRandomByteOperation;
@@ -15,13 +15,13 @@ namespace Subliminal.Serilog.TestApp
         public DataStore()
         {
             _random = new Random();
-            _randomMetric = new Metric<int>();
+            _randomMetric = new Gauge<int>();
             _bytesReadCounter = new Counter();
             _readRandomBytesOperation = new Operation();
             _readRandomByteOperation = new Operation();
         }
 
-        public IMetric<int> RandomMetric => _randomMetric;
+        public IGauge<int> RandomMetric => _randomMetric;
         public ICounter BytesReadCounter => _bytesReadCounter;
         public IOperation ReadRandomBytesOperation => _readRandomBytesOperation;
         public IOperation ReadRandomByteOperation => _readRandomByteOperation;

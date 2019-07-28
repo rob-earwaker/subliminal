@@ -10,12 +10,11 @@ namespace Subliminal
         public Counter()
         {
             _incrementLog = new Log<long>();
-            _derivedCounter = _incrementLog.Entries.AsCounter();
+            _derivedCounter = _incrementLog.AsCounter();
         }
 
         public Guid CounterId => _derivedCounter.CounterId;
-        public IObservable<long> Increments => _derivedCounter.Increments;
-        public IObservable<RateOfChange> RateOfChange => _derivedCounter.RateOfChange;
+        public IObservable<CounterIncrement> Incremented => _derivedCounter.Incremented;
 
         public void Increment()
         {

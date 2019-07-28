@@ -6,7 +6,7 @@ namespace Subliminal
 {
     public class ThreadPoolMonitor
     {
-        private ThreadPoolMonitor(IMetric<ThreadPoolUsage> threadPoolUsage)
+        private ThreadPoolMonitor(IGauge<ThreadPoolUsage> threadPoolUsage)
         {
             ThreadPoolUsage = threadPoolUsage;
         }
@@ -31,9 +31,9 @@ namespace Subliminal
                 availableWorkerThreads, availableCompletionPortThreads);
         }
 
-        public IMetric<ThreadPoolUsage> ThreadPoolUsage { get; }
+        public IGauge<ThreadPoolUsage> ThreadPoolUsage { get; }
 
-        public IMetric<int> MinWorkerThreads
+        public IGauge<int> MinWorkerThreads
         {
             get
             {
@@ -43,7 +43,7 @@ namespace Subliminal
             }
         }
 
-        public IMetric<int> MinCompletionPortThreads
+        public IGauge<int> MinCompletionPortThreads
         {
             get
             {
@@ -53,7 +53,7 @@ namespace Subliminal
             }
         }
 
-        public IMetric<int> MaxWorkerThreads
+        public IGauge<int> MaxWorkerThreads
         {
             get
             {
@@ -63,7 +63,7 @@ namespace Subliminal
             }
         }
 
-        public IMetric<int> MaxCompletionPortThreads
+        public IGauge<int> MaxCompletionPortThreads
         {
             get
             {
@@ -73,7 +73,7 @@ namespace Subliminal
             }
         }
 
-        public IMetric<int> AvailableWorkerThreads
+        public IGauge<int> AvailableWorkerThreads
         {
             get
             {
@@ -83,7 +83,7 @@ namespace Subliminal
             }
         }
 
-        public IMetric<int> AvailableCompletionPortThreads
+        public IGauge<int> AvailableCompletionPortThreads
         {
             get
             {
@@ -93,7 +93,7 @@ namespace Subliminal
             }
         }
 
-        public IMetric<int> ActiveWorkerThreads
+        public IGauge<int> ActiveWorkerThreads
         {
             get
             {
@@ -103,7 +103,7 @@ namespace Subliminal
             }
         }
 
-        public IMetric<int> ActiveCompletionPortThreads
+        public IGauge<int> ActiveCompletionPortThreads
         {
             get
             {

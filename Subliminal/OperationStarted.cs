@@ -5,7 +5,7 @@ namespace Subliminal
 {
     public class OperationStarted
     {
-        public OperationStarted(Guid operationId, Guid executionId, IEvent<OperationEnded> ended)
+        public OperationStarted(Guid operationId, Guid executionId, ITrigger<OperationEnded> ended)
         {
             OperationId = operationId;
             ExecutionId = executionId;
@@ -14,9 +14,9 @@ namespace Subliminal
 
         public Guid OperationId { get; }
         public Guid ExecutionId { get; }
-        public IEvent<OperationEnded> Ended { get; }
+        public ITrigger<OperationEnded> Ended { get; }
 
-        public IEvent<OperationCompleted> Completed
+        public ITrigger<OperationCompleted> Completed
         {
             get
             {
@@ -28,7 +28,7 @@ namespace Subliminal
             }
         }
 
-        public IEvent<OperationCanceled> Canceled
+        public ITrigger<OperationCanceled> Canceled
         {
             get
             {

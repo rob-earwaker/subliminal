@@ -6,7 +6,7 @@ namespace Subliminal
     public class ExecutionTimer : IDisposable
     {
         private readonly Stopwatch _stopwatch;
-        private readonly Event<OperationEnded> _ended;
+        private readonly Trigger<OperationEnded> _ended;
         private bool _hasEnded;
 
         public ExecutionTimer(Guid operationId)
@@ -15,15 +15,15 @@ namespace Subliminal
             ExecutionId = Guid.NewGuid();
 
             _stopwatch = Stopwatch.StartNew();
-            _ended = new Event<OperationEnded>();
+            _ended = new Trigger<OperationEnded>();
             _hasEnded = false;
         }
 
         public Guid OperationId { get; }
         public Guid ExecutionId { get; }
-        public IEvent<OperationEnded> Ended => _ended;
+        public ITrigger<OperationEnded> Ended => _ended;
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             Complete();
         }
