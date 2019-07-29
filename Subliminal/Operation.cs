@@ -19,7 +19,8 @@ namespace Subliminal
         public ExecutionTimer StartNew()
         {
             var executionTimer = new ExecutionTimer(OperationId);
-            _started.Log(new OperationStarted(executionTimer.OperationId, executionTimer.ExecutionId, executionTimer.Ended));
+            _started.LogOccurrence(
+                new OperationStarted(executionTimer.OperationId, executionTimer.ExecutionId, executionTimer.Ended));
             return executionTimer;
         }
 
@@ -27,17 +28,35 @@ namespace Subliminal
 
         public IEventLog<OperationEnded> Ended
         {
-            get { return Started.Events.SelectMany(operationStarted => operationStarted.Ended).AsEventLog(); }
+            get
+            {
+                return Started.EventLogged
+                    .SelectMany(operationStarted => operationStarted.Context.Ended.Activated)
+                    .Select(activatedTrigger => activatedTrigger.Context)
+                    .AsEventLog();
+            }
         }
 
         public IEventLog<OperationCompleted> Completed
         {
-            get { return Started.Events.SelectMany(operationStarted => operationStarted.Completed).AsEventLog(); }
+            get
+            {
+                return Started.EventLogged
+                    .SelectMany(operationStarted => operationStarted.Context.Completed.Activated)
+                    .Select(activatedTrigger => activatedTrigger.Context)
+                    .AsEventLog();
+            }
         }
 
         public IEventLog<OperationCanceled> Canceled
         {
-            get { return Started.Events.SelectMany(operationStarted => operationStarted.Canceled).AsEventLog(); }
+            get
+            {
+                return Started.EventLogged
+                    .SelectMany(operationStarted => operationStarted.Context.Canceled.Activated)
+                    .Select(activatedTrigger => activatedTrigger.Context)
+                    .AsEventLog();
+            }
         }
 
         public void Execute(Action<ExecutionTimer> operation)

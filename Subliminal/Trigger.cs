@@ -1,31 +1,26 @@
 ﻿using System;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class Trigger<TEvent> : ITrigger<TEvent>
+    public class Trigger<TContext> : ITrigger<TContext>
     {
-        private readonly Subject<TEvent> _eventSubject;
-        private readonly ITrigger<TEvent> _derivedEvent;
+        private readonly Subject<TContext> _eventSubject;
+        private readonly ITrigger<TContext> _derivedTrigger;
 
         public Trigger()
         {
-            _eventSubject = new Subject<TEvent>();
-            _derivedEvent = _eventSubject.AsObservable().AsEvent();
+            _eventSubject = new Subject<TContext>();
+            _derivedTrigger = _eventSubject.AsTrigger();
         }
 
-        public void Raise(TEvent @event)
+        public void Raise(TContext @event)
         {
             _eventSubject.OnNext(@event);
             _eventSubject.OnCompleted();
         }
 
-        public Guid TriggerId => _derivedEvent.TriggerId;
-
-        public IDisposable Subscribe(IObserver<TEvent> observer)
-        {
-            return _derivedEvent.Subscribe(observer);
-        }
+        public Guid TriggerId => _derivedTrigger.TriggerId;
+        public IObservable<ActivatedTrigger<TContext>> Activated => _derivedTrigger.Activated;
     }
 }

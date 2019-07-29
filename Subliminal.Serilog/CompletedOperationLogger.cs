@@ -4,7 +4,7 @@ using System;
 
 namespace Subliminal.Serilog
 {
-    public class CompletedOperationLogger : IObserver<OperationCompleted>
+    public class CompletedOperationLogger : IObserver<Event<OperationCompleted>>
     {
         private readonly ILogger _logger;
         private readonly LogEventLevel _level;
@@ -17,11 +17,11 @@ namespace Subliminal.Serilog
             _messageTemplate = messageTemplate;
         }
 
-        public void OnNext(OperationCompleted completed)
+        public void OnNext(Event<OperationCompleted> completed)
         {
-            _logger.ForContext("OperationId", completed.OperationId)
-                .ForContext("ExecutionId", completed.ExecutionId)
-                .ForContext("DurationSeconds", completed.Duration.TotalSeconds)
+            _logger.ForContext("OperationId", completed.Context.OperationId)
+                .ForContext("ExecutionId", completed.Context.ExecutionId)
+                .ForContext("DurationSeconds", completed.Context.Duration.TotalSeconds)
                 .Write(_level, _messageTemplate);
         }
 

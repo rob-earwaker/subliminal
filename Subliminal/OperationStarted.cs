@@ -20,11 +20,11 @@ namespace Subliminal
         {
             get
             {
-                return Ended
-                    .Where(operationEnded => !operationEnded.WasCanceled)
-                    .Select(operationEnded => new OperationCompleted(
-                        operationEnded.OperationId, operationEnded.ExecutionId, operationEnded.Duration))
-                    .AsEvent();
+                return Ended.Activated
+                    .Where(endedTrigger => !endedTrigger.Context.WasCanceled)
+                    .Select(endedTrigger => new OperationCompleted(
+                        endedTrigger.Context.OperationId, endedTrigger.Context.ExecutionId, endedTrigger.Context.Duration))
+                    .AsTrigger();
             }
         }
 
@@ -32,11 +32,11 @@ namespace Subliminal
         {
             get
             {
-                return Ended
-                    .Where(operationEnded => operationEnded.WasCanceled)
-                    .Select(operationEnded => new OperationCanceled(
-                        operationEnded.OperationId, operationEnded.ExecutionId, operationEnded.Duration))
-                    .AsEvent();
+                return Ended.Activated
+                    .Where(endedTrigger => endedTrigger.Context.WasCanceled)
+                    .Select(endedTrigger => new OperationCanceled(
+                        endedTrigger.Context.OperationId, endedTrigger.Context.ExecutionId, endedTrigger.Context.Duration))
+                    .AsTrigger();
             }
         }
     }

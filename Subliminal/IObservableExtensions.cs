@@ -21,9 +21,9 @@ namespace Subliminal
             return DerivedEventLog<TContext>.FromObservable(context);
         }
 
-        public static ITrigger<TEvent> AsEvent<TEvent>(this IObservable<TEvent> observable)
+        public static ITrigger<TContext> AsTrigger<TContext>(this IObservable<TContext> context)
         {
-            return DerivedTrigger<TEvent>.FromObservable(observable);
+            return DerivedTrigger<TContext>.FromObservable(context);
         }
 
         public static ICounter AsCounter(this IObservable<long> increments)
@@ -33,7 +33,9 @@ namespace Subliminal
 
         public static IObservable<IList<TSource>> Buffer<TSource>(this IObservable<TSource> source, IOperation operation)
         {
-            return source.Buffer(operation.Started.Events, operationStarted => operationStarted.Ended);
+            return source.Buffer(
+                operation.Started.EventLogged,
+                operationStarted => operationStarted.Context.Ended.Activated);
         }
     }
 }

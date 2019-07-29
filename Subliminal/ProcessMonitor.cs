@@ -40,7 +40,7 @@ namespace Subliminal
                         eventHandler => process.Exited -= eventHandler)
                     .Take(1)
                     .Select(_ => new ProcessExited(process.Id, process.ExitTime, process.ExitCode))
-                    .AsEvent());
+                    .AsTrigger());
         }
 
         public static ProcessMonitor ForCurrentProcess(TimeSpan samplingInterval)

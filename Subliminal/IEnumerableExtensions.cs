@@ -4,9 +4,9 @@ namespace Subliminal
 {
     public static class IEnumerableExtensions
     {
-        public static RateOfChange Average(this IEnumerable<RateOfChange> ratesOfChange)
+        public static Rate Average(this IEnumerable<Rate> rates)
         {
-            return RateOfChange.Average(ratesOfChange);
+            return Rate.Average(rates);
         }
     }
 }

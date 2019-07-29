@@ -7,7 +7,7 @@ using System.Reactive;
 
 namespace Subliminal.Serilog
 {
-    public class CompletedOperationsLogger : IObserver<TimeInterval<IList<OperationCompleted>>>
+    public class CompletedOperationsLogger : IObserver<TimeInterval<IList<Event<OperationCompleted>>>>
     {
         private readonly ILogger _logger;
         private readonly LogEventLevel _level;
@@ -20,12 +20,12 @@ namespace Subliminal.Serilog
             _messageTemplate = messageTemplate;
         }
 
-        public void OnNext(TimeInterval<IList<OperationCompleted>> buffer)
+        public void OnNext(TimeInterval<IList<Event<OperationCompleted>>> buffer)
         {
             if (!buffer.Value.Any())
                 return;
 
-            var averageDurationSeconds = buffer.Value.Average(completed => completed.Duration.TotalSeconds);
+            var averageDurationSeconds = buffer.Value.Average(completed => completed.Context.Duration.TotalSeconds);
 
             _logger.ForContext("AverageDurationSeconds", averageDurationSeconds)
                 .ForContext("SamplePeriodDurationSeconds", buffer.Interval.TotalSeconds)

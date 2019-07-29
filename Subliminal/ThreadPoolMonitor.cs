@@ -16,7 +16,7 @@ namespace Subliminal
             return new ThreadPoolMonitor(Observable
                 .Interval(samplingFrequency)
                 .Select(_ => GetManagedThreadPoolUsage())
-                .AsMetric());
+                .AsGauge());
         }
 
         private static ThreadPoolUsage GetManagedThreadPoolUsage()
@@ -37,9 +37,9 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage.Values
-                    .Select(threadPoolUsage => threadPoolUsage.MinWorkerThreads)
-                    .AsMetric();
+                return ThreadPoolUsage.Sampled
+                    .Select(threadPoolUsage => threadPoolUsage.Value.MinWorkerThreads)
+                    .AsGauge();
             }
         }
 
@@ -47,9 +47,9 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage.Values
-                    .Select(threadPoolUsage => threadPoolUsage.MinCompletionPortThreads)
-                    .AsMetric();
+                return ThreadPoolUsage.Sampled
+                    .Select(threadPoolUsage => threadPoolUsage.Value.MinCompletionPortThreads)
+                    .AsGauge();
             }
         }
 
@@ -57,9 +57,9 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage.Values
-                    .Select(threadPoolUsage => threadPoolUsage.MaxWorkerThreads)
-                    .AsMetric();
+                return ThreadPoolUsage.Sampled
+                    .Select(threadPoolUsage => threadPoolUsage.Value.MaxWorkerThreads)
+                    .AsGauge();
             }
         }
 
@@ -67,9 +67,9 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage.Values
-                    .Select(threadPoolUsage => threadPoolUsage.MaxCompletionPortThreads)
-                    .AsMetric();
+                return ThreadPoolUsage.Sampled
+                    .Select(threadPoolUsage => threadPoolUsage.Value.MaxCompletionPortThreads)
+                    .AsGauge();
             }
         }
 
@@ -77,9 +77,9 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage.Values
-                    .Select(threadPoolUsage => threadPoolUsage.AvailableWorkerThreads)
-                    .AsMetric();
+                return ThreadPoolUsage.Sampled
+                    .Select(threadPoolUsage => threadPoolUsage.Value.AvailableWorkerThreads)
+                    .AsGauge();
             }
         }
 
@@ -87,9 +87,9 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage.Values
-                    .Select(threadPoolUsage => threadPoolUsage.AvailableCompletionPortThreads)
-                    .AsMetric();
+                return ThreadPoolUsage.Sampled
+                    .Select(threadPoolUsage => threadPoolUsage.Value.AvailableCompletionPortThreads)
+                    .AsGauge();
             }
         }
 
@@ -97,9 +97,9 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage.Values
-                    .Select(threadPoolUsage => threadPoolUsage.ActiveWorkerThreads)
-                    .AsMetric();
+                return ThreadPoolUsage.Sampled
+                    .Select(threadPoolUsage => threadPoolUsage.Value.ActiveWorkerThreads)
+                    .AsGauge();
             }
         }
 
@@ -107,9 +107,9 @@ namespace Subliminal
         {
             get
             {
-                return ThreadPoolUsage.Values
-                    .Select(threadPoolUsage => threadPoolUsage.ActiveCompletionPortThreads)
-                    .AsMetric();
+                return ThreadPoolUsage.Sampled
+                    .Select(threadPoolUsage => threadPoolUsage.Value.ActiveCompletionPortThreads)
+                    .AsGauge();
             }
         }
     }

@@ -3,26 +3,27 @@ using System.Reactive.Linq;
 
 namespace Subliminal
 {
-    public class DerivedTrigger<TEvent> : ITrigger<TEvent>
+    public class DerivedTrigger<TContext> : ITrigger<TContext>
     {
-        private readonly IObservable<TEvent> _event;
-
-        private DerivedTrigger(IObservable<TEvent> @event)
+        private DerivedTrigger(Guid triggerId, IObservable<ActivatedTrigger<TContext>> activated)
         {
-            _event = @event;
-            TriggerId = Guid.NewGuid();
+            TriggerId = triggerId;
+            Activated = activated;
         }
 
-        public static DerivedTrigger<TEvent> FromObservable(IObservable<TEvent> events)
+        public static DerivedTrigger<TContext> FromObservable(IObservable<TContext> context)
         {
-            return new DerivedTrigger<TEvent>(events.Take(1));
+            var triggerId = Guid.NewGuid();
+
+            var activated = context
+                .Take(1)
+                .Timestamp()
+                .Select(ctx => new ActivatedTrigger<TContext>(triggerId, ctx.Value, ctx.Timestamp));
+
+            return new DerivedTrigger<TContext>(triggerId, activated);
         }
 
         public Guid TriggerId { get; }
-
-        public IDisposable Subscribe(IObserver<TEvent> observer)
-        {
-            return _event.Subscribe(observer);
-        }
+        public IObservable<ActivatedTrigger<TContext>> Activated { get; }
     }
 }

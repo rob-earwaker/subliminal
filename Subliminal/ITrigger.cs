@@ -2,8 +2,9 @@
 
 namespace Subliminal
 {
-    public interface ITrigger<TEvent> : IObservable<TEvent>
+    public interface ITrigger<TContext>
     {
         Guid TriggerId { get; }
+        IObservable<ActivatedTrigger<TContext>> Activated { get; }
     }
 }
