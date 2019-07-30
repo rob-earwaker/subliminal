@@ -4,23 +4,25 @@ using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class Log<TValue> : ILog<TValue>
+    public class Log<TEntry> : ILog<TEntry>
     {
-        private readonly Subject<TValue> _logSubject;
-        private readonly ILog<TValue> _derivedLog;
+        private readonly Subject<TEntry> _logSubject;
+        private readonly ILog<TEntry> _derivedLog;
 
         public Log()
         {
-            _logSubject = new Subject<TValue>();
+            _logSubject = new Subject<TEntry>();
             _derivedLog = _logSubject.AsObservable().AsLog();
         }
 
-        public Guid LogId => _derivedLog.LogId;
-        public IObservable<LogEntry<TValue>> EntryLogged => _derivedLog.EntryLogged;
-
-        public void Append(TValue value)
+        public void Append(TEntry value)
         {
             _logSubject.OnNext(value);
+        }
+
+        public IDisposable Subscribe(IObserver<TEntry> observer)
+        {
+            return _derivedLog.Subscribe(observer);
         }
     }
 }

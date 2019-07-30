@@ -1,27 +1,20 @@
-﻿using System.Reactive;
-
-namespace Subliminal
+﻿namespace Subliminal
 {
     public static class ILogExtensions
     {
-        public static ICounter AsCounter(this ILog<long> incrementLog)
+        public static ICounter<TIncrement> AsCounter<TIncrement>(this ILog<TIncrement> log)
         {
-            return DerivedCounter.FromLog(incrementLog);
+            return DerivedCounter<TIncrement>.FromLog(log);
         }
 
-        public static IEventLog AsEventLog(this ILog<Unit> occurrenceLog)
+        public static IEventLog<TContext> AsEventLog<TContext>(this ILog<TContext> log)
         {
-            return DerivedEventLog.FromLog(occurrenceLog);
+            return DerivedEventLog<TContext>.FromLog(log);
         }
 
-        public static IEventLog<TContext> AsEventLog<TContext>(this ILog<TContext> contextLog)
+        public static IGauge<TValue> AsGauge<TValue>(this ILog<TValue> log)
         {
-            return DerivedEventLog<TContext>.FromLog(contextLog);
-        }
-
-        public static IGauge<TValue> AsGauge<TValue>(this ILog<TValue> valueLog)
-        {
-            return DerivedGauge<TValue>.FromLog(valueLog);
+            return DerivedGauge<TValue>.FromLog(log);
         }
     }
 }

@@ -1,68 +1,55 @@
 ﻿using System;
-using System.Reactive.Linq;
+using System.Reactive;
 
 namespace Subliminal
 {
-    public class DerivedEventLog : IEventLog
-    {
-        private DerivedEventLog(Guid eventLogId, IObservable<Event> eventLogged, ICounter eventCounter)
-        {
-            EventLogId = eventLogId;
-            EventLogged = eventLogged;
-            EventCounter = eventCounter;
-        }
-
-        private static DerivedEventLog FromEventLog<TContext>(IEventLog<TContext> eventLog)
-        {
-            return new DerivedEventLog(
-                eventLog.EventLogId,
-                eventLog.EventLogged.Select(Event.WithoutContext),
-                eventLog.EventCounter);
-        }
-
-        public static DerivedEventLog FromLog<TContext>(ILog<TContext> occurrenceLog)
-        {
-            return FromEventLog(occurrenceLog.AsEventLog());
-        }
-
-        public static DerivedEventLog FromObservable<TContext>(IObservable<TContext> occurrences)
-        {
-            return FromLog(occurrences.AsLog());
-        }
-
-        public Guid EventLogId { get; }
-        public IObservable<Event> EventLogged { get; }
-        public ICounter EventCounter { get; }
-    }
-
     public class DerivedEventLog<TContext> : IEventLog<TContext>
     {
-        private DerivedEventLog(Guid eventLogId, IObservable<Event<TContext>> eventLogged, ICounter eventCounter)
+        private readonly IObservable<TContext> _eventLogged;
+
+        private DerivedEventLog(IObservable<TContext> eventLogged)
         {
-            EventLogId = eventLogId;
-            EventLogged = eventLogged;
-            EventCounter = eventCounter;
+            _eventLogged = eventLogged;
         }
 
-        public static DerivedEventLog<TContext> FromLog(ILog<TContext> contextLog)
+        public static DerivedEventLog<TContext> FromLog(ILog<TContext> log)
         {
-            var eventLogId = Guid.NewGuid();
-
-            var eventLogged = contextLog.EntryLogged
-                .Select(entry => new Event<TContext>(eventLogId, entry.Value, entry.Timestamp, entry.Interval));
-
-            var eventCounter = eventLogged.Select(_ => 1L).AsCounter();
-
-            return new DerivedEventLog<TContext>(eventLogId, eventLogged, eventCounter);
+            return new DerivedEventLog<TContext>(log);
         }
 
-        public static DerivedEventLog<TContext> FromObservable(IObservable<TContext> context)
+        public static DerivedEventLog<TContext> FromObservable(IObservable<TContext> observable)
         {
-            return FromLog(context.AsLog());
+            return FromLog(observable.AsLog());
         }
 
-        public Guid EventLogId { get; }
-        public IObservable<Event<TContext>> EventLogged { get; }
-        public ICounter EventCounter { get; }
+        public IDisposable Subscribe(IObserver<TContext> observer)
+        {
+            return _eventLogged.Subscribe(observer);
+        }
+    }
+
+    public class DerivedEventLog : IEventLog
+    {
+        private readonly IEventLog<Unit> _eventLog;
+
+        private DerivedEventLog(IEventLog<Unit> eventLog)
+        {
+            _eventLog = eventLog;
+        }
+
+        public static DerivedEventLog FromLog(ILog<Unit> log)
+        {
+            return new DerivedEventLog(log.AsEventLog());
+        }
+
+        public static DerivedEventLog FromObservable(IObservable<Unit> observable)
+        {
+            return FromLog(observable.AsLog());
+        }
+
+        public IDisposable Subscribe(IObserver<Unit> observer)
+        {
+            return _eventLog.Subscribe(observer);
+        }
     }
 }

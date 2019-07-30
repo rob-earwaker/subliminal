@@ -2,9 +2,7 @@
 
 namespace Subliminal
 {
-    public interface IGauge<TValue>
+    public interface IGauge<TValue> : IObservable<TValue>
     {
-        Guid GaugeId { get; }
-        IObservable<GaugeSample<TValue>> Sampled { get; }
     }
 }

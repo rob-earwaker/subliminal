@@ -5,21 +5,22 @@ namespace Subliminal
 {
     public class ProcessMonitor
     {
-        private ProcessMonitor(IGauge<Process> process, ITrigger<ProcessExited> exited)
+        private ProcessMonitor(IGauge<Process> process, IEvent<ExitedProcess> exited)
         {
             Process = process;
             Exited = exited;
 
-            PrivateMemorySize = process.Sampled.Select(processSample => processSample.Value.PrivateMemorySize).AsGauge();
-            TotalProcessorTime = process.Sampled.Select(processSample => processSample.Value.TotalProcessorTime).AsGauge();
-            VirtualMemorySize = process.Sampled.Select(processSample => processSample.Value.VirtualMemorySize).AsGauge();
-            WorkingSet = process.Sampled.Select(processSample => processSample.Value.WorkingSet).AsGauge();
+            PrivateMemorySize = process.Select(processSample => processSample.PrivateMemorySize).AsGauge();
+            TotalProcessorTime = process.Select(processSample => processSample.TotalProcessorTime).AsGauge();
+            VirtualMemorySize = process.Select(processSample => processSample.VirtualMemorySize).AsGauge();
+            WorkingSet = process.Select(processSample => processSample.WorkingSet).AsGauge();
 
-            CpuUsage = process.Sampled
+            CpuUsage = process
+                .TimeInterval()
                 .Buffer(count: 2, skip: 1)
                 .Select(buffer => new ProcessorUsage(
                     timeUsed: buffer[1].Value.TotalProcessorTime - buffer[0].Value.TotalProcessorTime,
-                    maxTimeAvailablePerProcessor: buffer[1].Interval,
+                    interval: buffer[1].Interval,
                     processorCount: Environment.ProcessorCount))
                 .AsGauge();
         }
@@ -38,9 +39,8 @@ namespace Subliminal
                     .FromEventPattern(
                         eventHandler => process.Exited += eventHandler,
                         eventHandler => process.Exited -= eventHandler)
-                    .Take(1)
-                    .Select(_ => new ProcessExited(process.Id, process.ExitTime, process.ExitCode))
-                    .AsTrigger());
+                    .Select(_ => new ExitedProcess(process.Id, process.ExitTime, process.ExitCode))
+                    .AsEvent());
         }
 
         public static ProcessMonitor ForCurrentProcess(TimeSpan samplingInterval)
@@ -54,13 +54,13 @@ namespace Subliminal
 
             return new Process(
                 totalProcessorTime: process.TotalProcessorTime,
-                workingSet: new ByteCount(process.WorkingSet64),
-                privateMemorySize: new ByteCount(process.PrivateMemorySize64),
-                virtualMemorySize: new ByteCount(process.VirtualMemorySize64));
+                workingSet: ByteCount.FromBytes(process.WorkingSet64),
+                privateMemorySize: ByteCount.FromBytes(process.PrivateMemorySize64),
+                virtualMemorySize: ByteCount.FromBytes(process.VirtualMemorySize64));
         }
 
         public IGauge<Process> Process { get; }
-        public ITrigger<ProcessExited> Exited { get; }
+        public IEvent<ExitedProcess> Exited { get; }
         public IGauge<ByteCount> PrivateMemorySize { get; }
         public IGauge<TimeSpan> TotalProcessorTime { get; }
         public IGauge<ByteCount> VirtualMemorySize { get; }

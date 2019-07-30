@@ -1,33 +1,29 @@
 ﻿using System;
-using System.Reactive.Linq;
 
 namespace Subliminal
 {
-    public class DerivedCounter : ICounter
+    public class DerivedCounter<TIncrement> : ICounter<TIncrement>
     {
-        private DerivedCounter(Guid counterId, IObservable<CounterIncrement> incremented)
+        private readonly IObservable<TIncrement> _incremented;
+
+        private DerivedCounter(IObservable<TIncrement> incremented)
         {
-            CounterId = counterId;
-            Incremented = incremented;
+            _incremented = incremented;
         }
 
-        public static DerivedCounter FromLog(ILog<long> incrementLog)
+        public static DerivedCounter<TIncrement> FromLog(ILog<TIncrement> log)
         {
-            var counterId = Guid.NewGuid();
-
-            var incremented = incrementLog.EntryLogged
-                .Where(entry => entry.Value > 0L)
-                .Select(entry => new CounterIncrement(counterId, entry.Value, entry.Timestamp, entry.Interval));
-
-            return new DerivedCounter(counterId, incremented);
+            return new DerivedCounter<TIncrement>(log);
         }
 
-        public static DerivedCounter FromIncrements(IObservable<long> increments)
+        public static DerivedCounter<TIncrement> FromObservable(IObservable<TIncrement> observable)
         {
-            return FromLog(increments.AsLog());
+            return FromLog(observable.AsLog());
         }
 
-        public Guid CounterId { get; }
-        public IObservable<CounterIncrement> Incremented { get; }
+        public IDisposable Subscribe(IObserver<TIncrement> observer)
+        {
+            return _incremented.Subscribe(observer);
+        }
     }
 }

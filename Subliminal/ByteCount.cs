@@ -2,6 +2,8 @@
 {
     public class ByteCount
     {
+        public static readonly ByteCount Zero = new ByteCount(0L);
+
         private const double DecimalMultiplier = 1000.0;
         private const double KiloMultiplier = DecimalMultiplier;
         private const double MegaMultiplier = DecimalMultiplier * KiloMultiplier;
@@ -14,9 +16,14 @@
 
         private const int BitsPerByte = 8;
 
-        public ByteCount(long byteCount)
+        private ByteCount(long byteCount)
         {
             Bytes = byteCount;
+        }
+
+        public static ByteCount FromBytes(long byteCount)
+        {
+            return new ByteCount(byteCount);
         }
 
         public long Bytes { get; }
@@ -38,5 +45,10 @@
         public double Kibibits => Kibibytes * BitsPerByte;
         public double Mebibits => Mebibytes * BitsPerByte;
         public double Gibibits => Gibibytes * BitsPerByte;
+
+        public static ByteCount operator +(ByteCount byteCount1, ByteCount byteCount2)
+        {
+            return ByteCount.FromBytes(byteCount1.Bytes + byteCount2.Bytes);
+        }
     }
 }

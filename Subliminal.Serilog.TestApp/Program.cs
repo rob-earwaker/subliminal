@@ -23,29 +23,29 @@ namespace Subliminal.Serilog.TestApp
 
             var currentProcessMonitor = ProcessMonitor.ForCurrentProcess(TimeSpan.FromSeconds(5));
 
-            currentProcessMonitor.CpuUsage.Sampled
-                .Subscribe(processorUsageSample =>
+            currentProcessMonitor.CpuUsage
+                .Subscribe(processorUsage =>
                     Log.Information(
                         "Total processor usage over the last {Interval} was {Percentage}%",
-                        processorUsageSample.Interval, processorUsageSample.Value.TotalPercentage));
+                        processorUsage.Interval, processorUsage.TotalPercentage));
 
             var threadPoolMonitor = ThreadPoolMonitor.ForManagedThreadPool(TimeSpan.FromSeconds(5));
 
-            threadPoolMonitor.ActiveWorkerThreads.Sampled
-                .Subscribe(activeWorkerThreadsSample =>
-                    Log.Information("Active worker thread count is {ActiveWorkerThreads}", activeWorkerThreadsSample.Value));
+            threadPoolMonitor.ActiveWorkerThreads
+                .Subscribe(activeWorkerThreads =>
+                    Log.Information("Active worker thread count is {ActiveWorkerThreads}", activeWorkerThreads));
 
             var dataStore = new DataStore();
 
             var dataStoreLogger = Log.Logger.ForContext(dataStore.GetType());
 
-            dataStore.ReadRandomBytesOperation.Completed.EventLogged
+            dataStore.ReadRandomBytesOperation.Completed
                 .Subscribe(new CompletedOperationLogger(
                     dataStoreLogger.ForContext("OperationName", "ReadRandomBytes"),
                     LogEventLevel.Information,
-                    "{OperationName} operation {ExecutionId} completed in {DurationSeconds}s"));
+                    "{OperationName} operation {OperationId} completed in {DurationSeconds}s"));
 
-            dataStore.ReadRandomByteOperation.Completed.EventLogged
+            dataStore.ReadRandomByteOperation.Completed
                 .Buffer(TimeSpan.FromSeconds(10))
                 .TimeInterval()
                 .Subscribe(new CompletedOperationsLogger(
@@ -53,7 +53,7 @@ namespace Subliminal.Serilog.TestApp
                     LogEventLevel.Information,
                     "Average time taken to complete {OperationName} operations was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
 
-            dataStore.ReadRandomByteOperation.Completed.EventLogged
+            dataStore.ReadRandomByteOperation.Completed
                 .Buffer(dataStore.ReadRandomBytesOperation)
                 .TimeInterval()
                 .Subscribe(new CompletedOperationsLogger(
@@ -61,9 +61,9 @@ namespace Subliminal.Serilog.TestApp
                     LogEventLevel.Information,
                     "Average time taken to complete {OperationName} operations was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
 
-            dataStore.RandomMetric.Sampled
+            dataStore.RandomGauge
                 .Buffer(100)
-                .Select(samples => samples.Average(sample => sample.Value))
+                .Select(samples => samples.Average())
                 .TimeInterval()
                 .Subscribe(averageValue =>
                     dataStoreLogger
@@ -72,14 +72,14 @@ namespace Subliminal.Serilog.TestApp
                         .ForContext("SampleInterval", averageValue.Interval)
                         .Information("Average {MetricName} value was {AverageValue} over the last {SampleInterval}"));
 
-            dataStore.BytesReadCounter.Incremented
-                .Buffer(TimeSpan.FromSeconds(5))
-                .Select(increments => increments.Select(increment => increment.Rate).Average())
-                .Subscribe(averageIncrementRate =>
-                    dataStoreLogger
-                        .ForContext("ByteRate", averageIncrementRate.DeltaPerSecond)
-                        .ForContext("RateInterval", averageIncrementRate.Interval)
-                        .Information("Read speed was {ByteRate}B/s over the last {RateInterval}"));
+            //dataStore.BytesReadCounter.Rate()
+            //    .Buffer(TimeSpan.FromSeconds(5))
+            //    .Select(bitRates => bitRates.Average())
+            //    .Subscribe(averageBitRate =>
+            //        dataStoreLogger
+            //            .ForContext("ByteRate", averageBitRate.BytesPerSecond)
+            //            .ForContext("Interval", averageBitRate.Interval)
+            //            .Information("Read speed was {ByteRate}B/s over the last {Interval}"));
 
             while (true)
             {

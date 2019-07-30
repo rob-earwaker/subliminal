@@ -3,27 +3,6 @@ using System.Reactive;
 
 namespace Subliminal
 {
-    public class EventLog : IEventLog
-    {
-        private readonly Log<Unit> _eventLog;
-        private readonly IEventLog _derivedEventLog;
-
-        public EventLog()
-        {
-            _eventLog = new Log<Unit>();
-            _derivedEventLog = _eventLog.AsEventLog();
-        }
-
-        public Guid EventLogId => _derivedEventLog.EventLogId;
-        public IObservable<Event> EventLogged => _derivedEventLog.EventLogged;
-        public ICounter EventCounter => _derivedEventLog.EventCounter;
-
-        public void LogOccurrence()
-        {
-            _eventLog.Append(Unit.Default);
-        }
-    }
-
     public class EventLog<TContext> : IEventLog<TContext>
     {
         private readonly Log<TContext> _eventLog;
@@ -35,13 +14,34 @@ namespace Subliminal
             _derivedEventLog = _eventLog.AsEventLog();
         }
 
-        public Guid EventLogId => _derivedEventLog.EventLogId;
-        public IObservable<Event<TContext>> EventLogged => _derivedEventLog.EventLogged;
-        public ICounter EventCounter => _derivedEventLog.EventCounter;
-        
         public void LogOccurrence(TContext context)
         {
             _eventLog.Append(context);
+        }
+
+        public IDisposable Subscribe(IObserver<TContext> observer)
+        {
+            return _derivedEventLog.Subscribe(observer);
+        }
+    }
+
+    public class EventLog : IEventLog<Unit>
+    {
+        private readonly EventLog<Unit> _eventLog;
+
+        public EventLog()
+        {
+            _eventLog = new EventLog<Unit>();
+        }
+
+        public void LogOccurrence()
+        {
+            _eventLog.LogOccurrence(Unit.Default);
+        }
+
+        public IDisposable Subscribe(IObserver<Unit> observer)
+        {
+            return _eventLog.Subscribe(observer);
         }
     }
 }

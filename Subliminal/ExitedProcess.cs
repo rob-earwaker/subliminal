@@ -2,9 +2,9 @@
 
 namespace Subliminal
 {
-    public class ProcessExited
+    public class ExitedProcess
     {
-        public ProcessExited(int processId, DateTime exitTime, int exitCode)
+        public ExitedProcess(int processId, DateTime exitTime, int exitCode)
         {
             ProcessId = processId;
             ExitTime = exitTime;

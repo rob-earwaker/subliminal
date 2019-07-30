@@ -13,12 +13,14 @@ namespace Subliminal
             _derivedGauge = _valueLog.AsGauge();
         }
 
-        public Guid GaugeId => _derivedGauge.GaugeId;
-        public IObservable<GaugeSample<TValue>> Sampled => _derivedGauge.Sampled;
-
         public void RecordValue(TValue value)
         {
             _valueLog.Append(value);
+        }
+
+        public IDisposable Subscribe(IObserver<TValue> observer)
+        {
+            return _derivedGauge.Subscribe(observer);
         }
     }
 }

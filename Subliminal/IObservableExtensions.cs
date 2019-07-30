@@ -6,36 +6,34 @@ namespace Subliminal
 {
     public static class IObservableExtensions
     {
-        public static ILog<TValue> AsLog<TValue>(this IObservable<TValue> values)
+        public static ILog<TEntry> AsLog<TEntry>(this IObservable<TEntry> observable)
         {
-            return DerivedLog<TValue>.FromValues(values);
+            return DerivedLog<TEntry>.FromObservable(observable);
         }
 
-        public static IGauge<TValue> AsGauge<TValue>(this IObservable<TValue> values)
+        public static IEvent<TContext> AsEvent<TContext>(this IObservable<TContext> observable)
         {
-            return DerivedGauge<TValue>.FromObservable(values);
+            return DerivedEvent<TContext>.FromObservable(observable);
         }
 
-        public static IEventLog<TContext> AsEventLog<TContext>(this IObservable<TContext> context)
+        public static IEventLog<TContext> AsEventLog<TContext>(this IObservable<TContext> observable)
         {
-            return DerivedEventLog<TContext>.FromObservable(context);
+            return DerivedEventLog<TContext>.FromObservable(observable);
         }
 
-        public static ITrigger<TContext> AsTrigger<TContext>(this IObservable<TContext> context)
+        public static ICounter<TIncrement> AsCounter<TIncrement>(this IObservable<TIncrement> observable)
         {
-            return DerivedTrigger<TContext>.FromObservable(context);
+            return DerivedCounter<TIncrement>.FromObservable(observable);
         }
 
-        public static ICounter AsCounter(this IObservable<long> increments)
+        public static IGauge<TValue> AsGauge<TValue>(this IObservable<TValue> observable)
         {
-            return DerivedCounter.FromIncrements(increments);
+            return DerivedGauge<TValue>.FromObservable(observable);
         }
 
         public static IObservable<IList<TSource>> Buffer<TSource>(this IObservable<TSource> source, IOperation operation)
         {
-            return source.Buffer(
-                operation.Started.EventLogged,
-                operationStarted => operationStarted.Context.Ended.Activated);
+            return source.Buffer(operation.Started, operationStarted => operationStarted.Ended);
         }
     }
 }

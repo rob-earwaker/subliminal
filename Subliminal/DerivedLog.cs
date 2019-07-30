@@ -3,45 +3,31 @@ using System.Reactive.Linq;
 
 namespace Subliminal
 {
-    public class DerivedLog<TValue> : ILog<TValue>
+    public class DerivedLog<TEntry> : ILog<TEntry>
     {
-        private DerivedLog(Guid logId, IObservable<LogEntry<TValue>> entrylogged)
+        private readonly IObservable<TEntry> _entryLogged;
+
+        private DerivedLog(IObservable<TEntry> entryLogged)
         {
-            LogId = logId;
-            EntryLogged = entrylogged;
+            _entryLogged = entryLogged;
         }
 
-        public static DerivedLog<TValue> FromLog(ILog<TValue> log)
-        {
-            var logId = Guid.NewGuid();
-
-            var entryLogged = log.EntryLogged
-                .Select(entry => new LogEntry<TValue>(logId, entry.Value, entry.Timestamp, entry.Interval));
-
-            return new DerivedLog<TValue>(logId, entryLogged);
-        }
-
-        public static DerivedLog<TValue> FromValues(IObservable<TValue> values)
+        public static DerivedLog<TEntry> FromObservable(IObservable<TEntry> observable)
         {
             // Publish the observable to ensure that all future subscribers to
-            // the log receive the same values.
-            var publishedObservable = values.Publish();
+            // the log receive the same entries.
+            var entryLogged = observable.Publish();
 
-            // Connect to the published observable to start emitting values
+            // Connect to the published observable to start emitting entries
             // from the underlying source immediately.
-            publishedObservable.Connect();
+            entryLogged.Connect();
 
-            var logId = Guid.NewGuid();
-
-            var entryLogged = publishedObservable
-                .Timestamp()
-                .TimeInterval()
-                .Select(value => new LogEntry<TValue>(logId, value.Value.Value, value.Value.Timestamp, value.Interval));
-
-            return new DerivedLog<TValue>(logId, entryLogged);
+            return new DerivedLog<TEntry>(entryLogged);
         }
 
-        public Guid LogId { get; }
-        public IObservable<LogEntry<TValue>> EntryLogged { get; }
+        public IDisposable Subscribe(IObserver<TEntry> observer)
+        {
+            return _entryLogged.Subscribe(observer);
+        }
     }
 }

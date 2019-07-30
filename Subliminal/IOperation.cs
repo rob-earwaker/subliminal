@@ -1,13 +1,10 @@
-﻿using System;
-
-namespace Subliminal
+﻿namespace Subliminal
 {
     public interface IOperation
     {
-        Guid OperationId { get; }
-        IEventLog<OperationStarted> Started { get; }
-        IEventLog<OperationEnded> Ended { get; }
-        IEventLog<OperationCompleted> Completed { get; }
-        IEventLog<OperationCanceled> Canceled { get; }
+        IEventLog<StartedOperation> Started { get; }
+        IEventLog<EndedOperation> Ended { get; }
+        IEventLog<CompletedOperation> Completed { get; }
+        IEventLog<CanceledOperation> Canceled { get; }
     }
 }

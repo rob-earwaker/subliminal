@@ -6,109 +6,76 @@ namespace Subliminal
 {
     public class Operation : IOperation
     {
-        private readonly EventLog<OperationStarted> _started;
+        private readonly EventLog<StartedOperation> _started;
 
         public Operation()
         {
-            OperationId = Guid.NewGuid();
-            _started = new EventLog<OperationStarted>();
+            _started = new EventLog<StartedOperation>();
         }
 
-        public Guid OperationId { get; }
-
-        public ExecutionTimer StartNew()
+        public Timer StartNewTimer()
         {
-            var executionTimer = new ExecutionTimer(OperationId);
-            _started.LogOccurrence(
-                new OperationStarted(executionTimer.OperationId, executionTimer.ExecutionId, executionTimer.Ended));
-            return executionTimer;
+            var timer = new Timer();
+            _started.LogOccurrence(new StartedOperation(timer.OperationId, timer.Ended));
+            timer.Start();
+            return timer;
         }
 
-        public IEventLog<OperationStarted> Started => _started;
+        public IEventLog<StartedOperation> Started => _started;
+        public IEventLog<EndedOperation> Ended => Started.SelectMany(operation => operation.Ended).AsEventLog();
+        public IEventLog<CompletedOperation> Completed => Started.SelectMany(operation => operation.Completed).AsEventLog();
+        public IEventLog<CanceledOperation> Canceled => Started.SelectMany(operation => operation.Canceled).AsEventLog();
 
-        public IEventLog<OperationEnded> Ended
+        public void Time(Action<Timer> operation)
         {
-            get
+            using (var timer = StartNewTimer())
             {
-                return Started.EventLogged
-                    .SelectMany(operationStarted => operationStarted.Context.Ended.Activated)
-                    .Select(activatedTrigger => activatedTrigger.Context)
-                    .AsEventLog();
+                operation(timer);
             }
         }
 
-        public IEventLog<OperationCompleted> Completed
+        public void Time(Action operation)
         {
-            get
+            Time(_ => operation());
+        }
+
+        public TResult Time<TResult>(Func<Timer, TResult> operation)
+        {
+            using (var timer = StartNewTimer())
             {
-                return Started.EventLogged
-                    .SelectMany(operationStarted => operationStarted.Context.Completed.Activated)
-                    .Select(activatedTrigger => activatedTrigger.Context)
-                    .AsEventLog();
+                return operation(timer);
             }
         }
 
-        public IEventLog<OperationCanceled> Canceled
+        public TResult Time<TResult>(Func<TResult> operation)
         {
-            get
+            return Time(_ => operation());
+        }
+
+        public async Task TimeAsync(Func<Timer, Task> operation)
+        {
+            using (var timer = StartNewTimer())
             {
-                return Started.EventLogged
-                    .SelectMany(operationStarted => operationStarted.Context.Canceled.Activated)
-                    .Select(activatedTrigger => activatedTrigger.Context)
-                    .AsEventLog();
+                await operation(timer);
             }
         }
 
-        public void Execute(Action<ExecutionTimer> operation)
+        public Task TimeAsync(Func<Task> operation)
         {
-            using (var executionTimer = StartNew())
+            return TimeAsync(_ => operation());
+        }
+
+        public async Task<TResult> TimeAsync<TResult>(Func<Timer, Task<TResult>> operation)
+        {
+            using (var timer = StartNewTimer())
             {
-                operation(executionTimer);
+                return await operation(timer);
             }
         }
 
-        public void Execute(Action operation)
+        public Task<TResult> TimeAsync<TResult>(Func<Task<TResult>> operation)
         {
-            Execute(_ => operation());
-        }
-
-        public TResult Execute<TResult>(Func<ExecutionTimer, TResult> operation)
-        {
-            using (var executionTimer = StartNew())
-            {
-                return operation(executionTimer);
-            }
-        }
-
-        public TResult Execute<TResult>(Func<TResult> operation)
-        {
-            return Execute(_ => operation());
-        }
-
-        public async Task ExecuteAsync(Func<ExecutionTimer, Task> operation)
-        {
-            using (var executionTimer = StartNew())
-            {
-                await operation(executionTimer);
-            }
-        }
-
-        public Task ExecuteAsync(Func<Task> operation)
-        {
-            return ExecuteAsync(_ => operation());
-        }
-
-        public async Task<TResult> ExecuteAsync<TResult>(Func<ExecutionTimer, Task<TResult>> operation)
-        {
-            using (var executionTimer = StartNew())
-            {
-                return await operation(executionTimer);
-            }
-        }
-
-        public Task<TResult> ExecuteAsync<TResult>(Func<Task<TResult>> operation)
-        {
-            return ExecuteAsync(_ => operation());
+            return TimeAsync(_ => operation());
         }
     }
 }

@@ -35,82 +35,42 @@ namespace Subliminal
 
         public IGauge<int> MinWorkerThreads
         {
-            get
-            {
-                return ThreadPoolUsage.Sampled
-                    .Select(threadPoolUsage => threadPoolUsage.Value.MinWorkerThreads)
-                    .AsGauge();
-            }
+            get { return ThreadPoolUsage.Select(usage => usage.MinWorkerThreads).AsGauge(); }
         }
 
         public IGauge<int> MinCompletionPortThreads
         {
-            get
-            {
-                return ThreadPoolUsage.Sampled
-                    .Select(threadPoolUsage => threadPoolUsage.Value.MinCompletionPortThreads)
-                    .AsGauge();
-            }
+            get { return ThreadPoolUsage.Select(usage => usage.MinCompletionPortThreads).AsGauge(); }
         }
 
         public IGauge<int> MaxWorkerThreads
         {
-            get
-            {
-                return ThreadPoolUsage.Sampled
-                    .Select(threadPoolUsage => threadPoolUsage.Value.MaxWorkerThreads)
-                    .AsGauge();
-            }
+            get { return ThreadPoolUsage.Select(usage => usage.MaxWorkerThreads).AsGauge(); }
         }
 
         public IGauge<int> MaxCompletionPortThreads
         {
-            get
-            {
-                return ThreadPoolUsage.Sampled
-                    .Select(threadPoolUsage => threadPoolUsage.Value.MaxCompletionPortThreads)
-                    .AsGauge();
-            }
+            get { return ThreadPoolUsage.Select(usage => usage.MaxCompletionPortThreads).AsGauge(); }
         }
 
         public IGauge<int> AvailableWorkerThreads
         {
-            get
-            {
-                return ThreadPoolUsage.Sampled
-                    .Select(threadPoolUsage => threadPoolUsage.Value.AvailableWorkerThreads)
-                    .AsGauge();
-            }
+            get { return ThreadPoolUsage.Select(usage => usage.AvailableWorkerThreads).AsGauge(); }
         }
 
         public IGauge<int> AvailableCompletionPortThreads
         {
-            get
-            {
-                return ThreadPoolUsage.Sampled
-                    .Select(threadPoolUsage => threadPoolUsage.Value.AvailableCompletionPortThreads)
-                    .AsGauge();
-            }
+            get { return ThreadPoolUsage.Select(usage => usage.AvailableCompletionPortThreads).AsGauge(); }
         }
 
         public IGauge<int> ActiveWorkerThreads
         {
-            get
-            {
-                return ThreadPoolUsage.Sampled
-                    .Select(threadPoolUsage => threadPoolUsage.Value.ActiveWorkerThreads)
-                    .AsGauge();
-            }
+            get { return ThreadPoolUsage.Select(usage => usage.ActiveWorkerThreads).AsGauge(); }
         }
 
         public IGauge<int> ActiveCompletionPortThreads
         {
-            get
-            {
-                return ThreadPoolUsage.Sampled
-                    .Select(threadPoolUsage => threadPoolUsage.Value.ActiveCompletionPortThreads)
-                    .AsGauge();
-            }
+            get { return ThreadPoolUsage.Select(usage => usage.ActiveCompletionPortThreads).AsGauge(); }
         }
     }
 }

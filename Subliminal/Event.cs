@@ -1,39 +1,50 @@
 ﻿using System;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class Event
+    public class Event<TContext> : IEvent<TContext>
     {
-        public Event(Guid eventLogId, DateTimeOffset timestamp, TimeSpan interval)
+        private readonly Subject<TContext> _eventSubject;
+        private readonly IEvent<TContext> _derivedEvent;
+
+        public Event()
         {
-            EventLogId = eventLogId;
-            Timestamp = timestamp;
-            Interval = interval;
+            _eventSubject = new Subject<TContext>();
+            _derivedEvent = _eventSubject.AsObservable().AsEvent();
         }
 
-        public static Event WithoutContext<TContext>(Event<TContext> @event)
+        public void Raise(TContext context)
         {
-            return new Event(@event.EventLogId, @event.Timestamp, @event.Interval);
+            _eventSubject.OnNext(context);
+            _eventSubject.OnCompleted();
         }
 
-        public Guid EventLogId { get; }
-        public DateTimeOffset Timestamp { get; }
-        public TimeSpan Interval { get; }
+        public IDisposable Subscribe(IObserver<TContext> observer)
+        {
+            return _derivedEvent.Subscribe(observer);
+        }
     }
 
-    public class Event<TContext>
+    public class Event : IEvent
     {
-        public Event(Guid eventLogId, TContext context, DateTimeOffset timestamp, TimeSpan interval)
+        private readonly Event<Unit> _event;
+
+        public Event()
         {
-            EventLogId = eventLogId;
-            Context = context;
-            Timestamp = timestamp;
-            Interval = interval;
+            _event = new Event<Unit>();
         }
 
-        public Guid EventLogId { get; }
-        public TContext Context { get; }
-        public DateTimeOffset Timestamp { get; }
-        public TimeSpan Interval { get; }
+        public void Raise()
+        {
+            _event.Raise(Unit.Default);
+        }
+
+        public IDisposable Subscribe(IObserver<Unit> observer)
+        {
+            return _event.Subscribe(observer);
+        }
     }
 }

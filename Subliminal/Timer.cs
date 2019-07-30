@@ -3,30 +3,28 @@ using System.Diagnostics;
 
 namespace Subliminal
 {
-    public class ExecutionTimer : IDisposable
+    public class Timer : IDisposable
     {
         private readonly Stopwatch _stopwatch;
-        private readonly Trigger<OperationEnded> _ended;
+        private readonly Event<EndedOperation> _ended;
         private bool _hasEnded;
 
-        public ExecutionTimer(Guid operationId)
+        internal Timer()
         {
-            OperationId = operationId;
-            ExecutionId = Guid.NewGuid();
+            OperationId = Guid.NewGuid();
 
-            _stopwatch = Stopwatch.StartNew();
-            _ended = new Trigger<OperationEnded>();
+            _stopwatch = new Stopwatch();
+            _ended = new Event<EndedOperation>();
             _hasEnded = false;
         }
 
-        public Guid OperationId { get; }
-        public Guid ExecutionId { get; }
-        public ITrigger<OperationEnded> Ended => _ended;
-
-        void IDisposable.Dispose()
+        internal void Start()
         {
-            Complete();
+            _stopwatch.Start();
         }
+
+        public Guid OperationId { get; }
+        public IEvent<EndedOperation> Ended => _ended;
 
         public void Pause()
         {
@@ -54,8 +52,13 @@ namespace Subliminal
                 return;
 
             _stopwatch.Stop();
-            _ended.Raise(new OperationEnded(OperationId, ExecutionId, _stopwatch.Elapsed, wasCanceled));
+            _ended.Raise(new EndedOperation(OperationId, _stopwatch.Elapsed, wasCanceled));
             _hasEnded = true;
+        }
+
+        void IDisposable.Dispose()
+        {
+            Complete();
         }
     }
 }

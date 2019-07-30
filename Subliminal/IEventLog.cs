@@ -1,18 +1,13 @@
 ﻿using System;
+using System.Reactive;
 
 namespace Subliminal
 {
-    public interface IEventLog
+    public interface IEventLog<TContext> : IObservable<TContext>
     {
-        Guid EventLogId { get; }
-        IObservable<Event> EventLogged { get; }
-        ICounter EventCounter { get; }
     }
 
-    public interface IEventLog<TContext>
+    public interface IEventLog : IEventLog<Unit>
     {
-        Guid EventLogId { get; }
-        IObservable<Event<TContext>> EventLogged { get; }
-        ICounter EventCounter { get; }
     }
 }

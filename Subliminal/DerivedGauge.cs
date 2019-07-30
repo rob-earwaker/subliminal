@@ -1,33 +1,29 @@
 ﻿using System;
-using System.Linq;
-using System.Reactive.Linq;
 
 namespace Subliminal
 {
     public class DerivedGauge<TValue> : IGauge<TValue>
     {
-        private DerivedGauge(Guid gaugeId, IObservable<GaugeSample<TValue>> sampled)
+        private readonly IObservable<TValue> _sampled;
+
+        private DerivedGauge(IObservable<TValue> sampled)
         {
-            GaugeId = gaugeId;
-            Sampled = sampled;
+            _sampled = sampled;
         }
 
-        public static DerivedGauge<TValue> FromLog(ILog<TValue> valueLog)
+        public static DerivedGauge<TValue> FromLog(ILog<TValue> log)
         {
-            var gaugeId = Guid.NewGuid();
-
-            var sampled = valueLog.EntryLogged
-                .Select(entry => new GaugeSample<TValue>(gaugeId, entry.Value, entry.Timestamp, entry.Interval));
-
-            return new DerivedGauge<TValue>(gaugeId, sampled);
+            return new DerivedGauge<TValue>(log);
         }
 
-        public static DerivedGauge<TValue> FromObservable(IObservable<TValue> values)
+        public static DerivedGauge<TValue> FromObservable(IObservable<TValue> observable)
         {
-            return FromLog(values.AsLog());
+            return FromLog(observable.AsLog());
         }
 
-        public Guid GaugeId { get; }
-        public IObservable<GaugeSample<TValue>> Sampled { get; }
+        public IDisposable Subscribe(IObserver<TValue> observer)
+        {
+            return _sampled.Subscribe(observer);
+        }
     }
 }

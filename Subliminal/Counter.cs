@@ -2,31 +2,25 @@
 
 namespace Subliminal
 {
-    public class Counter : ICounter
+    public class Counter<TIncrement> : ICounter<TIncrement>
     {
-        private readonly Log<long> _incrementLog;
-        private readonly ICounter _derivedCounter;
+        private readonly Log<TIncrement> _incrementLog;
+        private readonly ICounter<TIncrement> _derivedCounter;
 
         public Counter()
         {
-            _incrementLog = new Log<long>();
+            _incrementLog = new Log<TIncrement>();
             _derivedCounter = _incrementLog.AsCounter();
         }
 
-        public Guid CounterId => _derivedCounter.CounterId;
-        public IObservable<CounterIncrement> Incremented => _derivedCounter.Incremented;
-
-        public void Increment()
+        public void IncrementBy(TIncrement increment)
         {
-            IncrementBy(1L);
+            _incrementLog.Append(increment);
         }
 
-        public void IncrementBy(long increment)
+        public IDisposable Subscribe(IObserver<TIncrement> observer)
         {
-            if (increment <= 0L)
-                return;
-
-            _incrementLog.Append(increment);
+            return _derivedCounter.Subscribe(observer);
         }
     }
 }
