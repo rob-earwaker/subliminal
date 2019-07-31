@@ -11,11 +11,11 @@ namespace Subliminal
             Exited = exited;
 
             PrivateMemorySize = process.Select(processSample => processSample.PrivateMemorySize).AsGauge();
-            TotalProcessorTime = process.Select(processSample => processSample.TotalProcessorTime).AsGauge();
             VirtualMemorySize = process.Select(processSample => processSample.VirtualMemorySize).AsGauge();
             WorkingSet = process.Select(processSample => processSample.WorkingSet).AsGauge();
+            TotalProcessorTime = process.Select(processSample => processSample.TotalProcessorTime).AsGauge();
 
-            CpuUsage = process
+            ProcessorUsage = process
                 .TimeInterval()
                 .Buffer(count: 2, skip: 1)
                 .Select(buffer => new ProcessorUsage(
@@ -31,7 +31,7 @@ namespace Subliminal
 
             return new ProcessMonitor(
                 process: Observable
-                    .Timer(DateTimeOffset.UtcNow, samplingInterval)
+                    .Timer(dueTime: DateTimeOffset.UtcNow, period: samplingInterval)
                     .TakeWhile(_ => !process.HasExited)
                     .Select(_ => GetProcessSnapshot(process))
                     .AsGauge(),
@@ -62,9 +62,9 @@ namespace Subliminal
         public IGauge<Process> Process { get; }
         public IEvent<ExitedProcess> Exited { get; }
         public IGauge<ByteCount> PrivateMemorySize { get; }
-        public IGauge<TimeSpan> TotalProcessorTime { get; }
         public IGauge<ByteCount> VirtualMemorySize { get; }
         public IGauge<ByteCount> WorkingSet { get; }
-        public IGauge<ProcessorUsage> CpuUsage { get; }
+        public IGauge<TimeSpan> TotalProcessorTime { get; }
+        public IGauge<ProcessorUsage> ProcessorUsage { get; }
     }
 }
