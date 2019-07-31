@@ -17,7 +17,7 @@ namespace Subliminal
 
         public static ByteCount Sum(this IEnumerable<ByteCount> byteCounts)
         {
-            return byteCounts.Aggregate(ByteCount.Zero, (total, byteCount) => total + byteCount);
+            return ByteCount.Sum(byteCounts);
         }
     }
 }
