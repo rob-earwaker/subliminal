@@ -12,7 +12,10 @@ namespace Subliminal
 
         public Event()
         {
+            // Synchronize the subject to ensure the event is only raised once
+            // and that all subscribers receive the same context value.
             _eventSubject = Subject.Synchronize(new AsyncSubject<TContext>());
+
             _derivedEvent = _eventSubject.AsObservable().AsEvent();
         }
 
