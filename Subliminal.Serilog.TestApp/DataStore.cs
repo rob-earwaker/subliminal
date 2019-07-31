@@ -7,6 +7,7 @@ namespace Subliminal.Serilog.TestApp
     internal class DataStore
     {
         private readonly Random _random;
+        private readonly object _randomLockObject;
         private readonly Gauge<int> _randomGauge;
         private readonly Counter<ByteCount> _bytesReadCounter;
         private readonly Operation _readRandomBytesOperation;
@@ -15,6 +16,7 @@ namespace Subliminal.Serilog.TestApp
         public DataStore()
         {
             _random = new Random();
+            _randomLockObject = new object();
             _randomGauge = new Gauge<int>();
             _bytesReadCounter = new Counter<ByteCount>();
             _readRandomBytesOperation = new Operation();
@@ -41,11 +43,19 @@ namespace Subliminal.Serilog.TestApp
             using (_readRandomByteOperation.StartNewTimer())
             {
                 var buffer = new byte[1];
-                _random.NextBytes(buffer);
+                double randomDelay;
+                int randomValue;
 
-                await Task.Delay(TimeSpan.FromSeconds(_random.NextDouble())).ConfigureAwait(false);
+                lock (_randomLockObject)
+                {
+                    _random.NextBytes(buffer);
+                    randomDelay = _random.NextDouble();
+                    randomValue = _random.Next();
+                }
 
-                _randomGauge.RecordValue(_random.Next());
+                await Task.Delay(TimeSpan.FromSeconds(randomDelay)).ConfigureAwait(false);
+
+                _randomGauge.RecordValue(randomValue);
                 _bytesReadCounter.IncrementBy(ByteCount.FromBytes(1));
 
                 return buffer[0];
