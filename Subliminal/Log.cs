@@ -6,12 +6,12 @@ namespace Subliminal
 {
     public class Log<TEntry> : ILog<TEntry>
     {
-        private readonly Subject<TEntry> _logSubject;
+        private readonly ISubject<TEntry> _logSubject;
         private readonly ILog<TEntry> _derivedLog;
 
         public Log()
         {
-            _logSubject = new Subject<TEntry>();
+            _logSubject = Subject.Synchronize(new Subject<TEntry>());
             _derivedLog = _logSubject.AsObservable().AsLog();
         }
 

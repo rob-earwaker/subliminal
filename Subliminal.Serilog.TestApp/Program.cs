@@ -23,7 +23,7 @@ namespace Subliminal.Serilog.TestApp
 
             var currentProcessMonitor = ProcessMonitor.ForCurrentProcess(TimeSpan.FromSeconds(5));
 
-            currentProcessMonitor.CpuUsage
+            currentProcessMonitor.ProcessorUsage
                 .Subscribe(processorUsage =>
                     Log.Information(
                         "Total processor usage over the last {Interval} was {Percentage}%",
@@ -72,14 +72,14 @@ namespace Subliminal.Serilog.TestApp
                         .ForContext("SampleInterval", averageValue.Interval)
                         .Information("Average {MetricName} value was {AverageValue} over the last {SampleInterval}"));
 
-            //dataStore.BytesReadCounter.Rate()
-            //    .Buffer(TimeSpan.FromSeconds(5))
-            //    .Select(bitRates => bitRates.Average())
-            //    .Subscribe(averageBitRate =>
-            //        dataStoreLogger
-            //            .ForContext("ByteRate", averageBitRate.BytesPerSecond)
-            //            .ForContext("Interval", averageBitRate.Interval)
-            //            .Information("Read speed was {ByteRate}B/s over the last {Interval}"));
+            dataStore.BytesReadCounter.Rate()
+                .Buffer(TimeSpan.FromSeconds(5))
+                .Select(bitRates => bitRates.Average())
+                .Subscribe(averageBitRate =>
+                    dataStoreLogger
+                        .ForContext("ByteRate", averageBitRate.BytesPerSecond)
+                        .ForContext("Interval", averageBitRate.Interval)
+                        .Information("Read speed was {ByteRate}B/s over the last {Interval}"));
 
             while (true)
             {

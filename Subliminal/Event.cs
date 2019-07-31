@@ -7,12 +7,12 @@ namespace Subliminal
 {
     public class Event<TContext> : IEvent<TContext>
     {
-        private readonly Subject<TContext> _eventSubject;
+        private readonly ISubject<TContext> _eventSubject;
         private readonly IEvent<TContext> _derivedEvent;
 
         public Event()
         {
-            _eventSubject = new Subject<TContext>();
+            _eventSubject = Subject.Synchronize(new AsyncSubject<TContext>());
             _derivedEvent = _eventSubject.AsObservable().AsEvent();
         }
 
