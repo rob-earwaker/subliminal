@@ -55,7 +55,7 @@ namespace Subliminal.Serilog.TestApp
 
                 await Task.Delay(TimeSpan.FromSeconds(randomDelay)).ConfigureAwait(false);
 
-                _randomGauge.RecordValue(randomValue);
+                _randomGauge.LogValue(randomValue);
                 _bytesReadCounter.IncrementBy(ByteCount.FromBytes(1));
 
                 return buffer[0];

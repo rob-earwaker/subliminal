@@ -13,7 +13,7 @@ namespace Subliminal
             _derivedGauge = _valueLog.AsGauge();
         }
 
-        public void RecordValue(TValue value)
+        public void LogValue(TValue value)
         {
             _valueLog.Append(value);
         }
