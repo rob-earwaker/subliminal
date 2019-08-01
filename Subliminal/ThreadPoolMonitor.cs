@@ -38,19 +38,9 @@ namespace Subliminal
             get { return ThreadPoolUsage.Select(usage => usage.MinWorkerThreads).AsGauge(); }
         }
 
-        public IGauge<int> MinCompletionPortThreads
-        {
-            get { return ThreadPoolUsage.Select(usage => usage.MinCompletionPortThreads).AsGauge(); }
-        }
-
         public IGauge<int> MaxWorkerThreads
         {
             get { return ThreadPoolUsage.Select(usage => usage.MaxWorkerThreads).AsGauge(); }
-        }
-
-        public IGauge<int> MaxCompletionPortThreads
-        {
-            get { return ThreadPoolUsage.Select(usage => usage.MaxCompletionPortThreads).AsGauge(); }
         }
 
         public IGauge<int> AvailableWorkerThreads
@@ -58,14 +48,24 @@ namespace Subliminal
             get { return ThreadPoolUsage.Select(usage => usage.AvailableWorkerThreads).AsGauge(); }
         }
 
-        public IGauge<int> AvailableCompletionPortThreads
-        {
-            get { return ThreadPoolUsage.Select(usage => usage.AvailableCompletionPortThreads).AsGauge(); }
-        }
-
         public IGauge<int> ActiveWorkerThreads
         {
             get { return ThreadPoolUsage.Select(usage => usage.ActiveWorkerThreads).AsGauge(); }
+        }
+
+        public IGauge<int> MinCompletionPortThreads
+        {
+            get { return ThreadPoolUsage.Select(usage => usage.MinCompletionPortThreads).AsGauge(); }
+        }
+
+        public IGauge<int> MaxCompletionPortThreads
+        {
+            get { return ThreadPoolUsage.Select(usage => usage.MaxCompletionPortThreads).AsGauge(); }
+        }
+
+        public IGauge<int> AvailableCompletionPortThreads
+        {
+            get { return ThreadPoolUsage.Select(usage => usage.AvailableCompletionPortThreads).AsGauge(); }
         }
 
         public IGauge<int> ActiveCompletionPortThreads
