@@ -62,7 +62,7 @@ namespace Subliminal.Serilog.TestApp
                     "Average time taken to complete {OperationName} operations was {AverageDurationSeconds}s over the last {SamplePeriodDurationSeconds}s"));
 
             dataStore.RandomGauge
-                .Buffer(100)
+                .Buffer(128)
                 .Select(samples => samples.Average())
                 .TimeInterval()
                 .Subscribe(averageValue =>
@@ -75,11 +75,11 @@ namespace Subliminal.Serilog.TestApp
             dataStore.BytesReadCounter.Rate()
                 .Buffer(TimeSpan.FromSeconds(5))
                 .Select(bitRates => bitRates.Average())
-                .Subscribe(averageBitRate =>
+                .Subscribe(byteRate =>
                     dataStoreLogger
-                        .ForContext("ByteRate", averageBitRate.BytesPerSecond)
-                        .ForContext("Interval", averageBitRate.Interval)
-                        .Information("Read speed was {ByteRate}B/s over the last {Interval}"));
+                        .ForContext("BytesPerSecond", byteRate.Delta.Bytes / byteRate.Interval.TotalSeconds)
+                        .ForContext("Interval", byteRate.Interval)
+                        .Information("Read speed was {BytesPerSecond}B/s over the last {Interval}"));
 
             while (true)
             {

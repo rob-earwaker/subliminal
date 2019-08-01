@@ -1,12 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Subliminal
 {
     public static class IEnumerableExtensions
     {
-        public static Rate Average(this IEnumerable<Rate> rates)
+        public static TimeSpan Sum(this IEnumerable<TimeSpan> durations)
         {
-            return Rate.Average(rates);
+            return durations.Aggregate(
+                TimeSpan.Zero,
+                (totalDuration, duration) => totalDuration + duration);
+        }
+
+        public static Rate<ByteCount> Average(this IEnumerable<Rate<ByteCount>> rates)
+        {
+            return new Rate<ByteCount>(
+                delta: rates.Select(rate => rate.Delta).Sum(),
+                interval: rates.Select(rate => rate.Interval).Sum());
         }
 
         public static BitRate Average(this IEnumerable<BitRate> bitRates)
