@@ -25,7 +25,7 @@ namespace Subliminal
         }
     }
 
-    public class EventLog : IEventLog<Unit>
+    public class EventLog : IEventLog
     {
         private readonly EventLog<Unit> _eventLog;
 
