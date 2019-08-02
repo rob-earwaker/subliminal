@@ -31,9 +31,12 @@ namespace Subliminal
             return DerivedGauge<TValue>.FromObservable(observable);
         }
 
-        public static IObservable<IList<TSource>> Buffer<TSource>(this IObservable<TSource> source, IOperation operation)
+        public static IObservable<IList<TSource>> Buffer<TSource, TBufferClosing>(
+            this IObservable<TSource> source,
+            IOperation operation,
+            Func<StartedOperation, IObservable<TBufferClosing>> bufferClosingSelector)
         {
-            return source.Buffer(operation.Started, operationStarted => operationStarted.Ended);
+            return source.Buffer(operation.Started, bufferClosingSelector);
         }
     }
 }
