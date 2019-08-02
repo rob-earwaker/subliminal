@@ -69,10 +69,22 @@ namespace Subliminal.Serilog.TestApp
                     dataStoreLogger
                         .ForContext("MetricName", "RandomMetric")
                         .ForContext("AverageValue", averageValue.Value)
-                        .ForContext("SampleInterval", averageValue.Interval)
-                        .Information("Average {MetricName} value was {AverageValue} over the last {SampleInterval}"));
+                        .ForContext("Interval", averageValue.Interval)
+                        .Information("Average {MetricName} value was {AverageValue} over the last {Interval}"));
 
-            dataStore.BytesReadCounter.Rate()
+            dataStore.RandomGauge
+                .Rate()
+                .Buffer(128)
+                .Select(rates => rates.Average())
+                .Subscribe(rate =>
+                    dataStoreLogger
+                        .ForContext("MetricName", "RandomMetric")
+                        .ForContext("Rate", rate.Delta / rate.Interval.TotalSeconds)
+                        .ForContext("Interval", rate.Interval)
+                        .Information("{MetricName} rate was {Rate}/s over the last {Interval}"));
+
+            dataStore.BytesReadCounter
+                .Rate()
                 .Buffer(TimeSpan.FromSeconds(5))
                 .Select(bitRates => bitRates.Average())
                 .Subscribe(byteRate =>

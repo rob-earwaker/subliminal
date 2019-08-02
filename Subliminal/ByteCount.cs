@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Subliminal
+﻿namespace Subliminal
 {
     public class ByteCount
     {
@@ -27,11 +24,6 @@ namespace Subliminal
         public static ByteCount FromBytes(long byteCount)
         {
             return new ByteCount(byteCount);
-        }
-
-        public static ByteCount Sum(IEnumerable<ByteCount> byteCounts)
-        {
-            return byteCounts.Aggregate(Zero, (total, byteCount) => total + byteCount);
         }
 
         public long Bytes { get; }

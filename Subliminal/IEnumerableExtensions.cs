@@ -6,28 +6,37 @@ namespace Subliminal
 {
     public static class IEnumerableExtensions
     {
-        public static TimeSpan Sum(this IEnumerable<TimeSpan> durations)
+        public static Rate<int> Average(this IEnumerable<Rate<int>> rates)
         {
-            return durations.Aggregate(
-                TimeSpan.Zero,
-                (totalDuration, duration) => totalDuration + duration);
+            return rates.Average(deltas => deltas.Sum());
         }
 
         public static Rate<ByteCount> Average(this IEnumerable<Rate<ByteCount>> rates)
         {
-            return new Rate<ByteCount>(
-                delta: rates.Select(rate => rate.Delta).Sum(),
+            return rates.Average(deltas => deltas.Sum());
+        }
+
+        public static Rate<IList<TDelta>> Average<TDelta>(this IEnumerable<Rate<TDelta>> rates)
+        {
+            return rates.Average<TDelta, IList<TDelta>>(deltas => deltas.ToList());
+        }
+
+        public static Rate<TDeltaSum> Average<TDelta, TDeltaSum>(
+            this IEnumerable<Rate<TDelta>> rates, Func<IEnumerable<TDelta>, TDeltaSum> sumDeltas)
+        {
+            return new Rate<TDeltaSum>(
+                delta: sumDeltas(rates.Select(rate => rate.Delta)),
                 interval: rates.Select(rate => rate.Interval).Sum());
         }
 
-        public static BitRate Average(this IEnumerable<BitRate> bitRates)
+        public static TimeSpan Sum(this IEnumerable<TimeSpan> durations)
         {
-            return BitRate.Average(bitRates);
+            return durations.Aggregate(TimeSpan.Zero, (total, duration) => total + duration);
         }
 
         public static ByteCount Sum(this IEnumerable<ByteCount> byteCounts)
         {
-            return ByteCount.Sum(byteCounts);
+            return byteCounts.Aggregate(ByteCount.Zero, (total, byteCount) => total + byteCount);
         }
     }
 }
