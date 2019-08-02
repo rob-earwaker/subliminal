@@ -29,6 +29,12 @@ namespace Subliminal.Serilog.TestApp
                         "Total processor usage over the last {Interval} was {Percentage}%",
                         processorUsage.Interval, processorUsage.TotalPercentage));
 
+            currentProcessMonitor.WorkingSet
+                .Rate()
+                .Subscribe(rate =>
+                    Log.Information("Working set usage changed by {Delta}MB in the last {Interval}",
+                        rate.Delta.Megabytes, rate.Interval));
+
             var threadPoolMonitor = ThreadPoolMonitor.ForManagedThreadPool(TimeSpan.FromSeconds(5));
 
             threadPoolMonitor.ActiveWorkerThreads

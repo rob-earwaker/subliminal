@@ -48,7 +48,12 @@
 
         public static ByteCount operator +(ByteCount byteCount1, ByteCount byteCount2)
         {
-            return ByteCount.FromBytes(byteCount1.Bytes + byteCount2.Bytes);
+            return FromBytes(byteCount1.Bytes + byteCount2.Bytes);
+        }
+
+        public static ByteCount operator -(ByteCount byteCount1, ByteCount byteCount2)
+        {
+            return FromBytes(byteCount1.Bytes - byteCount2.Bytes);
         }
     }
 }

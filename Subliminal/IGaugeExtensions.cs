@@ -10,6 +10,11 @@ namespace Subliminal
             return gauge.Rate(delta => delta.CurrentValue - delta.PreviousValue);
         }
 
+        public static IGauge<Rate<ByteCount>> Rate(this IGauge<ByteCount> gauge)
+        {
+            return gauge.Rate(delta => delta.CurrentValue - delta.PreviousValue);
+        }
+
         public static IGauge<Rate<Delta<TValue>>> Rate<TValue>(this IGauge<TValue> gauge)
         {
             return gauge.Rate(delta => delta);
