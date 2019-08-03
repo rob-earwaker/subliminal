@@ -5,10 +5,11 @@ open Subliminal
 open Swensen.Unquote
 
 [<Property>]
-let ``entry is observed`` (entry: obj) =
+let ``emits entries`` (entry1: obj) (entry2: obj) =
     let log = Log<obj>()
     let observer = TestObserver()
     use subscription = log.Subscribe(observer)
-    log.Append(entry)
+    log.Append(entry1)
+    log.Append(entry2)
+    test <@ observer.ObservedValues = [ entry1; entry2 ] @>
     test <@ not observer.ObservableCompleted @>
-    test <@ observer.ObservedValues = [ entry ] @>

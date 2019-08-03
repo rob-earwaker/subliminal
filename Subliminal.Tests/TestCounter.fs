@@ -5,10 +5,11 @@ open Subliminal
 open Swensen.Unquote
 
 [<Property>]
-let ``increment is observed`` (increment: obj) =
+let ``emits increments`` (increment1: obj) (increment2: obj) =
     let counter = Counter<obj>()
     let observer = TestObserver()
     use subscription = counter.Subscribe(observer)
-    counter.IncrementBy(increment)
+    counter.IncrementBy(increment1)
+    counter.IncrementBy(increment2)
+    test <@ observer.ObservedValues = [ increment1; increment2 ] @>
     test <@ not observer.ObservableCompleted @>
-    test <@ observer.ObservedValues = [ increment ] @>
