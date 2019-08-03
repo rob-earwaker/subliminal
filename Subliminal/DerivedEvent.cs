@@ -13,18 +13,16 @@ namespace Subliminal
             _raised = raised;
         }
 
-        public static DerivedEvent<TContext> FromLog(ILog<TContext> log)
-        {
-            // Take a single item from the log to ensure that only one event is raised
-            // and that the underlying observable is then completed.
-            var raised = log.Take(1);
-
-            return new DerivedEvent<TContext>(raised);
-        }
-
         public static DerivedEvent<TContext> FromObservable(IObservable<TContext> observable)
         {
-            return FromLog(observable.AsLog());
+            // Take a single context value from the observable to ensure that the
+            // event is only raised once, and replay this value to all observers.
+            var raised = observable.Take(1).Replay();
+
+            // Connect immediately so that observers can consume the event.
+            raised.Connect();
+
+            return new DerivedEvent<TContext>(raised);
         }
 
         public IDisposable Subscribe(IObserver<TContext> observer)

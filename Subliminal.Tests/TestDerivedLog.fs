@@ -10,7 +10,7 @@ open System.Reactive.Subjects
 open Xunit
 
 [<Fact>]
-let ``observable is published`` () =
+let ``publishes source observable`` () =
     use trigger = new Subject<obj>()
     let source =
         // Create a source observable that produces a single
@@ -18,7 +18,7 @@ let ``observable is published`` () =
         // would yield a different object per observer.
         Observable.Create<obj>(fun (observer: IObserver<obj>) ->
             observer.OnNext(obj())
-            Action(id))
+            Action(ignore))
     // Create an observable that will only produce the source
     // observable's object when the trigger is pulled.
     let observable =
@@ -42,13 +42,13 @@ let ``observable is published`` () =
     test <@ observer1.ObservedValues.[0] = observer2.ObservedValues.[0] @>
     
 [<Property>]
-let ``observable is connected`` sourceObj =
+let ``connects to source observable`` sourceObj =
     use trigger = new Subject<obj>()
     let source =
         // Create a source observable that produces a single object.
         Observable.Create<obj>(fun (observer: IObserver<obj>) ->
             observer.OnNext(sourceObj)
-            Action(id))
+            Action(ignore))
     // Create an observable that returns an initial object immediately
     // and then the source object once the trigger is pulled.
     let observable =

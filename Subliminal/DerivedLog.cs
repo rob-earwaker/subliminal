@@ -14,8 +14,8 @@ namespace Subliminal
 
         public static DerivedLog<TEntry> FromObservable(IObservable<TEntry> observable)
         {
-            // Publish the observable to ensure that all future subscribers to
-            // the log receive the same entries.
+            // Publish the observable to ensure that all observers receive
+            // the same entries.
             var entryLogged = observable.Publish();
 
             // Connect to the published observable to start emitting entries
