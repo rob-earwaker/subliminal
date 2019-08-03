@@ -28,8 +28,8 @@ let ``observable is published`` () =
     let log = DerivedLog.FromObservable(observable)
     let observer1 = TestObserver()
     let observer2 = TestObserver()
-    use subscriber1 = log.Subscribe(observer1)
-    use subscriber2 = log.Subscribe(observer2)
+    use subscription1 = log.Subscribe(observer1)
+    use subscription2 = log.Subscribe(observer2)
     // Pull the trigger to emit the object from the source.
     trigger.OnNext(obj())
     test <@ not observer1.ObservableCompleted @>
@@ -58,7 +58,7 @@ let ``observable is connected`` sourceObj =
             .Select(fun zip -> zip.[0])
     let log = DerivedLog.FromObservable(observable)
     let observer = TestObserver()
-    use subscriber = log.Subscribe(observer)
+    use subscription = log.Subscribe(observer)
     // If the source observable was connected in the process of turning
     // it into a log, the initial object should have been emitted before
     // the observer was subscribed.
