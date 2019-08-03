@@ -1,15 +1,14 @@
 namespace Subliminal.Tests
 
 open System
-open System.Collections.Generic
 
 type TestObserver<'Value>() =
-    member val ObservedValues = List<'Value>()
+    member val ObservedValues = [] with get, set
     member val ObservableCompleted = false with get, set
 
     interface IObserver<'Value> with
         member this.OnNext(value) =
-            this.ObservedValues.Add(value)
+            this.ObservedValues <- List.append this.ObservedValues [ value ]
 
         member this.OnCompleted() =
             this.ObservableCompleted <- true
