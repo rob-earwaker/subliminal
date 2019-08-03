@@ -65,4 +65,3 @@ let ``connects to source observable`` (entry: obj) =
     trigger.OnNext(obj())
     // The only observed value should be the source entry.
     test <@ observer.ObservedValues = [ entry ] @>
-

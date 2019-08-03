@@ -51,4 +51,3 @@ let ``completes immediately for non-empty source observable`` (context: obj) =
     use subscription = event.Subscribe(observer)
     test <@ observer.ObservedValues = [ context ] @>
     test <@ observer.ObservableCompleted @>
-

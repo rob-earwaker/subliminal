@@ -12,6 +12,7 @@
     <Compile Include="TestDerivedEvent.fs" />
     <Compile Include="TestDerivedLog.fs" />
     <Compile Include="TestEvent.fs" />
+    <Compile Include="TestEventLog.fs" />
     <Compile Include="TestLog.fs" />
   </ItemGroup>
 
