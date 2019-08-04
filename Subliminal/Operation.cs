@@ -56,7 +56,7 @@ namespace Subliminal
         {
             using (var timer = StartNewTimer())
             {
-                await operation(timer);
+                await operation(timer).ConfigureAwait(false);
             }
         }
 
@@ -69,7 +69,7 @@ namespace Subliminal
         {
             using (var timer = StartNewTimer())
             {
-                return await operation(timer);
+                return await operation(timer).ConfigureAwait(false);
             }
         }
 
