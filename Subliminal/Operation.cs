@@ -47,7 +47,7 @@ namespace Subliminal
             get { return Started.SelectMany(operation => operation.Canceled).AsEventLog(); }
         }
 
-        public void Time(Action<Timer> operation, TContext context)
+        public void Time(TContext context, Action<Timer> operation)
         {
             using (var timer = StartNewTimer(context))
             {
@@ -55,12 +55,12 @@ namespace Subliminal
             }
         }
 
-        public void Time(Action operation, TContext context)
+        public void Time(TContext context, Action operation)
         {
-            Time(_ => operation(), context);
+            Time(context, _ => operation());
         }
 
-        public TResult Time<TResult>(Func<Timer, TResult> operation, TContext context)
+        public TResult Time<TResult>(TContext context, Func<Timer, TResult> operation)
         {
             using (var timer = StartNewTimer(context))
             {
@@ -68,12 +68,12 @@ namespace Subliminal
             }
         }
 
-        public TResult Time<TResult>(Func<TResult> operation, TContext context)
+        public TResult Time<TResult>(TContext context, Func<TResult> operation)
         {
-            return Time(_ => operation(), context);
+            return Time(context, _ => operation());
         }
 
-        public async Task TimeAsync(Func<Timer, Task> operation, TContext context)
+        public async Task TimeAsync(TContext context, Func<Timer, Task> operation)
         {
             using (var timer = StartNewTimer(context))
             {
@@ -81,12 +81,12 @@ namespace Subliminal
             }
         }
 
-        public Task TimeAsync(Func<Task> operation, TContext context)
+        public Task TimeAsync(TContext context, Func<Task> operation)
         {
-            return TimeAsync(_ => operation(), context);
+            return TimeAsync(context, _ => operation());
         }
 
-        public async Task<TResult> TimeAsync<TResult>(Func<Timer, Task<TResult>> operation, TContext context)
+        public async Task<TResult> TimeAsync<TResult>(TContext context, Func<Timer, Task<TResult>> operation)
         {
             using (var timer = StartNewTimer(context))
             {
@@ -94,9 +94,9 @@ namespace Subliminal
             }
         }
 
-        public Task<TResult> TimeAsync<TResult>(Func<Task<TResult>> operation, TContext context)
+        public Task<TResult> TimeAsync<TResult>(TContext context, Func<Task<TResult>> operation)
         {
-            return TimeAsync(_ => operation(), context);
+            return TimeAsync(context, _ => operation());
         }
     }
 
@@ -136,42 +136,42 @@ namespace Subliminal
 
         public void Time(Action<Timer> operation)
         {
-            _operation.Time(operation, Unit.Default);
+            _operation.Time(Unit.Default, operation);
         }
 
         public void Time(Action operation)
         {
-            _operation.Time(operation, Unit.Default);
+            _operation.Time(Unit.Default, operation);
         }
 
         public TResult Time<TResult>(Func<Timer, TResult> operation)
         {
-            return _operation.Time(operation, Unit.Default);
+            return _operation.Time(Unit.Default, operation);
         }
 
         public TResult Time<TResult>(Func<TResult> operation)
         {
-            return _operation.Time(operation, Unit.Default);
+            return _operation.Time(Unit.Default, operation);
         }
 
         public Task TimeAsync(Func<Timer, Task> operation)
         {
-            return _operation.TimeAsync(operation, Unit.Default);
+            return _operation.TimeAsync(Unit.Default, operation);
         }
 
         public Task TimeAsync(Func<Task> operation)
         {
-            return _operation.TimeAsync(operation, Unit.Default);
+            return _operation.TimeAsync(Unit.Default, operation);
         }
 
         public Task<TResult> TimeAsync<TResult>(Func<Timer, Task<TResult>> operation)
         {
-            return _operation.TimeAsync(operation, Unit.Default);
+            return _operation.TimeAsync(Unit.Default, operation);
         }
 
         public Task<TResult> TimeAsync<TResult>(Func<Task<TResult>> operation)
         {
-            return _operation.TimeAsync(operation, Unit.Default);
+            return _operation.TimeAsync(Unit.Default, operation);
         }
     }
 }
