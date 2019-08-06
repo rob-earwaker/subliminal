@@ -6,15 +6,13 @@ namespace Subliminal
     public class Timer : IDisposable
     {
         private readonly Stopwatch _stopwatch;
-        private readonly Event<EndedOperation> _ended;
+        private readonly Event<EndedTimer> _ended;
         private bool _hasEnded;
 
         internal Timer()
         {
-            OperationId = Guid.NewGuid();
-
             _stopwatch = new Stopwatch();
-            _ended = new Event<EndedOperation>();
+            _ended = new Event<EndedTimer>();
             _hasEnded = false;
         }
 
@@ -23,8 +21,7 @@ namespace Subliminal
             _stopwatch.Start();
         }
 
-        public Guid OperationId { get; }
-        public IEvent<EndedOperation> Ended => _ended;
+        public IEvent<EndedTimer> Ended => _ended;
 
         public void Pause()
         {
@@ -52,7 +49,7 @@ namespace Subliminal
                 return;
 
             _stopwatch.Stop();
-            _ended.Raise(new EndedOperation(OperationId, _stopwatch.Elapsed, wasCanceled));
+            _ended.Raise(new EndedTimer(_stopwatch.Elapsed, wasCanceled));
             _hasEnded = true;
         }
 

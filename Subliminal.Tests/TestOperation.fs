@@ -10,11 +10,54 @@ open Xunit
 let SleepDuration = TimeSpan.FromMilliseconds(1.)
 
 [<Fact>]
-let ``operations have different ids`` () =
+let ``ids are unique`` () =
     let operation = Operation()
+    let observer = TestObserver()
+    use subscription = operation.Started.Subscribe(observer)
     use timer1 = operation.StartNewTimer()
     use timer2 = operation.StartNewTimer()
-    test <@ timer1.OperationId <> timer2.OperationId @>
+    test <@ observer.ObservedValues.Length = 2 @>
+    test <@ observer.ObservedValues.[0].OperationId <> observer.ObservedValues.[1].OperationId @>
+    test <@ not observer.ObservableCompleted @>
+    
+[<Fact>]
+let ``id in completed operation matches started operation`` () =
+    let operation = Operation()
+    let startedObserver = TestObserver()
+    let completedObserver = TestObserver()
+    use startedSubscription = operation.Started.Subscribe(startedObserver)
+    use completedSubscription = operation.Completed.Subscribe(completedObserver)
+    use timer = operation.StartNewTimer()
+    timer.Complete()
+    test <@ startedObserver.ObservedValues.Length = 1 @>
+    test <@ completedObserver.ObservedValues.Length = 1 @>
+    test <@ startedObserver.ObservedValues.[0].OperationId = completedObserver.ObservedValues.[0].OperationId @>
+    
+[<Fact>]
+let ``id in canceled operation matches started operation`` () =
+    let operation = Operation()
+    let startedObserver = TestObserver()
+    let canceledObserver = TestObserver()
+    use startedSubscription = operation.Started.Subscribe(startedObserver)
+    use canceledSubscription = operation.Canceled.Subscribe(canceledObserver)
+    use timer = operation.StartNewTimer()
+    timer.Cancel()
+    test <@ startedObserver.ObservedValues.Length = 1 @>
+    test <@ canceledObserver.ObservedValues.Length = 1 @>
+    test <@ startedObserver.ObservedValues.[0].OperationId = canceledObserver.ObservedValues.[0].OperationId @>
+    
+[<Fact>]
+let ``id in ended operation matches started operation`` () =
+    let operation = Operation()
+    let startedObserver = TestObserver()
+    let endedObserver = TestObserver()
+    use startedSubscription = operation.Started.Subscribe(startedObserver)
+    use endedSubscription = operation.Ended.Subscribe(endedObserver)
+    use timer = operation.StartNewTimer()
+    timer.Complete()
+    test <@ startedObserver.ObservedValues.Length = 1 @>
+    test <@ endedObserver.ObservedValues.Length = 1 @>
+    test <@ startedObserver.ObservedValues.[0].OperationId = endedObserver.ObservedValues.[0].OperationId @>
     
 [<Fact>]
 let ``emits started operation when timer started`` () =
@@ -23,7 +66,6 @@ let ``emits started operation when timer started`` () =
     use subscription = operation.Started.Subscribe(observer)
     use timer = operation.StartNewTimer()
     test <@ observer.ObservedValues.Length = 1 @>
-    test <@ observer.ObservedValues.[0].OperationId = timer.OperationId @>
     test <@ not observer.ObservableCompleted @>
         
 [<Fact>]
@@ -32,12 +74,11 @@ let ``emits completed operation when timer completed`` () =
     let observer = TestObserver()
     use subscription = operation.Completed.Subscribe(observer)
     use timer = operation.StartNewTimer()
-    test <@ observer.ObservedValues.Length = 0 @>
+    test <@ observer.ObservedValues = [] @>
     Async.Sleep (int SleepDuration.TotalMilliseconds)
     |> Async.RunSynchronously
     timer.Complete()
     test <@ observer.ObservedValues.Length = 1 @>
-    test <@ observer.ObservedValues.[0].OperationId = timer.OperationId @>
     test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
     test <@ not observer.ObservableCompleted @>
     
@@ -47,12 +88,11 @@ let ``emits completed operation when timer disposed`` () =
     let observer = TestObserver()
     use subscription = operation.Completed.Subscribe(observer)
     use timer = operation.StartNewTimer()
-    test <@ observer.ObservedValues.Length = 0 @>
+    test <@ observer.ObservedValues = [] @>
     Async.Sleep (int SleepDuration.TotalMilliseconds)
     |> Async.RunSynchronously
     (timer :> IDisposable).Dispose()
     test <@ observer.ObservedValues.Length = 1 @>
-    test <@ observer.ObservedValues.[0].OperationId = timer.OperationId @>
     test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
     test <@ not observer.ObservableCompleted @>
         
@@ -62,12 +102,11 @@ let ``emits canceled operation when timer canceled`` () =
     let observer = TestObserver()
     use subscription = operation.Canceled.Subscribe(observer)
     use timer = operation.StartNewTimer()
-    test <@ observer.ObservedValues.Length = 0 @>
+    test <@ observer.ObservedValues = [] @>
     Async.Sleep (int SleepDuration.TotalMilliseconds)
     |> Async.RunSynchronously
     timer.Cancel()
     test <@ observer.ObservedValues.Length = 1 @>
-    test <@ observer.ObservedValues.[0].OperationId = timer.OperationId @>
     test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
     test <@ not observer.ObservableCompleted @>
     
@@ -77,12 +116,11 @@ let ``emits ended operation when timer completed`` () =
     let observer = TestObserver()
     use subscription = operation.Ended.Subscribe(observer)
     use timer = operation.StartNewTimer()
-    test <@ observer.ObservedValues.Length = 0 @>
+    test <@ observer.ObservedValues = [] @>
     Async.Sleep (int SleepDuration.TotalMilliseconds)
     |> Async.RunSynchronously
     timer.Complete()
     test <@ observer.ObservedValues.Length = 1 @>
-    test <@ observer.ObservedValues.[0].OperationId = timer.OperationId @>
     test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
     test <@ not observer.ObservedValues.[0].WasCanceled @>
     test <@ not observer.ObservableCompleted @>
@@ -93,12 +131,11 @@ let ``emits ended operation when timer canceled`` () =
     let observer = TestObserver()
     use subscription = operation.Ended.Subscribe(observer)
     use timer = operation.StartNewTimer()
-    test <@ observer.ObservedValues.Length = 0 @>
+    test <@ observer.ObservedValues = [] @>
     Async.Sleep (int SleepDuration.TotalMilliseconds)
     |> Async.RunSynchronously
     timer.Cancel()
     test <@ observer.ObservedValues.Length = 1 @>
-    test <@ observer.ObservedValues.[0].OperationId = timer.OperationId @>
     test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
     test <@ observer.ObservedValues.[0].WasCanceled @>
     test <@ not observer.ObservableCompleted @>
