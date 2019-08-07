@@ -30,7 +30,7 @@ namespace Subliminal.Serilog.TestApp
                         processorUsage.Interval, processorUsage.TotalPercentage));
 
             currentProcessMonitor.WorkingSet
-                .Rate()
+                .RateOfChange()
                 .Subscribe(rate =>
                     Log.Information("Working set usage changed by {Delta}MB in the last {Interval}",
                         rate.Delta.Megabytes, rate.Interval));
@@ -79,7 +79,7 @@ namespace Subliminal.Serilog.TestApp
                         .Information("Average {MetricName} value was {AverageValue} over the last {Interval}"));
 
             dataStore.RandomGauge
-                .Rate()
+                .RateOfChange()
                 .Buffer(128)
                 .Select(rates => rates.Average())
                 .Subscribe(rate =>
@@ -90,7 +90,7 @@ namespace Subliminal.Serilog.TestApp
                         .Information("{MetricName} rate was {Rate}/s over the last {Interval}"));
 
             dataStore.BytesReadCounter
-                .Rate()
+                .IncrementRate()
                 .Buffer(TimeSpan.FromSeconds(5))
                 .Select(bitRates => bitRates.Average())
                 .Subscribe(byteRate =>

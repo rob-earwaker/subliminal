@@ -5,22 +5,22 @@ namespace Subliminal
 {
     public static class IGaugeExtensions
     {
-        public static IGauge<Rate<int>> Rate(this IGauge<int> gauge)
+        public static IGauge<Rate<int>> RateOfChange(this IGauge<int> gauge)
         {
-            return gauge.Rate(delta => delta.CurrentValue - delta.PreviousValue);
+            return gauge.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
         }
 
-        public static IGauge<Rate<ByteCount>> Rate(this IGauge<ByteCount> gauge)
+        public static IGauge<Rate<ByteCount>> RateOfChange(this IGauge<ByteCount> gauge)
         {
-            return gauge.Rate(delta => delta.CurrentValue - delta.PreviousValue);
+            return gauge.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
         }
 
-        public static IGauge<Rate<Delta<TValue>>> Rate<TValue>(this IGauge<TValue> gauge)
+        public static IGauge<Rate<Delta<TValue>>> RateOfChange<TValue>(this IGauge<TValue> gauge)
         {
-            return gauge.Rate(delta => delta);
+            return gauge.RateOfChange(delta => delta);
         }
 
-        public static IGauge<Rate<TDelta>> Rate<TValue, TDelta>(
+        public static IGauge<Rate<TDelta>> RateOfChange<TValue, TDelta>(
             this IGauge<TValue> gauge, Func<Delta<TValue>, TDelta> deltaSelector)
         {
             return gauge

@@ -4,7 +4,7 @@ namespace Subliminal
 {
     public static class ICounterExtensions
     {
-        public static IGauge<Rate<TIncrement>> Rate<TIncrement>(this ICounter<TIncrement> counter)
+        public static IGauge<Rate<TIncrement>> IncrementRate<TIncrement>(this ICounter<TIncrement> counter)
         {
             return counter
                 .TimeInterval()
