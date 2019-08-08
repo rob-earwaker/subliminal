@@ -7,7 +7,7 @@ $version = "$versionPrefix-$versionSuffix"
 $assemblyVersion = "$majorVersionNumber.0.0.0"
 $fileVersion =
     If ($null -eq $env:APPVEYOR_BUILD_NUMBER) {"$versionPrefix.0"}
-    Else {[System.Int32]::Parse($env:APPVEYOR_BUILD_NUMBER)}
+    Else {[string]::Format("$versionPrefix.{0}", [System.Int32]::Parse($env:APPVEYOR_BUILD_NUMBER))}
 $informationalVersion =
     If ($null -eq $env:APPVEYOR_REPO_COMMIT) {"$version"}
     Else {[string]::Format("$version+{0}", $env:APPVEYOR_REPO_COMMIT.Substring(0, 7))}
