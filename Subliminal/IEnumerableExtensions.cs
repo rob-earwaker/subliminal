@@ -6,6 +6,17 @@ namespace Subliminal
 {
     public static class IEnumerableExtensions
     {
+        public static TimeSpan Average(this IEnumerable<TimeSpan> durations)
+        {
+            return TimeSpan.FromMilliseconds(durations.Average(duration => duration.TotalMilliseconds));
+        }
+
+        public static TimeSpan Average<TSource>(
+            this IEnumerable<TSource> source, Func<TSource, TimeSpan> durationSelector)
+        {
+            return source.Select(durationSelector).Average();
+        }
+
         public static Rate<int> Average(this IEnumerable<Rate<int>> rates)
         {
             return rates.Average(deltas => deltas.Sum());
