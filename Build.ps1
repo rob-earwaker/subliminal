@@ -1,7 +1,8 @@
 $majorVersionNumber = "1"
 $versionPrefix = "$majorVersionNumber.0.0"
 $version =
-    If ($env:APPVEYOR_REPO_TAG -And $env:APPVEYOR_REPO_TAG_NAME.StartsWith("v$versionPrefix")) {$env:APPVEYOR_REPO_TAG_NAME}
+    If ($env:APPVEYOR_REPO_TAG -And $env:APPVEYOR_REPO_TAG_NAME.StartsWith("v$versionPrefix"))
+        {$env:APPVEYOR_REPO_TAG_NAME.Remove(0, 1)}
     ElseIf ($null -eq $env:APPVEYOR_BUILD_NUMBER) {"$versionPrefix-local"}
     Else {[string]::Format("$versionPrefix-build-{0:D4}", [System.Int32]::Parse($env:APPVEYOR_BUILD_NUMBER))}
 $assemblyVersion = "$majorVersionNumber.0.0.0"
@@ -29,3 +30,5 @@ dotnet build . -c $buildConfiguration `
 dotnet test .\Subliminal.Tests -c $buildConfiguration --no-build
 dotnet pack .\Subliminal -c $buildConfiguration --no-build -o ..\artifacts `
     -p:PackageVersion=$version
+
+if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
