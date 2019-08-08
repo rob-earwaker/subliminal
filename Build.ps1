@@ -1,9 +1,9 @@
 $majorVersionNumber = "1"
 $versionPrefix = "$majorVersionNumber.0.0"
-$versionSuffix =
-    If ($null -eq $env:APPVEYOR_BUILD_NUMBER) {"local"}
-    Else {[string]::Format("build-{0:D4}", [System.Int32]::Parse($env:APPVEYOR_BUILD_NUMBER))}
-$version = "$versionPrefix-$versionSuffix"
+$version =
+    If ($env:APPVEYOR_REPO_TAG -And $env:APPVEYOR_REPO_TAG_NAME.StartsWith($versionPrefix)) {$env:APPVEYOR_REPO_TAG_NAME}
+    ElseIf ($null -eq $env:APPVEYOR_BUILD_NUMBER) {"$versionPrefix-local"}
+    Else {[string]::Format("$versionPrefix-build-{0:D4}", [System.Int32]::Parse($env:APPVEYOR_BUILD_NUMBER))}
 $assemblyVersion = "$majorVersionNumber.0.0.0"
 $fileVersion =
     If ($null -eq $env:APPVEYOR_BUILD_NUMBER) {"$versionPrefix.0"}
