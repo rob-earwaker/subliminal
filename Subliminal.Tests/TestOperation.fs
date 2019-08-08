@@ -6,8 +6,6 @@ open Swensen.Unquote
 open System
 open System.Threading.Tasks
 
-let SleepDuration = TimeSpan.FromMilliseconds(1.)
-
 [<Property>]
 let ``ids are unique`` (context1: obj) (context2: obj) =
     let operation = Operation<obj>()
@@ -114,8 +112,6 @@ let ``emits completed operation when timer completed`` (context: obj) =
     use subscription = operation.Completed.Subscribe(observer)
     use timer = operation.StartNewTimer(context)
     test <@ observer.ObservedValues = [] @>
-    Async.Sleep (int SleepDuration.TotalMilliseconds)
-    |> Async.RunSynchronously
     timer.Complete()
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>
@@ -129,8 +125,6 @@ let ``emits completed operation when timer disposed`` (context: obj) =
     use subscription = operation.Completed.Subscribe(observer)
     use timer = operation.StartNewTimer(context)
     test <@ observer.ObservedValues = [] @>
-    Async.Sleep (int SleepDuration.TotalMilliseconds)
-    |> Async.RunSynchronously
     (timer :> IDisposable).Dispose()
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>
@@ -144,8 +138,6 @@ let ``emits canceled operation when timer canceled`` (context: obj) =
     use subscription = operation.Canceled.Subscribe(observer)
     use timer = operation.StartNewTimer(context)
     test <@ observer.ObservedValues = [] @>
-    Async.Sleep (int SleepDuration.TotalMilliseconds)
-    |> Async.RunSynchronously
     timer.Cancel()
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>
@@ -159,8 +151,6 @@ let ``emits ended operation when timer completed`` (context: obj) =
     use subscription = operation.Ended.Subscribe(observer)
     use timer = operation.StartNewTimer(context)
     test <@ observer.ObservedValues = [] @>
-    Async.Sleep (int SleepDuration.TotalMilliseconds)
-    |> Async.RunSynchronously
     timer.Complete()
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>
@@ -175,8 +165,6 @@ let ``emits ended operation when timer canceled`` (context: obj) =
     use subscription = operation.Ended.Subscribe(observer)
     use timer = operation.StartNewTimer(context)
     test <@ observer.ObservedValues = [] @>
-    Async.Sleep (int SleepDuration.TotalMilliseconds)
-    |> Async.RunSynchronously
     timer.Cancel()
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>
@@ -189,9 +177,7 @@ let ``times operation with no return value`` (context: obj) =
     let operation = Operation<obj>()
     let observer = TestObserver()
     use subscription = operation.Completed.Subscribe(observer)
-    operation.Time(context, fun () ->
-        Async.Sleep (int SleepDuration.TotalMilliseconds)
-        |> Async.RunSynchronously)
+    operation.Time(context, fun () -> ())
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>
     test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
@@ -202,10 +188,7 @@ let ``times operation with return value`` (context: obj) (returnValue: obj) =
     let operation = Operation<obj>()
     let observer = TestObserver()
     use subscription = operation.Completed.Subscribe(observer)
-    let returnValue' = operation.Time(context, fun () ->
-        Async.Sleep (int SleepDuration.TotalMilliseconds)
-        |> Async.RunSynchronously
-        returnValue)
+    let returnValue' = operation.Time(context, fun () -> returnValue)
     test <@ returnValue' = returnValue @>
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>
@@ -217,10 +200,7 @@ let ``times async operation with no return value`` (context: obj) =
     let operation = Operation<obj>()
     let observer = TestObserver()
     use subscription = operation.Completed.Subscribe(observer)
-    operation.TimeAsync(context, fun () ->
-        Async.Sleep (int SleepDuration.TotalMilliseconds)
-        |> Async.StartAsTask
-        :> Task)
+    operation.TimeAsync(context, fun () -> Task.CompletedTask)
     |> Async.AwaitTask
     |> Async.RunSynchronously
     test <@ observer.ObservedValues.Length = 1 @>
@@ -234,11 +214,7 @@ let ``times async operation with return value`` (context: obj) (returnValue: obj
     let observer = TestObserver()
     use subscription = operation.Completed.Subscribe(observer)
     let returnValue' =
-        operation.TimeAsync(context, fun () ->
-            Async.StartAsTask <| async {
-                do! Async.Sleep (int SleepDuration.TotalMilliseconds)
-                return returnValue
-            })
+        operation.TimeAsync(context, fun () -> Task.FromResult(returnValue))
         |> Async.AwaitTask
         |> Async.RunSynchronously
     test <@ returnValue' = returnValue @>
@@ -252,9 +228,7 @@ let ``times operation with timer context and no return value`` (context: obj) =
     let operation = Operation<obj>()
     let observer = TestObserver()
     use subscription = operation.Completed.Subscribe(observer)
-    operation.Time(context, fun (timer: Timer) ->
-        Async.Sleep (int SleepDuration.TotalMilliseconds)
-        |> Async.RunSynchronously)
+    operation.Time(context, fun (timer: Timer) -> ())
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>
     test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
@@ -265,10 +239,7 @@ let ``times operation with timer context and return value`` (context: obj) (retu
     let operation = Operation<obj>()
     let observer = TestObserver()
     use subscription = operation.Completed.Subscribe(observer)
-    let returnValue' = operation.Time(context, fun (timer: Timer) ->
-        Async.Sleep (int SleepDuration.TotalMilliseconds)
-        |> Async.RunSynchronously
-        returnValue)
+    let returnValue' = operation.Time(context, fun (timer: Timer) -> returnValue)
     test <@ returnValue' = returnValue @>
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>
@@ -280,10 +251,7 @@ let ``times async operation with timer context and no return value`` (context: o
     let operation = Operation<obj>()
     let observer = TestObserver()
     use subscription = operation.Completed.Subscribe(observer)
-    operation.TimeAsync(context, fun (timer: Timer) ->
-        Async.Sleep (int SleepDuration.TotalMilliseconds)
-        |> Async.StartAsTask
-        :> Task)
+    operation.TimeAsync(context, fun (timer: Timer) -> Task.CompletedTask)
     |> Async.AwaitTask
     |> Async.RunSynchronously
     test <@ observer.ObservedValues.Length = 1 @>
@@ -297,11 +265,7 @@ let ``times async operation with timer context and return value`` (context: obj)
     let observer = TestObserver()
     use subscription = operation.Completed.Subscribe(observer)
     let returnValue' =
-        operation.TimeAsync(context, fun (timer: Timer) ->
-            Async.StartAsTask <| async {
-                do! Async.Sleep (int SleepDuration.TotalMilliseconds)
-                return returnValue
-            })
+        operation.TimeAsync(context, fun (timer: Timer) -> Task.FromResult(returnValue))
         |> Async.AwaitTask
         |> Async.RunSynchronously
     test <@ returnValue' = returnValue @>
