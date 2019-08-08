@@ -5,7 +5,7 @@ Write-Output "APPVEYOR_REPO_COMMIT: $env:APPVEYOR_REPO_COMMIT"
 Write-Output "APPVEYOR_REPO_TAG: $env:APPVEYOR_REPO_TAG"
 Write-Output "APPVEYOR_REPO_TAG_NAME: $env:APPVEYOR_REPO_TAG_NAME"
 $version =
-    If ($env:APPVEYOR_REPO_TAG -And $env:APPVEYOR_REPO_TAG_NAME.StartsWith("v$versionPrefix"))
+    If ($env:APPVEYOR_REPO_TAG -eq "true" -And $env:APPVEYOR_REPO_TAG_NAME.StartsWith("v$versionPrefix"))
         {$env:APPVEYOR_REPO_TAG_NAME.Remove(0, 1)}
     ElseIf ($null -eq $env:APPVEYOR_BUILD_NUMBER) {"$versionPrefix-local"}
     Else {[string]::Format("$versionPrefix-build-{0:D4}", [System.Int32]::Parse($env:APPVEYOR_BUILD_NUMBER))}
