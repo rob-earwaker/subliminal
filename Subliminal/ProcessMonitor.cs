@@ -16,11 +16,11 @@ namespace Subliminal
             TotalProcessorTime = process.Select(processSample => processSample.TotalProcessorTime).AsGauge();
 
             ProcessorUsage = process
-                .TimeInterval()
-                .Buffer(count: 2, skip: 1)
-                .Select(buffer => new ProcessorUsage(
-                    timeUsed: buffer[1].Value.TotalProcessorTime - buffer[0].Value.TotalProcessorTime,
-                    interval: buffer[1].Interval,
+                .Select(processSample => processSample.TotalProcessorTime)
+                .RateOfChange()
+                .Select(rate => new ProcessorUsage(
+                    timeUsed: rate.Delta,
+                    interval: rate.Interval,
                     processorCount: Environment.ProcessorCount))
                 .AsGauge();
         }

@@ -81,7 +81,7 @@ namespace Subliminal.Serilog.TestApp
                         "RandomMetric", rate.Delta / rate.Interval.TotalSeconds, rate.Interval));
 
             DataStore.BytesReadCounter
-                .IncrementRate()
+                .Rate()
                 .Buffer(TimeSpan.FromSeconds(5))
                 .Select(bitRates => bitRates.Average())
                 .Subscribe(byteRate =>
