@@ -1,5 +1,4 @@
 ﻿using Serilog;
-using Serilog.Events;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
@@ -47,7 +46,7 @@ namespace Subliminal.Serilog.TestApp
 
             dataStore.ReadRandomBytesOperation.Completed
                 .Subscribe(operation =>
-                    Log.Information("{OperationName} operation {OperationId} completed in {Duration}",
+                    dataStoreLogger.Information("{OperationName} operation {OperationId} completed in {Duration}",
                         "ReadRandomBytes", operation.OperationId, operation.Duration));
 
             dataStore.ReadRandomByteOperation.Completed
@@ -55,7 +54,7 @@ namespace Subliminal.Serilog.TestApp
                 .Where(buffer => buffer.Any())
                 .TimeInterval()
                 .Subscribe(operations =>
-                    Log.Information(
+                    dataStoreLogger.Information(
                         "Average {OperationName} duration was {AverageDuration} over the last {SamplePeriodDuration}",
                         "ReadRandomByte", operations.Value.Average(operation => operation.Duration), operations.Interval));
 
@@ -63,7 +62,7 @@ namespace Subliminal.Serilog.TestApp
                 .Buffer(dataStore.ReadRandomBytesOperation, operation => operation.Ended)
                 .TimeInterval()
                 .Subscribe(operations =>
-                    Log.Information(
+                    dataStoreLogger.Information(
                         "Average {OperationName} duration was {AverageDuration} over the last {SamplePeriodDuration}",
                         "ReadRandomByte", operations.Value.Average(operation => operation.Duration), operations.Interval));
 
@@ -72,32 +71,24 @@ namespace Subliminal.Serilog.TestApp
                 .Select(samples => samples.Average())
                 .TimeInterval()
                 .Subscribe(averageValue =>
-                    dataStoreLogger
-                        .ForContext("MetricName", "RandomMetric")
-                        .ForContext("AverageValue", averageValue.Value)
-                        .ForContext("Interval", averageValue.Interval)
-                        .Information("Average {MetricName} value was {AverageValue} over the last {Interval}"));
+                    dataStoreLogger.Information("Average {MetricName} value was {AverageValue} over the last {Interval}",
+                        "RandomMetric", averageValue.Value, averageValue.Interval));
 
             dataStore.RandomGauge
                 .RateOfChange()
                 .Buffer(128)
                 .Select(rates => rates.Average())
                 .Subscribe(rate =>
-                    dataStoreLogger
-                        .ForContext("MetricName", "RandomMetric")
-                        .ForContext("Rate", rate.Delta / rate.Interval.TotalSeconds)
-                        .ForContext("Interval", rate.Interval)
-                        .Information("{MetricName} rate was {Rate}/s over the last {Interval}"));
+                    dataStoreLogger.Information("{MetricName} rate was {Rate}/s over the last {Interval}",
+                        "RandomMetric", rate.Delta / rate.Interval.TotalSeconds, rate.Interval));
 
             dataStore.BytesReadCounter
                 .IncrementRate()
                 .Buffer(TimeSpan.FromSeconds(5))
                 .Select(bitRates => bitRates.Average())
                 .Subscribe(byteRate =>
-                    dataStoreLogger
-                        .ForContext("BytesPerSecond", byteRate.Delta.Bytes / byteRate.Interval.TotalSeconds)
-                        .ForContext("Interval", byteRate.Interval)
-                        .Information("Read speed was {BytesPerSecond}B/s over the last {Interval}"));
+                    dataStoreLogger.Information("Read speed was {BytesPerSecond}B/s over the last {Interval}",
+                        byteRate.Delta.Bytes / byteRate.Interval.TotalSeconds, byteRate.Interval));
 
             while (true)
             {
