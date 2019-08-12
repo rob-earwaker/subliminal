@@ -49,5 +49,10 @@ namespace Subliminal
         {
             return byteCounts.Aggregate(ByteCount.Zero, (total, byteCount) => total + byteCount);
         }
+
+        public static ByteCount Sum<TSource>(this IEnumerable<TSource> source, Func<TSource, ByteCount> selector)
+        {
+            return source.Select(selector).Sum();
+        }
     }
 }
