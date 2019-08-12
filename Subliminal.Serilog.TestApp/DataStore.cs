@@ -6,27 +6,18 @@ namespace Subliminal.Serilog.TestApp
 {
     internal class DataStore
     {
-        private readonly Random _random;
-        private readonly object _randomLockObject;
-        private readonly Gauge<int> _randomGauge;
-        private readonly Counter<ByteCount> _bytesReadCounter;
-        private readonly Operation _readRandomBytesOperation;
-        private readonly Operation _readRandomByteOperation;
+        private static readonly Random _random = new Random();
+        private static readonly object _randomLockObject = new object();
 
-        public DataStore()
-        {
-            _random = new Random();
-            _randomLockObject = new object();
-            _randomGauge = new Gauge<int>();
-            _bytesReadCounter = new Counter<ByteCount>();
-            _readRandomBytesOperation = new Operation();
-            _readRandomByteOperation = new Operation();
-        }
-
-        public IGauge<int> RandomGauge => _randomGauge;
-        public ICounter<ByteCount> BytesReadCounter => _bytesReadCounter;
-        public IOperation ReadRandomBytesOperation => _readRandomBytesOperation;
-        public IOperation ReadRandomByteOperation => _readRandomByteOperation;
+        private static readonly Gauge<int> _randomGauge = new Gauge<int>();
+        private static readonly Counter<ByteCount> _bytesReadCounter = new Counter<ByteCount>();
+        private static readonly Operation _readRandomBytesOperation = new Operation();
+        private static readonly Operation _readRandomByteOperation = new Operation();
+        
+        public static IGauge<int> RandomGauge => _randomGauge;
+        public static ICounter<ByteCount> BytesReadCounter => _bytesReadCounter;
+        public static IOperation ReadRandomBytesOperation => _readRandomBytesOperation;
+        public static IOperation ReadRandomByteOperation => _readRandomByteOperation;
 
         public async Task<byte[]> ReadRandomBytesAsync(int bufferSize)
         {
