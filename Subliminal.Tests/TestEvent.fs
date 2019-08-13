@@ -7,22 +7,22 @@ open System.Reactive
 open Xunit
 
 [<Property>]
-let ``completes after being raised`` (event: obj) =
+let ``completes after being raised`` (eventValue: obj) =
     let event = Event<obj>()
     let observer = TestObserver()
     use subscription = event.Subscribe(observer)
-    event.Raise(event)
-    test <@ observer.ObservedValues = [ event ] @>
+    event.Raise(eventValue)
+    test <@ observer.ObservedValues = [ eventValue ] @>
     test <@ observer.ObservableCompleted @>
 
 [<Property>]
-let ``only emits first event value`` (event1: obj) (event2: obj) =
+let ``only emits first event value`` (eventValue1: obj) (eventValue2: obj) =
     let event = Event<obj>()
     let observer = TestObserver()
     use subscription = event.Subscribe(observer)
-    event.Raise(event1)
-    event.Raise(event2)
-    test <@ observer.ObservedValues = [ event1 ] @>
+    event.Raise(eventValue1)
+    event.Raise(eventValue2)
+    test <@ observer.ObservedValues = [ eventValue1 ] @>
     test <@ observer.ObservableCompleted @>
     
 [<Fact>]
