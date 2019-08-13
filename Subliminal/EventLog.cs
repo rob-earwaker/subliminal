@@ -3,23 +3,23 @@ using System.Reactive;
 
 namespace Subliminal
 {
-    public class EventLog<TContext> : IEventLog<TContext>
+    public class EventLog<TEvent> : IEventLog<TEvent>
     {
-        private readonly Log<TContext> _eventLog;
-        private readonly IEventLog<TContext> _derivedEventLog;
+        private readonly Log<TEvent> _eventLog;
+        private readonly IEventLog<TEvent> _derivedEventLog;
 
         public EventLog()
         {
-            _eventLog = new Log<TContext>();
+            _eventLog = new Log<TEvent>();
             _derivedEventLog = _eventLog.AsEventLog();
         }
 
-        public void LogOccurrence(TContext context)
+        public void LogOccurrence(TEvent @event)
         {
-            _eventLog.Append(context);
+            _eventLog.Append(@event);
         }
 
-        public IDisposable Subscribe(IObserver<TContext> observer)
+        public IDisposable Subscribe(IObserver<TEvent> observer)
         {
             return _derivedEventLog.Subscribe(observer);
         }

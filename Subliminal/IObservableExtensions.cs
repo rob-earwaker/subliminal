@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive.Linq;
 
 namespace Subliminal
@@ -11,14 +10,14 @@ namespace Subliminal
             return DerivedLog<TEntry>.FromObservable(observable);
         }
 
-        public static IEvent<TContext> AsEvent<TContext>(this IObservable<TContext> observable)
+        public static IEvent<TEvent> AsEvent<TEvent>(this IObservable<TEvent> observable)
         {
-            return DerivedEvent<TContext>.FromObservable(observable);
+            return DerivedEvent<TEvent>.FromObservable(observable);
         }
 
-        public static IEventLog<TContext> AsEventLog<TContext>(this IObservable<TContext> observable)
+        public static IEventLog<TEvent> AsEventLog<TEvent>(this IObservable<TEvent> observable)
         {
-            return DerivedEventLog<TContext>.FromObservable(observable);
+            return DerivedEventLog<TEvent>.FromObservable(observable);
         }
 
         public static ICounter<TIncrement> AsCounter<TIncrement>(this IObservable<TIncrement> observable)
@@ -70,7 +69,7 @@ namespace Subliminal
         }
         public static IObservable<long> SampleCount<TValue>(this IObservable<TValue> observable)
         {
-            return observable.Select(context => 1L);
+            return observable.Select(_ => 1L);
         }
     }
 }

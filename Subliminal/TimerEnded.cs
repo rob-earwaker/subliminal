@@ -2,9 +2,9 @@
 
 namespace Subliminal
 {
-    internal class EndedTimer
+    internal class TimerEnded
     {
-        public EndedTimer(TimeSpan duration, bool wasCanceled)
+        public TimerEnded(TimeSpan duration, bool wasCanceled)
         {
             Duration = duration;
             WasCanceled = wasCanceled;

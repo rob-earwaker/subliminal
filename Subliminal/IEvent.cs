@@ -3,7 +3,7 @@ using System.Reactive;
 
 namespace Subliminal
 {
-    public interface IEvent<TContext> : IObservable<TContext>
+    public interface IEvent<TEvent> : IObservable<TEvent>
     {
     }
 

@@ -7,9 +7,9 @@
             return DerivedCounter<TIncrement>.FromLog(log);
         }
 
-        public static IEventLog<TContext> AsEventLog<TContext>(this ILog<TContext> log)
+        public static IEventLog<TEvent> AsEventLog<TEvent>(this ILog<TEvent> log)
         {
-            return DerivedEventLog<TContext>.FromLog(log);
+            return DerivedEventLog<TEvent>.FromLog(log);
         }
 
         public static IGauge<TValue> AsGauge<TValue>(this ILog<TValue> log)

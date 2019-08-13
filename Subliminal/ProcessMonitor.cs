@@ -5,7 +5,7 @@ namespace Subliminal
 {
     public class ProcessMonitor
     {
-        private ProcessMonitor(IGauge<Process> process, IEvent<ExitedProcess> exited)
+        private ProcessMonitor(IGauge<Process> process, IEvent<ProcessExited> exited)
         {
             Process = process;
             Exited = exited;
@@ -39,7 +39,7 @@ namespace Subliminal
                     .FromEventPattern(
                         eventHandler => process.Exited += eventHandler,
                         eventHandler => process.Exited -= eventHandler)
-                    .Select(_ => new ExitedProcess(process.Id, process.ExitTime, process.ExitCode))
+                    .Select(_ => new ProcessExited(process.Id, process.ExitTime, process.ExitCode))
                     .AsEvent());
         }
 
@@ -60,7 +60,7 @@ namespace Subliminal
         }
 
         public IGauge<Process> Process { get; }
-        public IEvent<ExitedProcess> Exited { get; }
+        public IEvent<ProcessExited> Exited { get; }
         public IGauge<ByteCount> PrivateMemorySize { get; }
         public IGauge<ByteCount> VirtualMemorySize { get; }
         public IGauge<ByteCount> WorkingSet { get; }

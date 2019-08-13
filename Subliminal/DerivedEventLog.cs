@@ -3,26 +3,26 @@ using System.Reactive;
 
 namespace Subliminal
 {
-    public class DerivedEventLog<TContext> : IEventLog<TContext>
+    public class DerivedEventLog<TEvent> : IEventLog<TEvent>
     {
-        private readonly IObservable<TContext> _eventLogged;
+        private readonly IObservable<TEvent> _eventLogged;
 
-        private DerivedEventLog(IObservable<TContext> eventLogged)
+        private DerivedEventLog(IObservable<TEvent> eventLogged)
         {
             _eventLogged = eventLogged;
         }
 
-        public static DerivedEventLog<TContext> FromLog(ILog<TContext> log)
+        public static DerivedEventLog<TEvent> FromLog(ILog<TEvent> log)
         {
-            return new DerivedEventLog<TContext>(log);
+            return new DerivedEventLog<TEvent>(log);
         }
 
-        public static DerivedEventLog<TContext> FromObservable(IObservable<TContext> observable)
+        public static DerivedEventLog<TEvent> FromObservable(IObservable<TEvent> observable)
         {
             return FromLog(observable.AsLog());
         }
 
-        public IDisposable Subscribe(IObserver<TContext> observer)
+        public IDisposable Subscribe(IObserver<TEvent> observer)
         {
             return _eventLogged.Subscribe(observer);
         }

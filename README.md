@@ -50,13 +50,13 @@ counter.IncrementBy(125);
 
 ## Event Log
 
-An event log records when a particular event occurs, along with optional context information.
+An event log records when a particular event occurs, along with optional event information.
 
 ```csharp
 using Subliminal;
 using System;
 
-// Event log without context information
+// Event log without event information
 var eventLog = new EventLog();
 
 eventLog.Subscribe(_ => Console.WriteLine($"Event occurred"));
@@ -71,9 +71,9 @@ eventLog.LogOccurrence();
 using Subliminal;
 using System;
 
-class Context
+class MessageSent
 {
-    public Context(string message)
+    public MessageSent(string message)
     {
         Message = message;
     }
@@ -81,16 +81,16 @@ class Context
     public string Message { get; }
 }
 
-// Event log with context information
-var eventLog = new EventLog<Context>();
+// Event log with event information
+var eventLog = new EventLog<MessageSent>();
 
-eventLog.Subscribe(context =>
-    Console.WriteLine($"Event occurred with message '{context.Message}'"));
+eventLog.Subscribe(messageSent =>
+    Console.WriteLine($"Message '{messageSent.Message}' was sent"));
 
-eventLog.LogOccurrence(new Context(message: "hello"));
-// "Event occurred with message 'hello'"
-eventLog.LogOccurrence(new Context(message: "world"));
-// "Event occurred with message 'world'"
+eventLog.LogOccurrence(new MessageSent("hello"));
+// "Message 'hello' was sent"
+eventLog.LogOccurrence(new MessageSent("world"));
+// "Message 'world' was sent"
 ```
 
 ## Operation

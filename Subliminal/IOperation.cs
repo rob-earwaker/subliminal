@@ -2,17 +2,17 @@
 {
     public interface IOperation<TContext>
     {
-        IEventLog<StartedOperation<TContext>> Started { get; }
-        IEventLog<EndedOperation<TContext>> Ended { get; }
-        IEventLog<CompletedOperation<TContext>> Completed { get; }
-        IEventLog<CanceledOperation<TContext>> Canceled { get; }
+        IEventLog<OperationStarted<TContext>> Started { get; }
+        IEventLog<OperationEnded<TContext>> Ended { get; }
+        IEventLog<OperationCompleted<TContext>> Completed { get; }
+        IEventLog<OperationCanceled<TContext>> Canceled { get; }
     }
 
     public interface IOperation
     {
-        IEventLog<StartedOperation> Started { get; }
-        IEventLog<EndedOperation> Ended { get; }
-        IEventLog<CompletedOperation> Completed { get; }
-        IEventLog<CanceledOperation> Canceled { get; }
+        IEventLog<OperationStarted> Started { get; }
+        IEventLog<OperationEnded> Ended { get; }
+        IEventLog<OperationCompleted> Completed { get; }
+        IEventLog<OperationCanceled> Canceled { get; }
     }
 }

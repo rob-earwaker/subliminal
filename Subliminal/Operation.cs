@@ -7,11 +7,11 @@ namespace Subliminal
 {
     public class Operation<TContext> : IOperation<TContext>
     {
-        private readonly EventLog<StartedOperation<TContext>> _started;
+        private readonly EventLog<OperationStarted<TContext>> _started;
 
         public Operation()
         {
-            _started = new EventLog<StartedOperation<TContext>>();
+            _started = new EventLog<OperationStarted<TContext>>();
         }
 
         public Timer StartNewTimer(TContext context)
@@ -20,29 +20,29 @@ namespace Subliminal
             var timer = new Timer();
 
             var operationEnded = timer.Ended
-                .Select(timerEnded => new EndedOperation<TContext>(
+                .Select(timerEnded => new OperationEnded<TContext>(
                     operationId, context, timerEnded.Duration, timerEnded.WasCanceled))
                 .AsEvent();
 
-            _started.LogOccurrence(new StartedOperation<TContext>(operationId, context, operationEnded));
+            _started.LogOccurrence(new OperationStarted<TContext>(operationId, context, operationEnded));
 
             timer.Start();
             return timer;
         }
 
-        public IEventLog<StartedOperation<TContext>> Started => _started;
+        public IEventLog<OperationStarted<TContext>> Started => _started;
 
-        public IEventLog<EndedOperation<TContext>> Ended
+        public IEventLog<OperationEnded<TContext>> Ended
         {
             get { return Started.SelectMany(operation => operation.Ended).AsEventLog(); }
         }
 
-        public IEventLog<CompletedOperation<TContext>> Completed
+        public IEventLog<OperationCompleted<TContext>> Completed
         {
             get { return Started.SelectMany(operation => operation.Completed).AsEventLog(); }
         }
 
-        public IEventLog<CanceledOperation<TContext>> Canceled
+        public IEventLog<OperationCanceled<TContext>> Canceled
         {
             get { return Started.SelectMany(operation => operation.Canceled).AsEventLog(); }
         }
@@ -114,22 +114,22 @@ namespace Subliminal
             return _operation.StartNewTimer(Unit.Default);
         }
 
-        public IEventLog<StartedOperation> Started
+        public IEventLog<OperationStarted> Started
         {
             get { return _operation.Started.Select(operation => operation.WithoutContext()).AsEventLog(); }
         }
 
-        public IEventLog<EndedOperation> Ended
+        public IEventLog<OperationEnded> Ended
         {
             get { return _operation.Ended.Select(operation => operation.WithoutContext()).AsEventLog(); }
         }
 
-        public IEventLog<CompletedOperation> Completed
+        public IEventLog<OperationCompleted> Completed
         {
             get { return _operation.Completed.Select(operation => operation.WithoutContext()).AsEventLog(); }
         }
 
-        public IEventLog<CanceledOperation> Canceled
+        public IEventLog<OperationCanceled> Canceled
         {
             get { return _operation.Canceled.Select(operation => operation.WithoutContext()).AsEventLog(); }
         }

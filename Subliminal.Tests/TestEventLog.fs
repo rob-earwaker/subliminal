@@ -7,17 +7,17 @@ open System.Reactive
 open Xunit
 
 [<Property>]
-let ``emits context values`` (context1: obj) (context2: obj) =
+let ``emits events`` (event1: obj) (event2: obj) =
     let eventLog = EventLog<obj>()
     let observer = TestObserver()
     use subscription = eventLog.Subscribe(observer)
-    eventLog.LogOccurrence(context1)
-    eventLog.LogOccurrence(context2)
-    test <@ observer.ObservedValues = [ context1; context2 ] @>
+    eventLog.LogOccurrence(event1)
+    eventLog.LogOccurrence(event2)
+    test <@ observer.ObservedValues = [ event1; event2 ] @>
     test <@ not observer.ObservableCompleted @>
     
 [<Fact>]
-let ``can log occurrence without context`` () =
+let ``can log occurrence without event value`` () =
     let eventLog = EventLog()
     let observer = TestObserver()
     use subscription = eventLog.Subscribe(observer)
