@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Reactive;
 using System.Reactive.Linq;
 
 namespace Subliminal
 {
     public class StartedOperation<TContext>
     {
-        public StartedOperation(Guid operationId, TContext context, IEvent<EndedOperation<TContext>> ended)
+        internal StartedOperation(Guid operationId, TContext context, IEvent<EndedOperation<TContext>> ended)
         {
             OperationId = operationId;
             Context = context;
@@ -15,9 +14,10 @@ namespace Subliminal
 
         public Guid OperationId { get; }
         public TContext Context { get; }
-        public IEvent<EndedOperation<TContext>> Ended { get; }
 
-        public IEvent<CompletedOperation<TContext>> Completed
+        internal IEvent<EndedOperation<TContext>> Ended { get; }
+
+        internal IEvent<CompletedOperation<TContext>> Completed
         {
             get
             {
@@ -29,7 +29,7 @@ namespace Subliminal
             }
         }
 
-        public IEvent<CanceledOperation<TContext>> Canceled
+        internal IEvent<CanceledOperation<TContext>> Canceled
         {
             get
             {
@@ -41,7 +41,7 @@ namespace Subliminal
             }
         }
 
-        public StartedOperation WithoutContext()
+        internal StartedOperation WithoutContext()
         {
             return new StartedOperation(
                 OperationId,
@@ -51,16 +51,17 @@ namespace Subliminal
 
     public class StartedOperation
     {
-        public StartedOperation(Guid operationId, IEvent<EndedOperation> ended)
+        internal StartedOperation(Guid operationId, IEvent<EndedOperation> ended)
         {
             OperationId = operationId;
             Ended = ended;
         }
 
         public Guid OperationId { get; }
-        public IEvent<EndedOperation> Ended { get; }
 
-        public IEvent<CompletedOperation> Completed
+        internal IEvent<EndedOperation> Ended { get; }
+
+        internal IEvent<CompletedOperation> Completed
         {
             get
             {
@@ -71,7 +72,7 @@ namespace Subliminal
             }
         }
 
-        public IEvent<CanceledOperation> Canceled
+        internal IEvent<CanceledOperation> Canceled
         {
             get
             {

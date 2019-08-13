@@ -55,15 +55,7 @@ namespace Subliminal.Serilog.TestApp
                     dataStoreLogger.Information(
                         "Average {OperationName} duration was {AverageDuration} over the last {SamplePeriodDuration}",
                         "ReadRandomByte", operations.Value.Average(operation => operation.Duration), operations.Interval));
-
-            DataStore.ReadRandomByteOperation.Completed
-                .Buffer(DataStore.ReadRandomBytesOperation, operation => operation.Ended)
-                .TimeInterval()
-                .Subscribe(operations =>
-                    dataStoreLogger.Information(
-                        "Average {OperationName} duration was {AverageDuration} over the last {SamplePeriodDuration}",
-                        "ReadRandomByte", operations.Value.Average(operation => operation.Duration), operations.Interval));
-
+            
             DataStore.RandomGauge
                 .Buffer(128)
                 .Select(samples => samples.Average())

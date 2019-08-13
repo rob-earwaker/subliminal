@@ -21,7 +21,7 @@ namespace Subliminal
             _stopwatch.Start();
         }
 
-        public IEvent<EndedTimer> Ended => _ended;
+        internal IEvent<EndedTimer> Ended => _ended;
 
         public void Complete()
         {

@@ -4,7 +4,7 @@ namespace Subliminal
 {
     public class CanceledOperation<TContext>
     {
-        public CanceledOperation(Guid operationId, TContext context, TimeSpan duration)
+        internal CanceledOperation(Guid operationId, TContext context, TimeSpan duration)
         {
             OperationId = operationId;
             Context = context;
@@ -15,7 +15,7 @@ namespace Subliminal
         public TContext Context { get; }
         public TimeSpan Duration { get; }
 
-        public CanceledOperation WithoutContext()
+        internal CanceledOperation WithoutContext()
         {
             return new CanceledOperation(OperationId, Duration);
         }
@@ -23,7 +23,7 @@ namespace Subliminal
 
     public class CanceledOperation
     {
-        public CanceledOperation(Guid operationId, TimeSpan duration)
+        internal CanceledOperation(Guid operationId, TimeSpan duration)
         {
             OperationId = operationId;
             Duration = duration;

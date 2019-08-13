@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public class EndedTimer
+    internal class EndedTimer
     {
         public EndedTimer(TimeSpan duration, bool wasCanceled)
         {
