@@ -47,3 +47,135 @@ counter.IncrementBy(2);
 counter.IncrementBy(125);
 // "Counter incremented by 125"
 ```
+
+## Event Log
+
+An event log records when a particular event occurs, along with optional context information.
+
+```csharp
+using Subliminal;
+using System;
+
+// Event log without context information
+var eventLog = new EventLog();
+
+eventLog.Subscribe(_ => Console.WriteLine($"Event occurred"));
+
+eventLog.LogOccurrence();
+// "Event occurred"
+eventLog.LogOccurrence();
+// "Event occurred"
+```
+
+```csharp
+using Subliminal;
+using System;
+
+class Context
+{
+    public Context(string message)
+    {
+        Message = message;
+    }
+
+    public string Message { get; }
+}
+
+// Event log with context information
+var eventLog = new EventLog<Context>();
+
+eventLog.Subscribe(context =>
+    Console.WriteLine($"Event occurred with message '{context.Message}'"));
+
+eventLog.LogOccurrence(new Context(message: "hello"));
+// "Event occurred with message 'hello'"
+eventLog.LogOccurrence(new Context(message: "world"));
+// "Event occurred with message 'world'"
+```
+
+## Operation
+
+An operation records execution timing information and is made up of several different event logs that record when an operation is started, completed, canceled or ended. Operations can also optionally include context information.
+
+```csharp
+using Subliminal;
+using System;
+using System.Threading;
+
+// Operation without context information
+var operation = new Operation();
+
+operation.Started.Subscribe(started =>
+    Console.WriteLine("Operation started"));
+
+operation.Completed.Subscribe(completed =>
+    Console.WriteLine($"Operation was completed after {completed.Duration}"));
+    
+operation.Canceled.Subscribe(canceled =>
+    Console.WriteLine($"Operation was canceled after {canceled.Duration}"));
+    
+operation.Ended.Subscribe(ended =>
+    Console.WriteLine($"Operation was ended after {ended.Duration}"));
+
+using (var timer = operation.StartNewTimer())
+{
+    // "Operation started"
+    Thread.Sleep(TimeSpan.FromSeconds(1));
+}
+// "Operation was completed after 00:00:01.0943984"
+// "Operationwas ended after 00:00:01.0943984"
+
+using (var timer = operation.StartNewTimer())
+{
+    // "Operation started"
+    Thread.Sleep(TimeSpan.FromSeconds(1));
+    operation.Complete();
+    // "Operation was completed after 00:00:01.0908245"
+    // "Operation was ended after 00:00:01.0908245"
+    Thread.Sleep(TimeSpan.FromSeconds(1));
+}
+
+using (var timer = operation.StartNewTimer())
+{
+    // "Operation started"
+    Thread.Sleep(TimeSpan.FromSeconds(1));
+    operation.Cancel();
+    // "Operation was canceled after 00:00:01.0952762"
+    // "Operation was ended after 00:00:01.0952762"
+    Thread.Sleep(TimeSpan.FromSeconds(1));
+}
+```
+
+```csharp
+using Subliminal;
+using System;
+using System.Threading;
+
+class Context
+{
+    public Context(string message)
+    {
+        Message = message;
+    }
+
+    public string Message { get; }
+}
+
+// Operation with context information
+var operation = new Operation<Context>();
+
+operation.Started.Subscribe(started =>
+    Console.WriteLine($"Operation started with message '{started.Context.Message}'"));
+
+using (var timer = operation.StartNewTimer(new Context(message: "hello")))
+{
+    // "Operation started with message 'hello'"
+    Thread.Sleep(TimeSpan.FromSeconds(1));
+}
+
+using (var timer = operation.StartNewTimer(new Context(message: "world")))
+{
+    // "Operation started with message 'world'"
+    Thread.Sleep(TimeSpan.FromSeconds(1));
+}
+```
