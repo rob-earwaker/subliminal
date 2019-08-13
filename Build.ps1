@@ -1,5 +1,5 @@
-$majorVersionNumber = "1"
-$versionPrefix = "$majorVersionNumber.0.0"
+$majorVersionNumber = "0"
+$versionPrefix = "$majorVersionNumber.1.0"
 
 Write-Output "APPVEYOR_BUILD_NUMBER: $env:APPVEYOR_BUILD_NUMBER"
 Write-Output "APPVEYOR_REPO_COMMIT: $env:APPVEYOR_REPO_COMMIT"
