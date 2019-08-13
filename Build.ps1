@@ -33,13 +33,19 @@ $buildConfiguration = "Release"
 
 dotnet clean . -c $buildConfiguration
 
+if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
+
 dotnet build . -c $buildConfiguration `
     -p:Version=$version `
     -p:AssemblyVersion=$assemblyVersion `
     -p:FileVersion=$fileVersion `
     -p:InformationalVersion=$informationalVersion
 
+if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
+
 dotnet test .\Subliminal.Tests -c $buildConfiguration --no-build
+
+if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
 
 dotnet pack .\Subliminal -c $buildConfiguration --no-build -o ..\artifacts `
     -p:PackageVersion=$version
