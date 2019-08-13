@@ -95,7 +95,7 @@ eventLog.LogOccurrence(new Context(message: "world"));
 
 ## Operation
 
-An operation records execution timing information and is made up of several different event logs that record when an operation is started, completed, canceled or ended. Operations can also optionally include context information.
+An operation records execution timing information and is made up of several different event logs that record when an operation is started, completed, canceled or ended. An operation ends when it is either canceled or completed. Operations can also optionally include context information.
 
 ```csharp
 using Subliminal;

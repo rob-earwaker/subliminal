@@ -23,16 +23,6 @@ namespace Subliminal
 
         public IEvent<EndedTimer> Ended => _ended;
 
-        public void Pause()
-        {
-            _stopwatch.Stop();
-        }
-
-        public void Resume()
-        {
-            _stopwatch.Start();
-        }
-
         public void Complete()
         {
             End(wasCanceled: false);
