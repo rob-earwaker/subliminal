@@ -129,7 +129,7 @@ using (var timer = operation.StartNewTimer())
 {
     // "Operation started"
     Thread.Sleep(TimeSpan.FromSeconds(1));
-    operation.Complete();
+    timer.Complete();
     // "Operation was completed after 00:00:01.0908245"
     // "Operation was ended after 00:00:01.0908245"
     Thread.Sleep(TimeSpan.FromSeconds(1));
@@ -139,7 +139,7 @@ using (var timer = operation.StartNewTimer())
 {
     // "Operation started"
     Thread.Sleep(TimeSpan.FromSeconds(1));
-    operation.Cancel();
+    timer.Cancel();
     // "Operation was canceled after 00:00:01.0952762"
     // "Operation was ended after 00:00:01.0952762"
     Thread.Sleep(TimeSpan.FromSeconds(1));
