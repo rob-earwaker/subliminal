@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-namespace Subliminal.Serilog.TestApp
+namespace Subliminal.SampleApp.Serilog
 {
     internal class Program
     {
