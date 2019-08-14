@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subliminal", "Subliminal\Su
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Subliminal.Tests", "Subliminal.Tests\Subliminal.Tests.fsproj", "{1C9A19D9-30C9-405D-92CB-77EF5E765B43}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subliminal.SampleApp.Serilog", "Subliminal.SampleApp.Serilog\Subliminal.SampleApp.Serilog.csproj", "{C306D4C6-4C76-4FB7-A297-45F17CA791A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subliminal.Sample.Serilog", "Subliminal.Sample.Serilog\Subliminal.Sample.Serilog.csproj", "{3447AAC8-5766-4454-B525-7C431237978D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{1C9A19D9-30C9-405D-92CB-77EF5E765B43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C9A19D9-30C9-405D-92CB-77EF5E765B43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C9A19D9-30C9-405D-92CB-77EF5E765B43}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C306D4C6-4C76-4FB7-A297-45F17CA791A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C306D4C6-4C76-4FB7-A297-45F17CA791A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C306D4C6-4C76-4FB7-A297-45F17CA791A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C306D4C6-4C76-4FB7-A297-45F17CA791A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3447AAC8-5766-4454-B525-7C431237978D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3447AAC8-5766-4454-B525-7C431237978D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3447AAC8-5766-4454-B525-7C431237978D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3447AAC8-5766-4454-B525-7C431237978D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

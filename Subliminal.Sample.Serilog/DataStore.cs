@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Subliminal.SampleApp.Serilog
+namespace Subliminal.Sample.Serilog
 {
     internal class DataStore
     {
