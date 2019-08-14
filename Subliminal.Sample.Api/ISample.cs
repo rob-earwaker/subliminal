@@ -2,6 +2,7 @@
 {
     internal interface ISample
     {
+        string SampleName { get; }
         void RunSample();
     }
 }
