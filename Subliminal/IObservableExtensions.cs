@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Linq;
 
 namespace Subliminal
 {
     public static class IObservableExtensions
     {
-        public static ILog<TEntry> AsLog<TEntry>(this IObservable<TEntry> observable)
+        internal static ILog<TEntry> AsLog<TEntry>(this IObservable<TEntry> observable)
         {
             return DerivedLog<TEntry>.FromObservable(observable);
         }
 
-        public static IEvent<TEvent> AsEvent<TEvent>(this IObservable<TEvent> observable)
+        internal static IEvent<TEvent> AsEvent<TEvent>(this IObservable<TEvent> observable)
         {
             return DerivedEvent<TEvent>.FromObservable(observable);
         }
@@ -18,6 +19,11 @@ namespace Subliminal
         public static IEventLog<TEvent> AsEventLog<TEvent>(this IObservable<TEvent> observable)
         {
             return DerivedEventLog<TEvent>.FromObservable(observable);
+        }
+
+        public static IEventLog AsEventLog(this IObservable<Unit> observable)
+        {
+            return DerivedEventLog.FromObservable(observable);
         }
 
         public static ICounter<TIncrement> AsCounter<TIncrement>(this IObservable<TIncrement> observable)

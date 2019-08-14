@@ -9,12 +9,9 @@
   <ItemGroup>
     <Compile Include="Utils.fs" />
     <Compile Include="TestCounter.fs" />
-    <Compile Include="TestDerivedEvent.fs" />
     <Compile Include="TestDerivedLog.fs" />
-    <Compile Include="TestEvent.fs" />
     <Compile Include="TestEventLog.fs" />
     <Compile Include="TestGauge.fs" />
-    <Compile Include="TestLog.fs" />
     <Compile Include="TestOperation.fs" />
   </ItemGroup>
 

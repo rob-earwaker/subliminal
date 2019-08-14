@@ -5,26 +5,21 @@ namespace Subliminal
 {
     public class DerivedEventLog<TEvent> : IEventLog<TEvent>
     {
-        private readonly IObservable<TEvent> _eventLogged;
+        private readonly ILog<TEvent> _eventLog;
 
-        private DerivedEventLog(IObservable<TEvent> eventLogged)
+        private DerivedEventLog(ILog<TEvent> eventLog)
         {
-            _eventLogged = eventLogged;
-        }
-
-        public static DerivedEventLog<TEvent> FromLog(ILog<TEvent> log)
-        {
-            return new DerivedEventLog<TEvent>(log);
+            _eventLog = eventLog;
         }
 
         public static DerivedEventLog<TEvent> FromObservable(IObservable<TEvent> observable)
         {
-            return FromLog(observable.AsLog());
+            return new DerivedEventLog<TEvent>(observable.AsLog());
         }
 
         public IDisposable Subscribe(IObserver<TEvent> observer)
         {
-            return _eventLogged.Subscribe(observer);
+            return _eventLog.Subscribe(observer);
         }
     }
 
@@ -37,14 +32,9 @@ namespace Subliminal
             _eventLog = eventLog;
         }
 
-        public static DerivedEventLog FromLog(ILog<Unit> log)
-        {
-            return new DerivedEventLog(log.AsEventLog());
-        }
-
         public static DerivedEventLog FromObservable(IObservable<Unit> observable)
         {
-            return FromLog(observable.AsLog());
+            return new DerivedEventLog(observable.AsEventLog<Unit>());
         }
 
         public IDisposable Subscribe(IObserver<Unit> observer)

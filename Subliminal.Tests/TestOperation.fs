@@ -119,12 +119,40 @@ let ``emits completed operation when timer completed`` (context: obj) =
     test <@ not observer.ObservableCompleted @>
     
 [<Property>]
+let ``emits single completed operation when timer completed twice`` (context: obj) =
+    let operation = Operation<obj>()
+    let observer = TestObserver()
+    use subscription = operation.Completed.Subscribe(observer)
+    use timer = operation.StartNewTimer(context)
+    test <@ observer.ObservedValues = [] @>
+    timer.Complete()
+    timer.Complete()
+    test <@ observer.ObservedValues.Length = 1 @>
+    test <@ observer.ObservedValues.[0].Context = context @>
+    test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
+    test <@ not observer.ObservableCompleted @>
+    
+[<Property>]
 let ``emits completed operation when timer disposed`` (context: obj) =
     let operation = Operation<obj>()
     let observer = TestObserver()
     use subscription = operation.Completed.Subscribe(observer)
     use timer = operation.StartNewTimer(context)
     test <@ observer.ObservedValues = [] @>
+    (timer :> IDisposable).Dispose()
+    test <@ observer.ObservedValues.Length = 1 @>
+    test <@ observer.ObservedValues.[0].Context = context @>
+    test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
+    test <@ not observer.ObservableCompleted @>
+    
+[<Property>]
+let ``emits single completed operation when timer disposed twice`` (context: obj) =
+    let operation = Operation<obj>()
+    let observer = TestObserver()
+    use subscription = operation.Completed.Subscribe(observer)
+    use timer = operation.StartNewTimer(context)
+    test <@ observer.ObservedValues = [] @>
+    (timer :> IDisposable).Dispose()
     (timer :> IDisposable).Dispose()
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>
@@ -138,6 +166,20 @@ let ``emits canceled operation when timer canceled`` (context: obj) =
     use subscription = operation.Canceled.Subscribe(observer)
     use timer = operation.StartNewTimer(context)
     test <@ observer.ObservedValues = [] @>
+    timer.Cancel()
+    test <@ observer.ObservedValues.Length = 1 @>
+    test <@ observer.ObservedValues.[0].Context = context @>
+    test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
+    test <@ not observer.ObservableCompleted @>
+    
+[<Property>]
+let ``emits single canceled operation when timer canceled twice`` (context: obj) =
+    let operation = Operation<obj>()
+    let observer = TestObserver()
+    use subscription = operation.Canceled.Subscribe(observer)
+    use timer = operation.StartNewTimer(context)
+    test <@ observer.ObservedValues = [] @>
+    timer.Cancel()
     timer.Cancel()
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>
@@ -159,12 +201,42 @@ let ``emits ended operation when timer completed`` (context: obj) =
     test <@ not observer.ObservableCompleted @>
     
 [<Property>]
+let ``emits single ended operation when timer completed twice`` (context: obj) =
+    let operation = Operation<obj>()
+    let observer = TestObserver()
+    use subscription = operation.Ended.Subscribe(observer)
+    use timer = operation.StartNewTimer(context)
+    test <@ observer.ObservedValues = [] @>
+    timer.Complete()
+    timer.Complete()
+    test <@ observer.ObservedValues.Length = 1 @>
+    test <@ observer.ObservedValues.[0].Context = context @>
+    test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
+    test <@ not observer.ObservedValues.[0].WasCanceled @>
+    test <@ not observer.ObservableCompleted @>
+    
+[<Property>]
 let ``emits ended operation when timer canceled`` (context: obj) =
     let operation = Operation<obj>()
     let observer = TestObserver()
     use subscription = operation.Ended.Subscribe(observer)
     use timer = operation.StartNewTimer(context)
     test <@ observer.ObservedValues = [] @>
+    timer.Cancel()
+    test <@ observer.ObservedValues.Length = 1 @>
+    test <@ observer.ObservedValues.[0].Context = context @>
+    test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
+    test <@ observer.ObservedValues.[0].WasCanceled @>
+    test <@ not observer.ObservableCompleted @>
+    
+[<Property>]
+let ``emits single ended operation when timer canceled twice`` (context: obj) =
+    let operation = Operation<obj>()
+    let observer = TestObserver()
+    use subscription = operation.Ended.Subscribe(observer)
+    use timer = operation.StartNewTimer(context)
+    test <@ observer.ObservedValues = [] @>
+    timer.Cancel()
     timer.Cancel()
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>

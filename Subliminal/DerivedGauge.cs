@@ -4,26 +4,21 @@ namespace Subliminal
 {
     public class DerivedGauge<TValue> : IGauge<TValue>
     {
-        private readonly IObservable<TValue> _sampled;
+        private readonly ILog<TValue> _valueLog;
 
-        private DerivedGauge(IObservable<TValue> sampled)
+        private DerivedGauge(ILog<TValue> valueLog)
         {
-            _sampled = sampled;
-        }
-
-        public static DerivedGauge<TValue> FromLog(ILog<TValue> log)
-        {
-            return new DerivedGauge<TValue>(log);
+            _valueLog = valueLog;
         }
 
         public static DerivedGauge<TValue> FromObservable(IObservable<TValue> observable)
         {
-            return FromLog(observable.AsLog());
+            return new DerivedGauge<TValue>(observable.AsLog());
         }
 
         public IDisposable Subscribe(IObserver<TValue> observer)
         {
-            return _sampled.Subscribe(observer);
+            return _valueLog.Subscribe(observer);
         }
     }
 }

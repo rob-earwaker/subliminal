@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Reactive;
 using System.Reactive.Linq;
 
 namespace Subliminal
 {
-    public class DerivedEvent<TEvent> : IEvent<TEvent>
+    internal class DerivedEvent<TEvent> : IEvent<TEvent>
     {
         private readonly IObservable<TEvent> _raised;
 
@@ -28,31 +27,6 @@ namespace Subliminal
         public IDisposable Subscribe(IObserver<TEvent> observer)
         {
             return _raised.Subscribe(observer);
-        }
-    }
-
-    public class DerivedEvent : IEvent
-    {
-        private readonly IEventLog<Unit> _eventLog;
-
-        private DerivedEvent(IEventLog<Unit> eventLog)
-        {
-            _eventLog = eventLog;
-        }
-
-        public static DerivedEvent FromLog(ILog<Unit> log)
-        {
-            return new DerivedEvent(log.AsEventLog());
-        }
-
-        public static DerivedEvent FromObservable(IObservable<Unit> observable)
-        {
-            return FromLog(observable.AsLog());
-        }
-
-        public IDisposable Subscribe(IObserver<Unit> observer)
-        {
-            return _eventLog.Subscribe(observer);
         }
     }
 }

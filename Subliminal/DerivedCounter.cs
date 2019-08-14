@@ -4,26 +4,21 @@ namespace Subliminal
 {
     public class DerivedCounter<TIncrement> : ICounter<TIncrement>
     {
-        private readonly IObservable<TIncrement> _incremented;
+        private readonly ILog<TIncrement> _incrementLog;
 
-        private DerivedCounter(IObservable<TIncrement> incremented)
+        private DerivedCounter(ILog<TIncrement> incrementLog)
         {
-            _incremented = incremented;
-        }
-
-        public static DerivedCounter<TIncrement> FromLog(ILog<TIncrement> log)
-        {
-            return new DerivedCounter<TIncrement>(log);
+            _incrementLog = incrementLog;
         }
 
         public static DerivedCounter<TIncrement> FromObservable(IObservable<TIncrement> observable)
         {
-            return FromLog(observable.AsLog());
+            return new DerivedCounter<TIncrement>(observable.AsLog());
         }
 
         public IDisposable Subscribe(IObserver<TIncrement> observer)
         {
-            return _incremented.Subscribe(observer);
+            return _incrementLog.Subscribe(observer);
         }
     }
 }

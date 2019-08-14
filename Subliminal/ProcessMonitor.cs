@@ -5,10 +5,9 @@ namespace Subliminal
 {
     public class ProcessMonitor
     {
-        private ProcessMonitor(IGauge<Process> process, IEvent<ProcessExited> exited)
+        private ProcessMonitor(IGauge<Process> process)
         {
             Process = process;
-            Exited = exited;
 
             PrivateMemorySize = process.Select(processSample => processSample.PrivateMemorySize).AsGauge();
             VirtualMemorySize = process.Select(processSample => processSample.VirtualMemorySize).AsGauge();
@@ -34,13 +33,7 @@ namespace Subliminal
                     .Timer(dueTime: DateTimeOffset.UtcNow, period: samplingInterval)
                     .TakeWhile(_ => !process.HasExited)
                     .Select(_ => GetProcessSnapshot(process))
-                    .AsGauge(),
-                exited: Observable
-                    .FromEventPattern(
-                        eventHandler => process.Exited += eventHandler,
-                        eventHandler => process.Exited -= eventHandler)
-                    .Select(_ => new ProcessExited(process.Id, process.ExitTime, process.ExitCode))
-                    .AsEvent());
+                    .AsGauge());
         }
 
         public static ProcessMonitor ForCurrentProcess(TimeSpan samplingInterval)
@@ -60,7 +53,6 @@ namespace Subliminal
         }
 
         public IGauge<Process> Process { get; }
-        public IEvent<ProcessExited> Exited { get; }
         public IGauge<ByteCount> PrivateMemorySize { get; }
         public IGauge<ByteCount> VirtualMemorySize { get; }
         public IGauge<ByteCount> WorkingSet { get; }
