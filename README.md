@@ -13,7 +13,7 @@ Key design principles of Subliminal:
 Metric types:
 
 - `Gauge<TValue>` - A gauge is the simplest type of metric. It provides absolute values of a particular quantity, e.g. the number of messages on a queue or the current processor usage.
-- `Counter<TIncrement>` - A counter provides incremental values that measure the relative changes of a quantity over time, e.g. the number of entities retrieved from a database or the number of bytes read from disk. Unlike a gauge, the values produced by a counter represent relative changes in the quantity not absolute values.
+- `Counter<TIncrement>` - A counter provides incremental values that measure the relative changes of a particular quantity over time, e.g. the number of entities retrieved from a database or the number of bytes read from disk. Unlike a gauge, the values produced by a counter represent relative changes of the quantity not absolute values.
 - `EventLog` `EventLog<TEvent>` - An event log provides notifications whenever a particular event occurs, e.g. when a message is handled or a file is deleted. Each event can optionally include context information.
 - `Operation` `Operation<TContext>` - An operation provides execution timing information for a particular action, e.g. adding an item to the basket or registering a new user. It is made up of several different event logs that record when an operation is started, completed, canceled or ended. An operation ends when it is either canceled or completed. Each operation execution can optionally include context information.
 
