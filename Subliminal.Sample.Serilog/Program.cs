@@ -43,18 +43,19 @@ namespace Subliminal.Sample.Serilog
             var dataStoreLogger = Log.Logger.ForContext<DataStore>();
 
             DataStore.ReadRandomBytesOperation.Completed
-                .Subscribe(operation =>
-                    dataStoreLogger.Information("{OperationName} operation {OperationId} completed in {Duration}",
-                        "ReadRandomBytes", operation.OperationId, operation.Duration));
+                .Subscribe(completed =>
+                    dataStoreLogger.Information("{OperationName} operation {OperationId} completed after {Duration}",
+                        "ReadRandomBytes", completed.OperationId, completed.Duration));
 
             DataStore.ReadRandomByteOperation.Completed
                 .Buffer(TimeSpan.FromSeconds(10))
                 .Where(buffer => buffer.Any())
                 .TimeInterval()
-                .Subscribe(operations =>
+                .Subscribe(completedOperations =>
                     dataStoreLogger.Information(
                         "Average {OperationName} duration was {AverageDuration} over the last {SamplePeriodDuration}",
-                        "ReadRandomByte", operations.Value.Average(operation => operation.Duration), operations.Interval));
+                        "ReadRandomByte", completedOperations.Value.Average(completed => completed.Duration),
+                        completedOperations.Interval));
             
             DataStore.RandomGauge
                 .Buffer(128)

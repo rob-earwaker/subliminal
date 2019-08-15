@@ -6,14 +6,12 @@ namespace Subliminal
     public class Timer : IDisposable
     {
         private readonly Stopwatch _stopwatch;
-        private readonly Event<TimerEnded> _ended;
-        private bool _hasEnded;
+        private readonly Event<TimerStopped> _stopped;
 
         internal Timer()
         {
             _stopwatch = new Stopwatch();
-            _ended = new Event<TimerEnded>();
-            _hasEnded = false;
+            _stopped = new Event<TimerStopped>();
         }
 
         internal void Start()
@@ -21,31 +19,30 @@ namespace Subliminal
             _stopwatch.Start();
         }
 
-        internal IEvent<TimerEnded> Ended => _ended;
+        internal IEvent<TimerStopped> Stopped => _stopped;
 
-        public void Complete()
+        public void Stop()
         {
-            End(wasCanceled: false);
+            Stop(wasCanceled: false);
         }
 
         public void Cancel()
         {
-            End(wasCanceled: true);
+            Stop(wasCanceled: true);
         }
 
-        private void End(bool wasCanceled)
+        private void Stop(bool wasCanceled)
         {
-            if (_hasEnded)
+            if (!_stopwatch.IsRunning)
                 return;
 
             _stopwatch.Stop();
-            _ended.Raise(new TimerEnded(_stopwatch.Elapsed, wasCanceled));
-            _hasEnded = true;
+            _stopped.Raise(new TimerStopped(_stopwatch.Elapsed, wasCanceled));
         }
 
         void IDisposable.Dispose()
         {
-            Complete();
+            Stop();
         }
     }
 }

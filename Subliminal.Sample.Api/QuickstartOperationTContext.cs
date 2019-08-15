@@ -26,10 +26,6 @@ namespace Subliminal.Sample.Api
             registerUser.Canceled.Subscribe(canceled =>
                 Console.WriteLine(
                     $"Canceled registration of user '{canceled.Context.Name}' after {canceled.Duration}"));
-
-            registerUser.Ended.Subscribe(ended =>
-                Console.WriteLine(
-                    $"Finished registration of user '{ended.Context.Name}' after {ended.Duration}"));
             
             using (var timer = registerUser.StartNewTimer(new RegisterUser { Name = "bob"}))
             // "Started registration of user 'bob'"
@@ -37,15 +33,13 @@ namespace Subliminal.Sample.Api
                 Thread.Sleep(TimeSpan.FromSeconds(1));
             }
             // "Successfully registered user 'bob' in 00:00:01.0004845"
-            // "Finished registration of user 'bob' after 00:00:01.0004845"
 
             using (var timer = registerUser.StartNewTimer(new RegisterUser { Name = "alice" }))
             // "Started registration of user 'alice'"
             {
                 Thread.Sleep(TimeSpan.FromSeconds(1));
-                timer.Complete();
+                timer.Stop();
                 // "Successfully registered user 'alice' in 00:00:01.0005217"
-                // "Finished registration of user 'alice' after 00:00:01.0005217"
                 Thread.Sleep(TimeSpan.FromSeconds(1));
             }
 
@@ -55,7 +49,6 @@ namespace Subliminal.Sample.Api
                 Thread.Sleep(TimeSpan.FromSeconds(1));
                 timer.Cancel();
                 // "Canceled registration of user 'john' after 00:00:01.0008496"
-                // "Finished registration of user 'john' after 00:00:01.0008496"
                 Thread.Sleep(TimeSpan.FromSeconds(1));
             }
         }

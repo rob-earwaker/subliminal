@@ -18,33 +18,21 @@ namespace Subliminal
         {
             var operationId = Guid.NewGuid();
             var timer = new Timer();
-
-            var operationEnded = timer.Ended
-                .Select(timerEnded => new OperationEnded<TContext>(
-                    operationId, context, timerEnded.Duration, timerEnded.WasCanceled))
-                .AsEvent();
-
-            _started.LogOccurrence(new OperationStarted<TContext>(operationId, context, operationEnded));
-
+            _started.LogOccurrence(new OperationStarted<TContext>(operationId, context, timer.Stopped));
             timer.Start();
             return timer;
         }
 
         public IEventLog<OperationStarted<TContext>> Started => _started;
 
-        public IEventLog<OperationEnded<TContext>> Ended
-        {
-            get { return Started.SelectMany(operation => operation.Ended).AsEventLog(); }
-        }
-
         public IEventLog<OperationCompleted<TContext>> Completed
         {
-            get { return Started.SelectMany(operation => operation.Completed).AsEventLog(); }
+            get { return Started.SelectMany(started => started.Completed).AsEventLog(); }
         }
 
         public IEventLog<OperationCanceled<TContext>> Canceled
         {
-            get { return Started.SelectMany(operation => operation.Canceled).AsEventLog(); }
+            get { return Started.SelectMany(started => started.Canceled).AsEventLog(); }
         }
 
         public void Time(TContext context, Action<Timer> operation)
@@ -116,22 +104,17 @@ namespace Subliminal
 
         public IEventLog<OperationStarted> Started
         {
-            get { return _operation.Started.Select(operation => operation.WithoutContext()).AsEventLog(); }
-        }
-
-        public IEventLog<OperationEnded> Ended
-        {
-            get { return _operation.Ended.Select(operation => operation.WithoutContext()).AsEventLog(); }
+            get { return _operation.Started.Select(started => started.WithoutContext()).AsEventLog(); }
         }
 
         public IEventLog<OperationCompleted> Completed
         {
-            get { return _operation.Completed.Select(operation => operation.WithoutContext()).AsEventLog(); }
+            get { return _operation.Completed.Select(completed => completed.WithoutContext()).AsEventLog(); }
         }
 
         public IEventLog<OperationCanceled> Canceled
         {
-            get { return _operation.Canceled.Select(operation => operation.WithoutContext()).AsEventLog(); }
+            get { return _operation.Canceled.Select(canceled => canceled.WithoutContext()).AsEventLog(); }
         }
 
         public void Time(Action<Timer> operation)

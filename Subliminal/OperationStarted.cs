@@ -5,26 +5,25 @@ namespace Subliminal
 {
     public class OperationStarted<TContext>
     {
-        internal OperationStarted(Guid operationId, TContext context, IEvent<OperationEnded<TContext>> ended)
+        private readonly IEvent<TimerStopped> _timerStopped;
+
+        internal OperationStarted(Guid operationId, TContext context, IEvent<TimerStopped> timerStopped)
         {
             OperationId = operationId;
             Context = context;
-            Ended = ended;
+            _timerStopped = timerStopped;
         }
 
         public Guid OperationId { get; }
         public TContext Context { get; }
 
-        internal IEvent<OperationEnded<TContext>> Ended { get; }
-
         internal IEvent<OperationCompleted<TContext>> Completed
         {
             get
             {
-                return Ended
-                    .Where(operation => !operation.WasCanceled)
-                    .Select(operation => new OperationCompleted<TContext>(
-                        operation.OperationId, operation.Context, operation.Duration))
+                return _timerStopped
+                    .Where(stopped => !stopped.WasCanceled)
+                    .Select(stopped => new OperationCompleted<TContext>(OperationId, Context, stopped.Duration))
                     .AsEvent();
             }
         }
@@ -33,10 +32,9 @@ namespace Subliminal
         {
             get
             {
-                return Ended
-                    .Where(operation => operation.WasCanceled)
-                    .Select(operation => new OperationCanceled<TContext>(
-                        operation.OperationId, operation.Context, operation.Duration))
+                return _timerStopped
+                    .Where(stopped => stopped.WasCanceled)
+                    .Select(stopped => new OperationCanceled<TContext>(OperationId, Context, stopped.Duration))
                     .AsEvent();
             }
         }
@@ -45,42 +43,22 @@ namespace Subliminal
         {
             return new OperationStarted(
                 OperationId,
-                Ended.Select(operation => operation.WithoutContext()).AsEvent());
+                Completed.Select(completed => completed.WithoutContext()).AsEvent(),
+                Canceled.Select(canceled => canceled.WithoutContext()).AsEvent());
         }
     }
 
     public class OperationStarted
     {
-        internal OperationStarted(Guid operationId, IEvent<OperationEnded> ended)
+        internal OperationStarted(Guid operationId, IEvent<OperationCompleted> completed, IEvent<OperationCanceled> canceled)
         {
             OperationId = operationId;
-            Ended = ended;
+            Completed = completed;
+            Canceled = canceled;
         }
 
         public Guid OperationId { get; }
-
-        internal IEvent<OperationEnded> Ended { get; }
-
-        internal IEvent<OperationCompleted> Completed
-        {
-            get
-            {
-                return Ended
-                    .Where(operation => !operation.WasCanceled)
-                    .Select(operation => new OperationCompleted(operation.OperationId, operation.Duration))
-                    .AsEvent();
-            }
-        }
-
-        internal IEvent<OperationCanceled> Canceled
-        {
-            get
-            {
-                return Ended
-                    .Where(operation => operation.WasCanceled)
-                    .Select(operation => new OperationCanceled(operation.OperationId, operation.Duration))
-                    .AsEvent();
-            }
-        }
+        internal IEvent<OperationCompleted> Completed { get; }
+        internal IEvent<OperationCanceled> Canceled { get; }
     }
 }
