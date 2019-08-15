@@ -16,9 +16,8 @@ namespace Subliminal
 
         public Timer StartNewTimer(TContext context)
         {
-            var operationId = Guid.NewGuid();
             var timer = new Timer();
-            _started.LogOccurrence(new OperationStarted<TContext>(operationId, context, timer.Stopped));
+            _started.LogOccurrence(new OperationStarted<TContext>(OperationId.New(), context, timer.Stopped));
             timer.Start();
             return timer;
         }

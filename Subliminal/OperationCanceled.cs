@@ -1,35 +1,29 @@
-﻿using System;
-
-namespace Subliminal
+﻿namespace Subliminal
 {
     public class OperationCanceled<TContext>
     {
-        internal OperationCanceled(Guid operationId, TContext context, TimeSpan duration)
+        internal OperationCanceled(string operationId, TContext context)
         {
             OperationId = operationId;
             Context = context;
-            Duration = duration;
         }
 
-        public Guid OperationId { get; }
+        public string OperationId { get; }
         public TContext Context { get; }
-        public TimeSpan Duration { get; }
 
         internal OperationCanceled WithoutContext()
         {
-            return new OperationCanceled(OperationId, Duration);
+            return new OperationCanceled(OperationId);
         }
     }
 
     public class OperationCanceled
     {
-        internal OperationCanceled(Guid operationId, TimeSpan duration)
+        internal OperationCanceled(string operationId)
         {
             OperationId = operationId;
-            Duration = duration;
         }
 
-        public Guid OperationId { get; }
-        public TimeSpan Duration { get; }
+        public string OperationId { get; }
     }
 }

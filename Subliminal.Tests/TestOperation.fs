@@ -89,7 +89,6 @@ let ``emits canceled operation when timer canceled`` (context: obj) =
     timer.Cancel()
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>
-    test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
     test <@ not observer.ObservableCompleted @>
     
 [<Property>]
@@ -105,7 +104,6 @@ let ``emits single canceled operation`` (context: obj) =
     (timer :> IDisposable).Dispose()
     test <@ observer.ObservedValues.Length = 1 @>
     test <@ observer.ObservedValues.[0].Context = context @>
-    test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
     test <@ not observer.ObservableCompleted @>
     
 [<Property>]

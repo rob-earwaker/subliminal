@@ -9,39 +9,39 @@ namespace Subliminal.Sample.Api
 
         public void RunSample()
         {
-            var addItemToBasket = new Operation();
+            var addToBasket = new Operation();
 
-            addItemToBasket.Started.Subscribe(started =>
-                Console.WriteLine("Started adding item to basket"));
+            addToBasket.Started.Subscribe(started =>
+                Console.WriteLine($"Started AddToBasket operation {started.OperationId}"));
 
-            addItemToBasket.Completed.Subscribe(completed =>
-                Console.WriteLine($"Successfully added item to basket in {completed.Duration}"));
+            addToBasket.Completed.Subscribe(completed =>
+                Console.WriteLine($"AddToBasket operation {completed.OperationId} took {completed.Duration}"));
 
-            addItemToBasket.Canceled.Subscribe(canceled =>
-                Console.WriteLine($"Canceled adding item to basket after {canceled.Duration}"));
-            
-            using (var timer = addItemToBasket.StartNewTimer())
-            // "Started adding item to basket"
+            addToBasket.Canceled.Subscribe(canceled =>
+                Console.WriteLine($"AddToBasket operation {canceled.OperationId} was canceled"));
+
+            using (var timer = addToBasket.StartNewTimer())
+            // "Started AddToBasket operation qRWENlQa"
             {
                 Thread.Sleep(TimeSpan.FromSeconds(1));
             }
-            // "Successfully added item to basket in 00:00:01.0008729"
+            // "AddToBasket operation qRWENlQa took 00:00:01.0012713"
 
-            using (var timer = addItemToBasket.StartNewTimer())
-            // "Started adding item to basket"
+            using (var timer = addToBasket.StartNewTimer())
+            // "Started AddToBasket operation FnUHNTBp"
             {
                 Thread.Sleep(TimeSpan.FromSeconds(1));
                 timer.Stop();
-                // "Successfully added item to basket in 00:00:01.0006293"
+                // "AddToBasket operation FnUHNTBp took 00:00:01.0006734"
                 Thread.Sleep(TimeSpan.FromSeconds(1));
             }
 
-            using (var timer = addItemToBasket.StartNewTimer())
-            // "Started adding item to basket"
+            using (var timer = addToBasket.StartNewTimer())
+            // "Started AddToBasket operation pbM7EBz4"
             {
                 Thread.Sleep(TimeSpan.FromSeconds(1));
                 timer.Cancel();
-                // "Canceled adding item to basket after 00:00:01.0006214"
+                // "AddToBasket operation pbM7EBz4 was canceled"
                 Thread.Sleep(TimeSpan.FromSeconds(1));
             }
         }

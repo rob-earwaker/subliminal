@@ -17,38 +17,37 @@ namespace Subliminal.Sample.Api
             var registerUser = new Operation<RegisterUser>();
 
             registerUser.Started.Subscribe(started =>
-                Console.WriteLine($"Started registration of user '{started.Context.Name}'"));
+                Console.WriteLine($"Started RegisterUser operation for {started.Context.Name}"));
 
             registerUser.Completed.Subscribe(completed =>
                 Console.WriteLine(
-                    $"Successfully registered user '{completed.Context.Name}' in {completed.Duration}"));
+                    $"RegisterUser operation for {completed.Context.Name} took {completed.Duration}"));
 
             registerUser.Canceled.Subscribe(canceled =>
-                Console.WriteLine(
-                    $"Canceled registration of user '{canceled.Context.Name}' after {canceled.Duration}"));
-            
-            using (var timer = registerUser.StartNewTimer(new RegisterUser { Name = "bob"}))
-            // "Started registration of user 'bob'"
+                Console.WriteLine($"RegisterUser operation for {canceled.Context.Name} was canceled"));
+
+            using (var timer = registerUser.StartNewTimer(new RegisterUser { Name = "Bob"}))
+            // "Started RegisterUser operation for Bob"
             {
                 Thread.Sleep(TimeSpan.FromSeconds(1));
             }
-            // "Successfully registered user 'bob' in 00:00:01.0004845"
+            // "RegisterUser operation for Bob took 00:00:01.0006389"
 
-            using (var timer = registerUser.StartNewTimer(new RegisterUser { Name = "alice" }))
-            // "Started registration of user 'alice'"
+            using (var timer = registerUser.StartNewTimer(new RegisterUser { Name = "Alice" }))
+            // "Started RegisterUser operation for Alice"
             {
                 Thread.Sleep(TimeSpan.FromSeconds(1));
                 timer.Stop();
-                // "Successfully registered user 'alice' in 00:00:01.0005217"
+                // "RegisterUser operation for Alice took 00:00:01.0003205"
                 Thread.Sleep(TimeSpan.FromSeconds(1));
             }
 
-            using (var timer = registerUser.StartNewTimer(new RegisterUser { Name = "john" }))
-            // "Started registration of user 'john'"
+            using (var timer = registerUser.StartNewTimer(new RegisterUser { Name = "John" }))
+            // "Started RegisterUser operation for John"
             {
                 Thread.Sleep(TimeSpan.FromSeconds(1));
                 timer.Cancel();
-                // "Canceled registration of user 'john' after 00:00:01.0008496"
+                // "RegisterUser operation for John was canceled"
                 Thread.Sleep(TimeSpan.FromSeconds(1));
             }
         }

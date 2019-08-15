@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reactive.Linq;
+﻿using System.Reactive.Linq;
 
 namespace Subliminal
 {
@@ -7,14 +6,14 @@ namespace Subliminal
     {
         private readonly IEvent<TimerStopped> _timerStopped;
 
-        internal OperationStarted(Guid operationId, TContext context, IEvent<TimerStopped> timerStopped)
+        internal OperationStarted(string operationId, TContext context, IEvent<TimerStopped> timerStopped)
         {
             OperationId = operationId;
             Context = context;
             _timerStopped = timerStopped;
         }
 
-        public Guid OperationId { get; }
+        public string OperationId { get; }
         public TContext Context { get; }
 
         internal IEvent<OperationCompleted<TContext>> Completed
@@ -34,7 +33,7 @@ namespace Subliminal
             {
                 return _timerStopped
                     .Where(stopped => stopped.WasCanceled)
-                    .Select(stopped => new OperationCanceled<TContext>(OperationId, Context, stopped.Duration))
+                    .Select(stopped => new OperationCanceled<TContext>(OperationId, Context))
                     .AsEvent();
             }
         }
@@ -50,14 +49,14 @@ namespace Subliminal
 
     public class OperationStarted
     {
-        internal OperationStarted(Guid operationId, IEvent<OperationCompleted> completed, IEvent<OperationCanceled> canceled)
+        internal OperationStarted(string operationId, IEvent<OperationCompleted> completed, IEvent<OperationCanceled> canceled)
         {
             OperationId = operationId;
             Completed = completed;
             Canceled = canceled;
         }
 
-        public Guid OperationId { get; }
+        public string OperationId { get; }
         internal IEvent<OperationCompleted> Completed { get; }
         internal IEvent<OperationCanceled> Canceled { get; }
     }

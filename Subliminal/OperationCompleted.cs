@@ -4,14 +4,14 @@ namespace Subliminal
 {
     public class OperationCompleted<TContext>
     {
-        internal OperationCompleted(Guid operationId, TContext context, TimeSpan duration)
+        internal OperationCompleted(string operationId, TContext context, TimeSpan duration)
         {
             OperationId = operationId;
             Context = context;
             Duration = duration;
         }
 
-        public Guid OperationId { get; }
+        public string OperationId { get; }
         public TContext Context { get; }
         public TimeSpan Duration { get; }
 
@@ -23,13 +23,13 @@ namespace Subliminal
 
     public class OperationCompleted
     {
-        internal OperationCompleted(Guid operationId, TimeSpan duration)
+        internal OperationCompleted(string operationId, TimeSpan duration)
         {
             OperationId = operationId;
             Duration = duration;
         }
 
-        public Guid OperationId { get; }
+        public string OperationId { get; }
         public TimeSpan Duration { get; }
     }
 }
