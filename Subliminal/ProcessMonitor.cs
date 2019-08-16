@@ -46,6 +46,7 @@ namespace Subliminal
             process.Refresh();
 
             return new Process(
+                processId: process.Id,
                 totalProcessorTime: process.TotalProcessorTime,
                 workingSet: ByteCount.FromBytes(process.WorkingSet64),
                 privateMemorySize: ByteCount.FromBytes(process.PrivateMemorySize64),
