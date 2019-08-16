@@ -18,14 +18,9 @@ $fileVersion =
     If ($null -eq $env:APPVEYOR_BUILD_NUMBER) {"$versionPrefix.0"}
     Else {[string]::Format("$versionPrefix.{0}", [System.Int32]::Parse($env:APPVEYOR_BUILD_NUMBER))}
 
-$informationalVersion =
-    If ($null -eq $env:APPVEYOR_REPO_COMMIT) {"$version"}
-    Else {[string]::Format("$version+{0}", $env:APPVEYOR_REPO_COMMIT.Substring(0, 7))}
-
 Write-Output "Version: $version"
 Write-Output "AssemblyVersion: $assemblyVersion"
 Write-Output "FileVersion: $fileVersion"
-Write-Output "InformationalVersion: $informationalVersion"
 
 Remove-Item -Path .\artifacts -Recurse -ErrorAction Ignore
 
@@ -38,8 +33,7 @@ if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
 dotnet build . -c $buildConfiguration `
     -p:Version=$version `
     -p:AssemblyVersion=$assemblyVersion `
-    -p:FileVersion=$fileVersion `
-    -p:InformationalVersion=$informationalVersion
+    -p:FileVersion=$fileVersion
 
 if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
 
