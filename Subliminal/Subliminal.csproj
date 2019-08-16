@@ -9,6 +9,7 @@
   <PropertyGroup>
     <PackageId>Subliminal</PackageId>
     <Description>Observable application metrics</Description>
+    <PackageProjectUrl>https://github.com/rob-earwaker/subliminal</PackageProjectUrl>
     <RepositoryUrl>https://github.com/rob-earwaker/subliminal</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>metrics;monitoring;observable;reactive;rx</PackageTags>
