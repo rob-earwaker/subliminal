@@ -2,11 +2,19 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\Subliminal.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Subliminal</PackageId>
     <Description>Observable application metrics</Description>
     <RepositoryUrl>https://github.com/rob-earwaker/subliminal</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\Subliminal.snk</AssemblyOriginatorKeyFile>
+    <PackageTags>metrics;monitoring;observable;reactive;rx</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
   </PropertyGroup>
