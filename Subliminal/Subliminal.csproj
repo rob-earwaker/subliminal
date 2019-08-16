@@ -5,6 +5,8 @@
     <Description>Observable application metrics</Description>
     <RepositoryUrl>https://github.com/rob-earwaker/subliminal</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\Subliminal.snk</AssemblyOriginatorKeyFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
   </PropertyGroup>
