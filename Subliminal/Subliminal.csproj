@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>Subliminal</PackageId>
+    <Title>Subliminal</Title>
     <Description>Observable application metrics</Description>
     <PackageProjectUrl>https://github.com/rob-earwaker/subliminal</PackageProjectUrl>
     <RepositoryUrl>https://github.com/rob-earwaker/subliminal</RepositoryUrl>
