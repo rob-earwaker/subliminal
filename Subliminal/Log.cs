@@ -4,7 +4,7 @@ using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    internal class Log<TEntry> : ILog<TEntry>
+    public class Log<TEntry> : ILog<TEntry>
     {
         private readonly ISubject<TEntry> _logSubject;
         private readonly ILog<TEntry> _derivedLog;

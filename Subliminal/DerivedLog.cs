@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 
 namespace Subliminal
 {
-    internal class DerivedLog<TEntry> : ILog<TEntry>
+    public class DerivedLog<TEntry> : ILog<TEntry>
     {
         private readonly IObservable<TEntry> _entryLogged;
 

@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 
 namespace Subliminal
 {
-    internal class DerivedEvent<TEvent> : IEvent<TEvent>
+    public class DerivedEvent<TEvent> : IEvent<TEvent>
     {
         private readonly IObservable<TEvent> _raised;
 

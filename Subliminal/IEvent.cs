@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    internal interface IEvent<TEvent> : IObservable<TEvent>
+    public interface IEvent<TEvent> : IObservable<TEvent>
     {
     }
 }

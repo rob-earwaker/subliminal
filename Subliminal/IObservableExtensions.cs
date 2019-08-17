@@ -6,12 +6,12 @@ namespace Subliminal
 {
     public static class IObservableExtensions
     {
-        internal static ILog<TEntry> AsLog<TEntry>(this IObservable<TEntry> observable)
+        public static ILog<TEntry> AsLog<TEntry>(this IObservable<TEntry> observable)
         {
             return DerivedLog<TEntry>.FromObservable(observable);
         }
 
-        internal static IEvent<TEvent> AsEvent<TEvent>(this IObservable<TEvent> observable)
+        public static IEvent<TEvent> AsEvent<TEvent>(this IObservable<TEvent> observable)
         {
             return DerivedEvent<TEvent>.FromObservable(observable);
         }

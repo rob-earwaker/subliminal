@@ -4,7 +4,7 @@ using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    internal class Event<TEvent> : IEvent<TEvent>
+    public class Event<TEvent> : IEvent<TEvent>
     {
         private readonly ISubject<TEvent> _eventSubject;
         private readonly IEvent<TEvent> _derivedEvent;
