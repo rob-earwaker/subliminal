@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Linq;
 
 namespace Subliminal
@@ -27,6 +28,26 @@ namespace Subliminal
         public IDisposable Subscribe(IObserver<TEvent> observer)
         {
             return _raised.Subscribe(observer);
+        }
+    }
+
+    public class DerivedEvent : IEvent
+    {
+        private readonly IEvent<Unit> _event;
+
+        private DerivedEvent(IEvent<Unit> @event)
+        {
+            _event = @event;
+        }
+
+        public static DerivedEvent FromObservable(IObservable<Unit> observable)
+        {
+            return new DerivedEvent(observable.AsEvent<Unit>());
+        }
+
+        public IDisposable Subscribe(IObserver<Unit> observer)
+        {
+            return _event.Subscribe(observer);
         }
     }
 }

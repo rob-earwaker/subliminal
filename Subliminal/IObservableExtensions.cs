@@ -16,6 +16,11 @@ namespace Subliminal
             return DerivedEvent<TEvent>.FromObservable(observable);
         }
 
+        public static IEvent AsEvent(this IObservable<Unit> observable)
+        {
+            return DerivedEvent.FromObservable(observable);
+        }
+
         public static IEventLog<TEvent> AsEventLog<TEvent>(this IObservable<TEvent> observable)
         {
             return DerivedEventLog<TEvent>.FromObservable(observable);
