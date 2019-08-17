@@ -12,6 +12,7 @@
     <Compile Include="Utils.fs" />
     <Compile Include="TestCounter.fs" />
     <Compile Include="TestDerivedCounter.fs" />
+    <Compile Include="TestDerivedEvent.fs" />
     <Compile Include="TestDerivedEventLog.fs" />
     <Compile Include="TestDerivedGauge.fs" />
     <Compile Include="TestDerivedLog.fs" />
