@@ -6,7 +6,7 @@ open Swensen.Unquote
 
 module ``Test Gauge<TValue>`` =
     [<Property>]
-    let ``emits values when values logged`` (value1: obj) (value2: obj) =
+    let ``emits values when logged`` (value1: obj) (value2: obj) =
         let gauge = Gauge<obj>()
         let observer = TestObserver()
         use subscription = gauge.Subscribe(observer)

@@ -18,7 +18,7 @@ module ``Test EventLog<TEvent>`` =
     
 module ``Test EventLog`` =
     [<Property>]
-    let ``emits units when occurrences logged`` () =
+    let ``emits events when occurrences logged`` () =
         let eventLog = EventLog()
         let observer = TestObserver()
         use subscription = eventLog.Subscribe(observer)
