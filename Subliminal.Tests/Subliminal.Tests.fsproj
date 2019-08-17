@@ -15,6 +15,8 @@
     <Compile Include="TestDerivedEventLog.fs" />
     <Compile Include="TestDerivedGauge.fs" />
     <Compile Include="TestDerivedLog.fs" />
+    <Compile Include="TestEvent.fs" />
+    <Compile Include="TestEvent`TEvent.fs" />
     <Compile Include="TestEventLog.fs" />
     <Compile Include="TestGauge.fs" />
     <Compile Include="TestOperation.fs" />
