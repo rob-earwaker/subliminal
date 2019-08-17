@@ -12,7 +12,7 @@ namespace Subliminal
         public Log()
         {
             // Synchronize the subject to ensure that multiple entries
-            // are not logged at the same time and therefore all
+            // are not logged at the same time and therefore that all
             // subscribers receive entries in the same order.
             _logSubject = Subject.Synchronize(new Subject<TEntry>());
 

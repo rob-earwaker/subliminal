@@ -20,7 +20,6 @@ module ``Test Event<TEvent>`` =
         let observer = TestObserver()
         use subscription = event.Subscribe(observer)
         event.Raise(value)
-        test <@ observer.ObservedValues = [ value ] @>
         test <@ observer.ObservableCompleted @>
         
     [<Property>]
@@ -47,7 +46,6 @@ module ``Test Event`` =
         let observer = TestObserver()
         use subscription = event.Subscribe(observer)
         event.Raise()
-        test <@ observer.ObservedValues = [ Unit.Default ] @>
         test <@ observer.ObservableCompleted @>
         
     [<Property>]
