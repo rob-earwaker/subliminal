@@ -34,7 +34,7 @@ module ``Test Event<TEvent>`` =
         
 module ``Test Event`` =
     [<Property>]
-    let ``emits unit when raised`` () =
+    let ``emits value when raised`` () =
         let event = Event()
         let observer = TestObserver()
         use subscription = event.Subscribe(observer)

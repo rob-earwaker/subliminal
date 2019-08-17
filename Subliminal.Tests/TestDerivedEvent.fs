@@ -107,7 +107,7 @@ module ``Test DerivedEvent`` =
             |> Arb.fromGen
         
     [<Property>]
-    let ``only emits single unit`` () =
+    let ``only emits single value`` () =
         let test (DerivedEventFactory deriveEvent) =
             use subject = new Subject<Unit>()
             let event = deriveEvent subject
@@ -120,7 +120,7 @@ module ``Test DerivedEvent`` =
         Prop.forAll DerivedEventFactory.Arb test
             
     [<Property>]
-    let ``does not complete before unit is emitted`` () =
+    let ``does not complete before value is emitted`` () =
         let test (DerivedEventFactory deriveEvent) =
             use subject = new Subject<Unit>()
             let event = deriveEvent subject
@@ -130,7 +130,7 @@ module ``Test DerivedEvent`` =
         Prop.forAll DerivedEventFactory.Arb test
                 
     [<Property>]
-    let ``emits unit immediately for non-empty observable`` () =
+    let ``emits value immediately for non-empty observable`` () =
         let test (DerivedEventFactory deriveEvent) =
             let observable = Observable.Return(Unit.Default)
             let event = deriveEvent observable
@@ -141,7 +141,7 @@ module ``Test DerivedEvent`` =
         Prop.forAll DerivedEventFactory.Arb test
                 
     [<Property>]
-    let ``emits unit to observers that subscribe after completion`` () =
+    let ``emits value to observers that subscribe after completion`` () =
         let test (DerivedEventFactory deriveEvent) =
             use subject = new Subject<Unit>()
             let event = deriveEvent subject

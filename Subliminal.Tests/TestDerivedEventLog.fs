@@ -80,3 +80,49 @@ module ``Test DerivedEventLog<TEvent>`` =
             // The only observed value should be the second value.
             test <@ observer.ObservedValues = [ event2 ] @>
         Prop.forAll DerivedEventLogFactory.Arb test
+        
+module ``Test DerivedEventLog`` =
+    type DerivedEventLogFactory =
+        DerivedEventLogFactory of deriveEventLog:(IObservable<Unit> -> IEventLog) with
+        static member Arb =
+            [ fun observable -> DerivedEventLog.FromObservable(observable) :> IEventLog
+              fun observable -> observable.AsEventLog() ]
+            |> Gen.elements
+            |> Gen.map DerivedEventLogFactory
+            |> Arb.fromGen
+        
+    [<Property>]
+    let ``emits events`` () =
+        let test (DerivedEventLogFactory deriveEventLog) =
+            use subject = new Subject<Unit>()
+            let eventLog = deriveEventLog subject
+            let observer = TestObserver()
+            use subscription = eventLog.Subscribe(observer)
+            subject.OnNext(Unit.Default)
+            subject.OnNext(Unit.Default)
+            test <@ observer.ObservedValues = [ Unit.Default; Unit.Default ] @>
+        Prop.forAll DerivedEventLogFactory.Arb test
+            
+    [<Property>]
+    let ``starts emitting events immediately`` () =
+        let test (DerivedEventLogFactory deriveEventLog) =
+            // Create an observable that emits one value immediately
+            // and a second value when a subject is completed.
+            use subject = new Subject<Unit>()
+            let observable =
+                Observable.Concat(
+                    Observable.Return(Unit.Default),
+                    subject,
+                    Observable.Return(Unit.Default))
+            let eventLog = deriveEventLog observable
+            let observer = TestObserver()
+            use subscription = eventLog.Subscribe(observer)
+            // The first value should have been emitted before the
+            // observer was subscribed if the derived observable
+            // started emitting values immediately.
+            test <@ observer.ObservedValues = [] @>
+            // Complete the subject to emit the second value.
+            subject.OnCompleted()
+            // There should now be a single observed value.
+            test <@ observer.ObservedValues = [ Unit.Default ] @>
+        Prop.forAll DerivedEventLogFactory.Arb test
