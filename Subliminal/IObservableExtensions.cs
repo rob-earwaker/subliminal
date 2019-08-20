@@ -101,6 +101,7 @@ namespace Subliminal
         {
             return observable.Delta(deltaSelector).Rate();
         }
+
         public static IObservable<long> SampleCount<TValue>(this IObservable<TValue> observable)
         {
             return observable.Select(_ => 1L);
