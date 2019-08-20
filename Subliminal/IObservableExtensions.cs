@@ -41,6 +41,34 @@ namespace Subliminal
             return DerivedGauge<TValue>.FromObservable(observable);
         }
 
+        public static IObservable<int> Delta(this IObservable<int> observable)
+        {
+            return observable.Delta(delta => delta.CurrentValue - delta.PreviousValue);
+        }
+
+        public static IObservable<TimeSpan> Delta(this IObservable<TimeSpan> observable)
+        {
+            return observable.Delta(delta => delta.CurrentValue - delta.PreviousValue);
+        }
+
+        public static IObservable<ByteCount> Delta(this IObservable<ByteCount> observable)
+        {
+            return observable.Delta(delta => delta.CurrentValue - delta.PreviousValue);
+        }
+
+        public static IObservable<Delta<TValue>> Delta<TValue>(this IObservable<TValue> observable)
+        {
+            return observable.Delta(delta => delta);
+        }
+
+        public static IObservable<TDelta> Delta<TValue, TDelta>(
+            this IObservable<TValue> observable, Func<Delta<TValue>, TDelta> deltaSelector)
+        {
+            return observable
+                .Buffer(count: 2, skip: 1)
+                .Select(buffer => deltaSelector(new Delta<TValue>(previousValue: buffer[0], currentValue: buffer[1])));
+        }
+
         public static IObservable<Rate<TValue>> Rate<TValue>(this IObservable<TValue> observable)
         {
             return observable
@@ -50,33 +78,28 @@ namespace Subliminal
 
         public static IObservable<Rate<int>> RateOfChange(this IObservable<int> observable)
         {
-            return observable.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
+            return observable.Delta().Rate();
         }
 
         public static IObservable<Rate<TimeSpan>> RateOfChange(this IObservable<TimeSpan> observable)
         {
-            return observable.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
+            return observable.Delta().Rate();
         }
 
         public static IObservable<Rate<ByteCount>> RateOfChange(this IObservable<ByteCount> observable)
         {
-            return observable.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
+            return observable.Delta().Rate();
         }
 
         public static IObservable<Rate<Delta<TValue>>> RateOfChange<TValue>(this IObservable<TValue> observable)
         {
-            return observable.RateOfChange(delta => delta);
+            return observable.Delta().Rate();
         }
 
         public static IObservable<Rate<TDelta>> RateOfChange<TValue, TDelta>(
             this IObservable<TValue> observable, Func<Delta<TValue>, TDelta> deltaSelector)
         {
-            return observable
-                .TimeInterval()
-                .Buffer(count: 2, skip: 1)
-                .Select(buffer => new Rate<TDelta>(
-                    delta: deltaSelector(new Delta<TValue>(previousValue: buffer[0].Value, currentValue: buffer[1].Value)),
-                    interval: buffer[1].Interval));
+            return observable.Delta(deltaSelector).Rate();
         }
         public static IObservable<long> SampleCount<TValue>(this IObservable<TValue> observable)
         {
