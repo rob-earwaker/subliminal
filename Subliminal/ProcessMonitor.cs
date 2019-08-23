@@ -35,6 +35,7 @@ namespace Subliminal
                 process: Observable
                     .Timer(dueTime: DateTimeOffset.UtcNow, period: samplingInterval)
                     .Do(_ => process.Refresh())
+                    .SkipWhile(_ => !HasStarted(process))
                     .TakeWhile(_ => !process.HasExited)
                     .Select(_ => new Process(
                         processId: process.Id,
@@ -67,6 +68,19 @@ namespace Subliminal
         public static ProcessMonitor ForCurrentProcess(TimeSpan samplingInterval)
         {
             return ForProcess(System.Diagnostics.Process.GetCurrentProcess(), samplingInterval);
+        }
+
+        private static bool HasStarted(System.Diagnostics.Process process)
+        {
+            try
+            {
+                var processId = process.Id;
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
         }
 
         public IGauge<Process> Process { get; }
