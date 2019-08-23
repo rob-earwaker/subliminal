@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Subliminal
+﻿namespace Subliminal
 {
     public interface ICounter<TIncrement> : ILog<TIncrement>
     {
