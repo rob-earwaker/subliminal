@@ -33,7 +33,7 @@ namespace Subliminal
         {
             return new ProcessMonitor(
                 process: Observable
-                    .Timer(dueTime: DateTimeOffset.UtcNow, period: samplingInterval)
+                    .Interval(samplingInterval)
                     .Do(_ => process.Refresh())
                     .SkipWhile(_ => !HasStarted(process))
                     .TakeWhile(_ => !process.HasExited)
