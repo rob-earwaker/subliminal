@@ -15,10 +15,12 @@ namespace Subliminal
         public TimeSpan Interval { get; }
         public int ProcessorCount { get; }
 
-        public double ProcessorFraction => TimeUsed.TotalMilliseconds / Interval.TotalMilliseconds;
-        public double ProcessorPercentage => ProcessorFraction * 100.0;
-        public double TotalFraction => ProcessorFraction / ProcessorCount;
-        public double TotalPercentage => TotalFraction * 100.0;
-        public TimeSpan TotalTimeAvailable => TimeSpan.FromMilliseconds(ProcessorCount * TimeUsed.TotalMilliseconds);
+        public double Fraction => TimeUsed.TotalMilliseconds / TimeAvailable.TotalMilliseconds;
+        public double Percentage => Fraction * 100.0;
+        public TimeSpan TimeAvailable => Interval;
+
+        public double TotalFraction => Fraction / ProcessorCount;
+        public double TotalPercentage => Percentage / ProcessorCount;
+        public TimeSpan TotalTimeAvailable => TimeSpan.FromTicks(TimeAvailable.Ticks * ProcessorCount);
     }
 }
