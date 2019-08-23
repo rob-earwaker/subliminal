@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public interface ICounter<TIncrement> : IObservable<TIncrement>
+    public interface ICounter<TIncrement> : ILog<TIncrement>
     {
     }
 }

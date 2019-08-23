@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Subliminal
+﻿namespace Subliminal
 {
-    public interface IGauge<TValue> : IObservable<TValue>
+    public interface IGauge<TValue> : ILog<TValue>
     {
     }
 }

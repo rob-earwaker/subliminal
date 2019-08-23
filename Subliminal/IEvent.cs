@@ -7,7 +7,7 @@ namespace Subliminal
     {
     }
 
-    public interface IEvent : IObservable<Unit>
+    public interface IEvent : IEvent<Unit>
     {
     }
 }
