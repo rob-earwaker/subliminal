@@ -78,28 +78,33 @@ namespace Subliminal
 
         public static IObservable<Rate<int>> RateOfChange(this IObservable<int> observable)
         {
-            return observable.Delta().Rate();
+            return observable.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
         }
 
         public static IObservable<Rate<TimeSpan>> RateOfChange(this IObservable<TimeSpan> observable)
         {
-            return observable.Delta().Rate();
+            return observable.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
         }
 
         public static IObservable<Rate<ByteCount>> RateOfChange(this IObservable<ByteCount> observable)
         {
-            return observable.Delta().Rate();
+            return observable.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
         }
 
         public static IObservable<Rate<Delta<TValue>>> RateOfChange<TValue>(this IObservable<TValue> observable)
         {
-            return observable.Delta().Rate();
+            return observable.RateOfChange(delta => delta);
         }
 
         public static IObservable<Rate<TDelta>> RateOfChange<TValue, TDelta>(
             this IObservable<TValue> observable, Func<Delta<TValue>, TDelta> deltaSelector)
         {
-            return observable.Delta(deltaSelector).Rate();
+            return observable
+                .TimeInterval()
+                .Buffer(count: 2, skip: 1)
+                .Select(buffer => new Rate<TDelta>(
+                    delta: deltaSelector(new Delta<TValue>(previousValue: buffer[0].Value, currentValue: buffer[1].Value)),
+                    interval: buffer[1].Interval));
         }
 
         public static IObservable<long> SampleCount<TValue>(this IObservable<TValue> observable)
