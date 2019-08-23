@@ -51,11 +51,6 @@ namespace Subliminal
             return observable.Delta(delta => delta.CurrentValue - delta.PreviousValue);
         }
 
-        public static IObservable<ByteCount> Delta(this IObservable<ByteCount> observable)
-        {
-            return observable.Delta(delta => delta.CurrentValue - delta.PreviousValue);
-        }
-
         public static IObservable<Delta<TValue>> Delta<TValue>(this IObservable<TValue> observable)
         {
             return observable.Delta(delta => delta);
@@ -81,12 +76,12 @@ namespace Subliminal
             return observable.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
         }
 
-        public static IObservable<Rate<TimeSpan>> RateOfChange(this IObservable<TimeSpan> observable)
+        public static IObservable<Rate<long>> RateOfChange(this IObservable<long> observable)
         {
             return observable.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
         }
 
-        public static IObservable<Rate<ByteCount>> RateOfChange(this IObservable<ByteCount> observable)
+        public static IObservable<Rate<TimeSpan>> RateOfChange(this IObservable<TimeSpan> observable)
         {
             return observable.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
         }

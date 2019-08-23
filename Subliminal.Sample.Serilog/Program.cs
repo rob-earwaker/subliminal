@@ -32,7 +32,7 @@ namespace Subliminal.Sample.Serilog
                 .RateOfChange()
                 .Subscribe(rate =>
                     Log.Information("Working set usage changed by {Delta}MB in the last {Interval}",
-                        rate.Delta.Megabytes, rate.Interval));
+                        rate.Delta / 1E6, rate.Interval));
 
             var threadPoolMonitor = ThreadPoolMonitor.ForManagedThreadPool(TimeSpan.FromSeconds(5));
 
@@ -79,7 +79,7 @@ namespace Subliminal.Sample.Serilog
                 .Select(bitRates => bitRates.Average())
                 .Subscribe(byteRate =>
                     dataStoreLogger.Information("Read speed was {BytesPerSecond}B/s over the last {Interval}",
-                        byteRate.Delta.Bytes / byteRate.Interval.TotalSeconds, byteRate.Interval));
+                        byteRate.Delta / byteRate.Interval.TotalSeconds, byteRate.Interval));
 
             var dataStore = new DataStore();
 

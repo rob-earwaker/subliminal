@@ -22,7 +22,7 @@ namespace Subliminal
             return rates.Average(deltas => deltas.Sum());
         }
 
-        public static Rate<ByteCount> Average(this IEnumerable<Rate<ByteCount>> rates)
+        public static Rate<long> Average(this IEnumerable<Rate<long>> rates)
         {
             return rates.Average(deltas => deltas.Sum());
         }
@@ -43,16 +43,6 @@ namespace Subliminal
         public static TimeSpan Sum(this IEnumerable<TimeSpan> durations)
         {
             return durations.Aggregate(TimeSpan.Zero, (total, duration) => total + duration);
-        }
-
-        public static ByteCount Sum(this IEnumerable<ByteCount> byteCounts)
-        {
-            return byteCounts.Aggregate(ByteCount.Zero, (total, byteCount) => total + byteCount);
-        }
-
-        public static ByteCount Sum<TSource>(this IEnumerable<TSource> source, Func<TSource, ByteCount> selector)
-        {
-            return source.Select(selector).Sum();
         }
     }
 }

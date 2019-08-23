@@ -40,9 +40,9 @@ namespace Subliminal
                     .Select(_ => new Process(
                         processId: process.Id,
                         totalProcessorTime: process.TotalProcessorTime,
-                        workingSet: ByteCount.FromBytes(process.WorkingSet64),
-                        privateMemorySize: ByteCount.FromBytes(process.PrivateMemorySize64),
-                        virtualMemorySize: ByteCount.FromBytes(process.VirtualMemorySize64)))
+                        workingSet: process.WorkingSet64,
+                        privateMemorySize: process.PrivateMemorySize64,
+                        virtualMemorySize: process.VirtualMemorySize64))
                     .AsGauge(),
                 standardOutput: Observable
                     .FromEventPattern<DataReceivedEventHandler, DataReceivedEventArgs>(
@@ -88,9 +88,9 @@ namespace Subliminal
         public ILog<string> StandardError { get; }
         public IEvent<ProcessExited> Exited { get; }
 
-        public IGauge<ByteCount> PrivateMemorySize { get; }
-        public IGauge<ByteCount> VirtualMemorySize { get; }
-        public IGauge<ByteCount> WorkingSet { get; }
+        public IGauge<long> PrivateMemorySize { get; }
+        public IGauge<long> VirtualMemorySize { get; }
+        public IGauge<long> WorkingSet { get; }
         public IGauge<TimeSpan> TotalProcessorTime { get; }
         public IGauge<ProcessorUsage> ProcessorUsage { get; }
     }

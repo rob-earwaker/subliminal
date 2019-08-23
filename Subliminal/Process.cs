@@ -5,8 +5,8 @@ namespace Subliminal
     public class Process
     {
         public Process(
-            int processId, TimeSpan totalProcessorTime, ByteCount workingSet,
-            ByteCount privateMemorySize, ByteCount virtualMemorySize)
+            int processId, TimeSpan totalProcessorTime, long workingSet,
+            long privateMemorySize, long virtualMemorySize)
         {
             ProcessId = processId;
             TotalProcessorTime = totalProcessorTime;
@@ -17,8 +17,8 @@ namespace Subliminal
 
         public int ProcessId { get; }
         public TimeSpan TotalProcessorTime { get; }
-        public ByteCount WorkingSet { get; }
-        public ByteCount PrivateMemorySize { get; }
-        public ByteCount VirtualMemorySize { get; }
+        public long WorkingSet { get; }
+        public long PrivateMemorySize { get; }
+        public long VirtualMemorySize { get; }
     }
 }
