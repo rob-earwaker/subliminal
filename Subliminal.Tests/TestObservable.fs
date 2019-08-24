@@ -18,6 +18,13 @@ module ``Test IObservable<TValue>`` =
         test <@ observer.ObservedValues.[0].CurrentValue = value2 @>
         test <@ observer.ObservedValues.[1].PreviousValue = value2 @>
         test <@ observer.ObservedValues.[1].CurrentValue = value3 @>
+
+    [<Property>]
+    let ``delta uses custom selector result`` (value1: obj) (value2: obj) (value3: obj) (result: obj) =
+        let observable = [ value1; value2; value3 ].ToObservable().Delta(fun delta -> result)
+        let observer = TestObserver()
+        use subscription = observable.Subscribe(observer)
+        test <@ observer.ObservedValues = [ result; result ] @>
                 
 module ``Test IObservable<int>`` =
     [<Property>]
