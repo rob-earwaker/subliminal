@@ -47,40 +47,5 @@ namespace Subliminal
                 .TimeInterval()
                 .Select(increment => new Rate<TValue>(increment.Value, increment.Interval));
         }
-
-        public static IObservable<Rate<int>> RateOfChange(this IObservable<int> observable)
-        {
-            return observable.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
-        }
-
-        public static IObservable<Rate<long>> RateOfChange(this IObservable<long> observable)
-        {
-            return observable.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
-        }
-
-        public static IObservable<Rate<TimeSpan>> RateOfChange(this IObservable<TimeSpan> observable)
-        {
-            return observable.RateOfChange(delta => delta.CurrentValue - delta.PreviousValue);
-        }
-
-        public static IObservable<Rate<Delta<TValue>>> RateOfChange<TValue>(this IObservable<TValue> observable)
-        {
-            return observable.RateOfChange(delta => delta);
-        }
-
-        public static IObservable<Rate<TDelta>> RateOfChange<TValue, TDelta>(
-            this IObservable<TValue> observable, Func<Delta<TValue>, TDelta> deltaSelector)
-        {
-            return observable
-                .TimeInterval()
-                .Buffer(count: 2, skip: 1)
-                // If the observable completes, the last item will be emitted in a buffer containing just
-                // that item. This will have already been emitted as the second value in the previous buffer,
-                // so ignoring this smaller final buffer does not hide the final value from subscribers.
-                .Where(buffer => buffer.Count == 2)
-                .Select(buffer => new Rate<TDelta>(
-                    delta: deltaSelector(new Delta<TValue>(previousValue: buffer[0].Value, currentValue: buffer[1].Value)),
-                    interval: buffer[1].Interval));
-        }
     }
 }

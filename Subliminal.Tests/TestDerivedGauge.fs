@@ -111,6 +111,53 @@ module ``Test DerivedGauge<TValue>`` =
             test <@ observer.ObservedValues = [ result; result ] @>
         Prop.forAll DerivedGaugeFactory.Arb test
         
+    [<Property>]
+    let ``rate of change returns intervals between pairwise values`` (value1: obj) (value2: obj) (value3: obj) =
+        let test (DerivedGaugeFactory deriveGauge) =
+            use subject = new Subject<obj>()
+            let gauge = deriveGauge subject
+            let observer = TestObserver()
+            use subscription = gauge.RateOfChange().Subscribe(observer)
+            subject.OnNext(value1)
+            subject.OnNext(value2)
+            subject.OnNext(value3)
+            test <@ observer.ObservedValues.Length = 2 @>
+            test <@ observer.ObservedValues.[0].Interval > TimeSpan.Zero @>
+            test <@ observer.ObservedValues.[1].Interval > TimeSpan.Zero @>
+        Prop.forAll DerivedGaugeFactory.Arb test
+        
+    [<Property>]
+    let ``rate of change combines values pairwise`` (value1: obj) (value2: obj) (value3: obj) =
+        let test (DerivedGaugeFactory deriveGauge) =
+            use subject = new Subject<obj>()
+            let gauge = deriveGauge subject
+            let observer = TestObserver()
+            use subscription = gauge.RateOfChange().Subscribe(observer)
+            subject.OnNext(value1)
+            subject.OnNext(value2)
+            subject.OnNext(value3)
+            test <@ observer.ObservedValues.Length = 2 @>
+            test <@ observer.ObservedValues.[0].Delta.PreviousValue = value1 @>
+            test <@ observer.ObservedValues.[0].Delta.CurrentValue = value2 @>
+            test <@ observer.ObservedValues.[1].Delta.PreviousValue = value2 @>
+            test <@ observer.ObservedValues.[1].Delta.CurrentValue = value3 @>
+        Prop.forAll DerivedGaugeFactory.Arb test
+        
+    [<Property>]
+    let ``rate of change uses custom delta selector result`` (value1: obj) (value2: obj) (value3: obj) (result: obj) =
+        let test (DerivedGaugeFactory deriveGauge) =
+            use subject = new Subject<obj>()
+            let gauge = deriveGauge subject
+            let observer = TestObserver()
+            use subscription = gauge.RateOfChange(fun delta -> result).Subscribe(observer)
+            subject.OnNext(value1)
+            subject.OnNext(value2)
+            subject.OnNext(value3)
+            test <@ observer.ObservedValues.Length = 2 @>
+            test <@ observer.ObservedValues.[0].Delta = result @>
+            test <@ observer.ObservedValues.[1].Delta = result @>
+        Prop.forAll DerivedGaugeFactory.Arb test
+        
 module ``Test DerivedGauge<int>`` =
     [<Property>]
     let ``delta subtracts pairwise values`` (value1: int) (value2: int) (value3: int) =
@@ -125,6 +172,21 @@ module ``Test DerivedGauge<int>`` =
             test <@ observer.ObservedValues.Length = 2 @>
             test <@ observer.ObservedValues.[0] = value2 - value1 @>
             test <@ observer.ObservedValues.[1] = value3 - value2 @>
+        Prop.forAll DerivedGaugeFactory.Arb test
+
+    [<Property>]
+    let ``rate of change subtracts pairwise values`` (value1: int) (value2: int) (value3: int) =
+        let test (DerivedGaugeFactory deriveGauge) =
+            use subject = new Subject<int>()
+            let gauge = deriveGauge subject
+            let observer = TestObserver()
+            use subscription = gauge.RateOfChange().Subscribe(observer)
+            subject.OnNext(value1)
+            subject.OnNext(value2)
+            subject.OnNext(value3)
+            test <@ observer.ObservedValues.Length = 2 @>
+            test <@ observer.ObservedValues.[0].Delta = value2 - value1 @>
+            test <@ observer.ObservedValues.[1].Delta = value3 - value2 @>
         Prop.forAll DerivedGaugeFactory.Arb test
         
 module ``Test DerivedGauge<long>`` =
@@ -141,6 +203,21 @@ module ``Test DerivedGauge<long>`` =
             test <@ observer.ObservedValues.Length = 2 @>
             test <@ observer.ObservedValues.[0] = value2 - value1 @>
             test <@ observer.ObservedValues.[1] = value3 - value2 @>
+        Prop.forAll DerivedGaugeFactory.Arb test
+        
+    [<Property>]
+    let ``rate of change subtracts pairwise values`` (value1: int64) (value2: int64) (value3: int64) =
+        let test (DerivedGaugeFactory deriveGauge) =
+            use subject = new Subject<int64>()
+            let gauge = deriveGauge subject
+            let observer = TestObserver()
+            use subscription = gauge.RateOfChange().Subscribe(observer)
+            subject.OnNext(value1)
+            subject.OnNext(value2)
+            subject.OnNext(value3)
+            test <@ observer.ObservedValues.Length = 2 @>
+            test <@ observer.ObservedValues.[0].Delta = value2 - value1 @>
+            test <@ observer.ObservedValues.[1].Delta = value3 - value2 @>
         Prop.forAll DerivedGaugeFactory.Arb test
         
 module ``Test DerivedGauge<TimeSpan>`` =
@@ -160,4 +237,22 @@ module ``Test DerivedGauge<TimeSpan>`` =
             test <@ observer.ObservedValues.Length = 2 @>
             test <@ observer.ObservedValues.[0] = value2 - value1 @>
             test <@ observer.ObservedValues.[1] = value3 - value2 @>
+        Prop.forAll DerivedGaugeFactory.Arb test
+        
+    [<Property>]
+    let ``rate of change subtracts pairwise values`` (value1: int64) (value2: int64) (value3: int64) =
+        let test (DerivedGaugeFactory deriveGauge) =
+            let value1 = TimeSpan.FromTicks(value1)
+            let value2 = TimeSpan.FromTicks(value2)
+            let value3 = TimeSpan.FromTicks(value3)
+            use subject = new Subject<TimeSpan>()
+            let gauge = deriveGauge subject
+            let observer = TestObserver()
+            use subscription = gauge.RateOfChange().Subscribe(observer)
+            subject.OnNext(value1)
+            subject.OnNext(value2)
+            subject.OnNext(value3)
+            test <@ observer.ObservedValues.Length = 2 @>
+            test <@ observer.ObservedValues.[0].Delta = value2 - value1 @>
+            test <@ observer.ObservedValues.[1].Delta = value3 - value2 @>
         Prop.forAll DerivedGaugeFactory.Arb test

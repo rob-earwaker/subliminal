@@ -21,6 +21,7 @@ namespace Subliminal
 
             ProcessorUsage = process
                 .Select(processSample => processSample.TotalProcessorTime)
+                .AsGauge()
                 .RateOfChange()
                 .Select(rate => new ProcessorUsage(
                     timeUsed: rate.Delta,
