@@ -46,6 +46,11 @@ namespace Subliminal
             return observable.Delta(delta => delta.CurrentValue - delta.PreviousValue);
         }
 
+        public static IObservable<long> Delta(this IObservable<long> observable)
+        {
+            return observable.Delta(delta => delta.CurrentValue - delta.PreviousValue);
+        }
+
         public static IObservable<TimeSpan> Delta(this IObservable<TimeSpan> observable)
         {
             return observable.Delta(delta => delta.CurrentValue - delta.PreviousValue);
