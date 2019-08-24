@@ -19,9 +19,9 @@ namespace Subliminal
             _derivedLog = _logSubject.AsObservable().AsLog();
         }
 
-        public void Append(TEntry value)
+        public void Append(TEntry entry)
         {
-            _logSubject.OnNext(value);
+            _logSubject.OnNext(entry);
         }
 
         public IDisposable Subscribe(IObserver<TEntry> observer)

@@ -19,6 +19,7 @@
     <Compile Include="TestEvent.fs" />
     <Compile Include="TestEventLog.fs" />
     <Compile Include="TestGauge.fs" />
+    <Compile Include="TestLog.fs" />
     <Compile Include="TestOperation.fs" />
   </ItemGroup>
 

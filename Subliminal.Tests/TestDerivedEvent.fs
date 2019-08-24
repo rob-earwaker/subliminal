@@ -43,6 +43,17 @@ module ``Test DerivedEvent<TEvent>`` =
         Prop.forAll DerivedEventFactory.Arb test
         
     [<Property>]
+    let ``completes after receiving first value`` (value: obj) =
+        let test (DerivedEventFactory deriveEvent) =
+            use subject = new Subject<obj>()
+            let event = deriveEvent subject
+            let observer = TestObserver()
+            use subscription = event.Subscribe(observer)
+            subject.OnNext(value)
+            test <@ observer.ObservableCompleted @>
+        Prop.forAll DerivedEventFactory.Arb test
+        
+    [<Property>]
     let ``observers receive the same value`` () =
         let test (DerivedEventFactory deriveEvent) =
             // Create an observable that emits a value after a
@@ -81,7 +92,7 @@ module ``Test DerivedEvent<TEvent>`` =
         Prop.forAll DerivedEventFactory.Arb test
         
     [<Property>]
-    let ``emits value to observers that subscribe after completion`` (value: obj) =
+    let ``emits value to observers that subscribe after value emitted`` (value: obj) =
         let test (DerivedEventFactory deriveEvent) =
             use subject = new Subject<obj>()
             let event = deriveEvent subject
@@ -127,6 +138,17 @@ module ``Test DerivedEvent`` =
             let observer = TestObserver()
             use subscription = event.Subscribe(observer)
             test <@ not observer.ObservableCompleted @>
+        Prop.forAll DerivedEventFactory.Arb test
+        
+    [<Property>]
+    let ``completes after receiving first value`` () =
+        let test (DerivedEventFactory deriveEvent) =
+            use subject = new Subject<Unit>()
+            let event = deriveEvent subject
+            let observer = TestObserver()
+            use subscription = event.Subscribe(observer)
+            subject.OnNext(Unit.Default)
+            test <@ observer.ObservableCompleted @>
         Prop.forAll DerivedEventFactory.Arb test
                 
     [<Property>]

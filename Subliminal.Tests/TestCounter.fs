@@ -17,6 +17,18 @@ module ``Test Counter<TIncrement>`` =
         test <@ not observer.ObservableCompleted @>
         
     [<Property>]
+    let ``observers receive the same increments`` (increment1: obj) (increment2: obj) =
+        let counter = Counter<obj>()
+        let observer1 = TestObserver()
+        let observer2 = TestObserver()
+        use subscription1 = counter.Subscribe(observer1)
+        use subscription2 = counter.Subscribe(observer2)
+        counter.IncrementBy(increment1)
+        counter.IncrementBy(increment2)
+        test <@ observer1.ObservedValues = [ increment1; increment2 ] @>
+        test <@ observer2.ObservedValues = [ increment1; increment2 ] @>
+            
+    [<Property>]
     let ``rate returns original values as deltas`` (value1: obj) (value2: obj) (value3: obj) =
         let counter = Counter<obj>()
         let observer = TestObserver()

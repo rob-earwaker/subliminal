@@ -17,6 +17,18 @@ module ``Test Gauge<TValue>`` =
         test <@ not observer.ObservableCompleted @>
         
     [<Property>]
+    let ``observers receive the same values`` (value1: obj) (value2: obj) =
+        let gauge = Gauge<obj>()
+        let observer1 = TestObserver()
+        let observer2 = TestObserver()
+        use subscription1 = gauge.Subscribe(observer1)
+        use subscription2 = gauge.Subscribe(observer2)
+        gauge.LogValue(value1)
+        gauge.LogValue(value2)
+        test <@ observer1.ObservedValues = [ value1; value2 ] @>
+        test <@ observer2.ObservedValues = [ value1; value2 ] @>
+        
+    [<Property>]
     let ``delta combines values pairwise`` (value1: obj) (value2: obj) (value3: obj) =
         let gauge = Gauge<obj>()
         let observer = TestObserver()
