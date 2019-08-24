@@ -9,16 +9,16 @@ open System.Reactive
 open System.Reactive.Linq
 open System.Reactive.Subjects
 
-module ``Test DerivedLog<TEntry>`` =
-    type DerivedLogFactory =
-        DerivedLogFactory of deriveLog:(IObservable<obj> -> ILog<obj>) with
-        static member Arb =
-            [ fun observable -> DerivedLog<obj>.FromObservable(observable) :> ILog<obj>
-              fun observable -> observable.AsLog<obj>() ]
-            |> Gen.elements
-            |> Gen.map DerivedLogFactory
-            |> Arb.fromGen
+type DerivedLogFactory<'TEntry> =
+    DerivedLogFactory of deriveLog:(IObservable<'TEntry> -> ILog<'TEntry>) with
+    static member Arb =
+        [ fun observable -> DerivedLog<'TEntry>.FromObservable(observable) :> ILog<'TEntry>
+          fun observable -> observable.AsLog<'TEntry>() ]
+        |> Gen.elements
+        |> Gen.map DerivedLogFactory
+        |> Arb.fromGen
 
+module ``Test DerivedLog<TEntry>`` =
     [<Property>]
     let ``emits entries`` (entry1: obj) (entry2: obj) =
         let test (DerivedLogFactory deriveLog) =

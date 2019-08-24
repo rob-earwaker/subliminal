@@ -9,16 +9,16 @@ open System.Reactive
 open System.Reactive.Linq
 open System.Reactive.Subjects
 
-module ``Test DerivedEventLog<TEvent>`` =
-    type DerivedEventLogFactory =
-        DerivedEventLogFactory of deriveEventLog:(IObservable<obj> -> IEventLog<obj>) with
-        static member Arb =
-            [ fun observable -> DerivedEventLog<obj>.FromObservable(observable) :> IEventLog<obj>
-              fun observable -> observable.AsEventLog<obj>() ]
-            |> Gen.elements
-            |> Gen.map DerivedEventLogFactory
-            |> Arb.fromGen
+type DerivedEventLogFactory<'TEvent> =
+    DerivedEventLogFactory of deriveEventLog:(IObservable<'TEvent> -> IEventLog<'TEvent>) with
+    static member Arb =
+        [ fun observable -> DerivedEventLog<'TEvent>.FromObservable(observable) :> IEventLog<'TEvent>
+          fun observable -> observable.AsEventLog<'TEvent>() ]
+        |> Gen.elements
+        |> Gen.map DerivedEventLogFactory
+        |> Arb.fromGen
 
+module ``Test DerivedEventLog<TEvent>`` =
     [<Property>]
     let ``emits events`` (event1: obj) (event2: obj) =
         let test (DerivedEventLogFactory deriveEventLog) =
@@ -93,16 +93,16 @@ module ``Test DerivedEventLog<TEvent>`` =
             test <@ observer.ObservedValues = [ 1L; 1L ] @>
         Prop.forAll DerivedEventLogFactory.Arb test
         
+type DerivedEventLogFactory =
+    DerivedEventLogFactory of deriveEventLog:(IObservable<Unit> -> IEventLog) with
+    static member Arb =
+        [ fun observable -> DerivedEventLog.FromObservable(observable) :> IEventLog
+          fun observable -> observable.AsEventLog() ]
+        |> Gen.elements
+        |> Gen.map DerivedEventLogFactory
+        |> Arb.fromGen
+            
 module ``Test DerivedEventLog`` =
-    type DerivedEventLogFactory =
-        DerivedEventLogFactory of deriveEventLog:(IObservable<Unit> -> IEventLog) with
-        static member Arb =
-            [ fun observable -> DerivedEventLog.FromObservable(observable) :> IEventLog
-              fun observable -> observable.AsEventLog() ]
-            |> Gen.elements
-            |> Gen.map DerivedEventLogFactory
-            |> Arb.fromGen
-        
     [<Property>]
     let ``emits events`` () =
         let test (DerivedEventLogFactory deriveEventLog) =

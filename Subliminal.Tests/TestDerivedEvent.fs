@@ -9,16 +9,16 @@ open System.Reactive
 open System.Reactive.Linq
 open System.Reactive.Subjects
 
-module ``Test DerivedEvent<TEvent>`` =
-    type DerivedEventFactory =
-        DerivedEventFactory of deriveEvent:(IObservable<obj> -> IEvent<obj>) with
-        static member Arb =
-            [ fun observable -> DerivedEvent<obj>.FromObservable(observable) :> IEvent<obj>
-              fun observable -> observable.AsEvent<obj>() ]
-            |> Gen.elements
-            |> Gen.map DerivedEventFactory
-            |> Arb.fromGen
+type DerivedEventFactory<'TEvent> =
+    DerivedEventFactory of deriveEvent:(IObservable<'TEvent> -> IEvent<'TEvent>) with
+    static member Arb =
+        [ fun observable -> DerivedEvent<'TEvent>.FromObservable(observable) :> IEvent<'TEvent>
+          fun observable -> observable.AsEvent<'TEvent>() ]
+        |> Gen.elements
+        |> Gen.map DerivedEventFactory
+        |> Arb.fromGen
 
+module ``Test DerivedEvent<TEvent>`` =
     [<Property>]
     let ``only emits first value`` (value1: obj) (value2: obj) =
         let test (DerivedEventFactory deriveEvent) =
@@ -95,17 +95,17 @@ module ``Test DerivedEvent<TEvent>`` =
             test <@ observer2.ObservedValues = [ value ] @>
             test <@ observer2.ObservableCompleted @>
         Prop.forAll DerivedEventFactory.Arb test
-
-module ``Test DerivedEvent`` =
-    type DerivedEventFactory =
-        DerivedEventFactory of deriveEvent:(IObservable<Unit> -> IEvent) with
-        static member Arb =
-            [ fun observable -> DerivedEvent.FromObservable(observable) :> IEvent
-              fun observable -> observable.AsEvent() ]
-            |> Gen.elements
-            |> Gen.map DerivedEventFactory
-            |> Arb.fromGen
         
+type DerivedEventFactory =
+    DerivedEventFactory of deriveEvent:(IObservable<Unit> -> IEvent) with
+    static member Arb =
+        [ fun observable -> DerivedEvent.FromObservable(observable) :> IEvent
+          fun observable -> observable.AsEvent() ]
+        |> Gen.elements
+        |> Gen.map DerivedEventFactory
+        |> Arb.fromGen
+            
+module ``Test DerivedEvent`` =
     [<Property>]
     let ``only emits single value`` () =
         let test (DerivedEventFactory deriveEvent) =
