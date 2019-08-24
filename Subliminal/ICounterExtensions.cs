@@ -7,9 +7,17 @@ namespace Subliminal
     {
         public static IObservable<Rate<TIncrement>> Rate<TIncrement>(this ICounter<TIncrement> counter)
         {
+            return counter.Rate(increment => increment);
+        }
+
+        public static IObservable<Rate<TDelta>> Rate<TIncrement, TDelta>(
+            this ICounter<TIncrement> counter, Func<TIncrement, TDelta> incrementSelector)
+        {
             return counter
                 .TimeInterval()
-                .Select(increment => new Rate<TIncrement>(increment.Value, increment.Interval));
+                .Select(increment => new Rate<TDelta>(
+                    delta: incrementSelector(increment.Value),
+                    interval: increment.Interval));
         }
     }
 }

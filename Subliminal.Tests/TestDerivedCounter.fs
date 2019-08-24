@@ -112,3 +112,19 @@ module ``Test DerivedCounter<TIncrement>`` =
             test <@ observer.ObservedValues.[1].Interval > TimeSpan.Zero @>
             test <@ observer.ObservedValues.[2].Interval > TimeSpan.Zero @>
         Prop.forAll DerivedCounterFactory.Arb test
+        
+    [<Property>]
+    let ``rate returns custom selector result as delta`` (value1: obj) (value2: obj) (value3: obj) (result: obj) =
+        let test (DerivedCounterFactory deriveCounter) =
+            use subject = new Subject<obj>()
+            let counter = deriveCounter subject
+            let observer = TestObserver()
+            use subscription = counter.Rate(fun increment -> result).Subscribe(observer)
+            subject.OnNext(value1)
+            subject.OnNext(value2)
+            subject.OnNext(value3)
+            test <@ observer.ObservedValues.Length = 3 @>
+            test <@ observer.ObservedValues.[0].Delta = result @>
+            test <@ observer.ObservedValues.[1].Delta = result @>
+            test <@ observer.ObservedValues.[2].Delta = result @>
+        Prop.forAll DerivedCounterFactory.Arb test
