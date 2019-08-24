@@ -14,6 +14,8 @@ namespace Subliminal
             _derivedEventLog = _eventLog.AsEventLog();
         }
 
+        public ICounter<long> EventCounter => _derivedEventLog.EventCounter;
+
         public void LogOccurrence(TEvent @event)
         {
             _eventLog.Append(@event);
@@ -33,6 +35,8 @@ namespace Subliminal
         {
             _eventLog = new EventLog<Unit>();
         }
+
+        public ICounter<long> EventCounter => _eventLog.EventCounter;
 
         public void LogOccurrence()
         {

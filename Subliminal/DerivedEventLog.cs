@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive;
+using System.Reactive.Linq;
 
 namespace Subliminal
 {
@@ -11,6 +12,8 @@ namespace Subliminal
         {
             _eventLog = eventLog;
         }
+
+        public ICounter<long> EventCounter => _eventLog.Select(_ => 1L).AsCounter();
 
         public static DerivedEventLog<TEvent> FromObservable(IObservable<TEvent> observable)
         {
@@ -31,6 +34,8 @@ namespace Subliminal
         {
             _eventLog = eventLog;
         }
+
+        public ICounter<long> EventCounter => _eventLog.EventCounter;
 
         public static DerivedEventLog FromObservable(IObservable<Unit> observable)
         {

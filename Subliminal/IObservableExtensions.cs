@@ -114,10 +114,5 @@ namespace Subliminal
                     delta: deltaSelector(new Delta<TValue>(previousValue: buffer[0].Value, currentValue: buffer[1].Value)),
                     interval: buffer[1].Interval));
         }
-
-        public static IObservable<long> SampleCount<TValue>(this IObservable<TValue> observable)
-        {
-            return observable.Select(_ => 1L);
-        }
     }
 }

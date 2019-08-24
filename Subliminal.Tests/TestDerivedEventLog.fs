@@ -81,6 +81,18 @@ module ``Test DerivedEventLog<TEvent>`` =
             test <@ observer.ObservedValues = [ event2 ] @>
         Prop.forAll DerivedEventLogFactory.Arb test
         
+    [<Property>]
+    let ``event counter increments by one per event`` (event1: obj) (event2: obj) =
+        let test (DerivedEventLogFactory deriveEventLog) =
+            use subject = new Subject<obj>()
+            let eventLog = deriveEventLog subject
+            let observer = TestObserver()
+            use subscription = eventLog.EventCounter.Subscribe(observer)
+            subject.OnNext(event1)
+            subject.OnNext(event2)
+            test <@ observer.ObservedValues = [ 1L; 1L ] @>
+        Prop.forAll DerivedEventLogFactory.Arb test
+        
 module ``Test DerivedEventLog`` =
     type DerivedEventLogFactory =
         DerivedEventLogFactory of deriveEventLog:(IObservable<Unit> -> IEventLog) with
@@ -125,4 +137,16 @@ module ``Test DerivedEventLog`` =
             subject.OnCompleted()
             // There should now be a single observed value.
             test <@ observer.ObservedValues = [ Unit.Default ] @>
+        Prop.forAll DerivedEventLogFactory.Arb test
+        
+    [<Property>]
+    let ``event counter increments by one per event`` () =
+        let test (DerivedEventLogFactory deriveEventLog) =
+            use subject = new Subject<Unit>()
+            let eventLog = deriveEventLog subject
+            let observer = TestObserver()
+            use subscription = eventLog.EventCounter.Subscribe(observer)
+            subject.OnNext(Unit.Default)
+            subject.OnNext(Unit.Default)
+            test <@ observer.ObservedValues = [ 1L; 1L ] @>
         Prop.forAll DerivedEventLogFactory.Arb test
