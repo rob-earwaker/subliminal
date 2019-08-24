@@ -41,38 +41,6 @@ namespace Subliminal
             return DerivedGauge<TValue>.FromObservable(observable);
         }
 
-        public static IObservable<int> Delta(this IObservable<int> observable)
-        {
-            return observable.Delta(delta => delta.CurrentValue - delta.PreviousValue);
-        }
-
-        public static IObservable<long> Delta(this IObservable<long> observable)
-        {
-            return observable.Delta(delta => delta.CurrentValue - delta.PreviousValue);
-        }
-
-        public static IObservable<TimeSpan> Delta(this IObservable<TimeSpan> observable)
-        {
-            return observable.Delta(delta => delta.CurrentValue - delta.PreviousValue);
-        }
-
-        public static IObservable<Delta<TValue>> Delta<TValue>(this IObservable<TValue> observable)
-        {
-            return observable.Delta(delta => delta);
-        }
-
-        public static IObservable<TDelta> Delta<TValue, TDelta>(
-            this IObservable<TValue> observable, Func<Delta<TValue>, TDelta> deltaSelector)
-        {
-            return observable
-                .Buffer(count: 2, skip: 1)
-                // If the observable completes, the last item will be emitted in a buffer containing just
-                // that item. This will have already been emitted as the second value in the previous buffer,
-                // so ignoring this smaller final buffer does not hide the final value from subscribers.
-                .Where(buffer => buffer.Count == 2)
-                .Select(buffer => deltaSelector(new Delta<TValue>(previousValue: buffer[0], currentValue: buffer[1])));
-        }
-
         public static IObservable<Rate<TValue>> Rate<TValue>(this IObservable<TValue> observable)
         {
             return observable
