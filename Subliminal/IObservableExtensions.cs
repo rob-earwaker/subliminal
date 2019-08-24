@@ -61,6 +61,10 @@ namespace Subliminal
         {
             return observable
                 .Buffer(count: 2, skip: 1)
+                // If the observable completes, the last item will be emitted in a buffer containing just
+                // that item. This will have already been emitted as the second value in the previous buffer,
+                // so ignoring this smaller final buffer does not hide the final value from subscribers.
+                .Where(buffer => buffer.Count == 2)
                 .Select(buffer => deltaSelector(new Delta<TValue>(previousValue: buffer[0], currentValue: buffer[1])));
         }
 
