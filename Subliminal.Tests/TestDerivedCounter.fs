@@ -82,12 +82,13 @@ module ``Test DerivedCounter<TIncrement>`` =
         Prop.forAll DerivedCounterFactory.Arb test
         
     [<Property>]
-    let ``rate returns original values as deltas`` (value1: obj) (value2: obj) (value3: obj) =
+    let ``rate returns original values as deltas`` value1 value2 value3 =
         let test (DerivedCounterFactory deriveCounter) =
             use subject = new Subject<obj>()
             let counter = deriveCounter subject
+            let observable = counter.Rate()
             let observer = TestObserver()
-            use subscription = counter.Rate().Subscribe(observer)
+            use subscription = observable.Subscribe(observer)
             subject.OnNext(value1)
             subject.OnNext(value2)
             subject.OnNext(value3)
@@ -102,8 +103,9 @@ module ``Test DerivedCounter<TIncrement>`` =
         let test (DerivedCounterFactory deriveCounter) =
             use subject = new Subject<obj>()
             let counter = deriveCounter subject
+            let observable = counter.Rate()
             let observer = TestObserver()
-            use subscription = counter.Rate().Subscribe(observer)
+            use subscription = observable.Subscribe(observer)
             subject.OnNext(value1)
             subject.OnNext(value2)
             subject.OnNext(value3)
@@ -114,17 +116,18 @@ module ``Test DerivedCounter<TIncrement>`` =
         Prop.forAll DerivedCounterFactory.Arb test
         
     [<Property>]
-    let ``rate returns custom selector result as delta`` (value1: obj) (value2: obj) (value3: obj) (result: obj) =
+    let ``rate returns increment selector result as delta`` wrapper1 wrapper2 wrapper3 =
         let test (DerivedCounterFactory deriveCounter) =
-            use subject = new Subject<obj>()
+            use subject = new Subject<Wrapper<obj>>()
             let counter = deriveCounter subject
+            let observable = counter.Rate(fun increment -> increment.Value)
             let observer = TestObserver()
-            use subscription = counter.Rate(fun increment -> result).Subscribe(observer)
-            subject.OnNext(value1)
-            subject.OnNext(value2)
-            subject.OnNext(value3)
+            use subscription = observable.Subscribe(observer)
+            subject.OnNext(wrapper1)
+            subject.OnNext(wrapper2)
+            subject.OnNext(wrapper3)
             test <@ observer.ObservedValues.Length = 3 @>
-            test <@ observer.ObservedValues.[0].Delta = result @>
-            test <@ observer.ObservedValues.[1].Delta = result @>
-            test <@ observer.ObservedValues.[2].Delta = result @>
+            test <@ observer.ObservedValues.[0].Delta = wrapper1.Value @>
+            test <@ observer.ObservedValues.[1].Delta = wrapper2.Value @>
+            test <@ observer.ObservedValues.[2].Delta = wrapper3.Value @>
         Prop.forAll DerivedCounterFactory.Arb test

@@ -27,12 +27,13 @@ module ``Test Counter<TIncrement>`` =
         counter.IncrementBy(increment2)
         test <@ observer1.ObservedValues = [ increment1; increment2 ] @>
         test <@ observer2.ObservedValues = [ increment1; increment2 ] @>
-            
+        
     [<Property>]
-    let ``rate returns original values as deltas`` (value1: obj) (value2: obj) (value3: obj) =
+    let ``rate returns original values as deltas`` value1 value2 value3 =
         let counter = Counter<obj>()
+        let observable = counter.Rate()
         let observer = TestObserver()
-        use subscription = counter.Rate().Subscribe(observer)
+        use subscription = observable.Subscribe(observer)
         counter.IncrementBy(value1)
         counter.IncrementBy(value2)
         counter.IncrementBy(value3)
@@ -44,8 +45,9 @@ module ``Test Counter<TIncrement>`` =
     [<Property>]
     let ``rate returns intervals between values`` (value1: obj) (value2: obj) (value3: obj) =
         let counter = Counter<obj>()
+        let observable = counter.Rate()
         let observer = TestObserver()
-        use subscription = counter.Rate().Subscribe(observer)
+        use subscription = observable.Subscribe(observer)
         counter.IncrementBy(value1)
         counter.IncrementBy(value2)
         counter.IncrementBy(value3)
@@ -53,6 +55,20 @@ module ``Test Counter<TIncrement>`` =
         test <@ observer.ObservedValues.[0].Interval > TimeSpan.Zero @>
         test <@ observer.ObservedValues.[1].Interval > TimeSpan.Zero @>
         test <@ observer.ObservedValues.[2].Interval > TimeSpan.Zero @>
+        
+    [<Property>]
+    let ``rate returns increment selector result as delta`` wrapper1 wrapper2 wrapper3 =
+        let counter = Counter<Wrapper<obj>>()
+        let observable = counter.Rate(fun increment -> increment.Value)
+        let observer = TestObserver()
+        use subscription = observable.Subscribe(observer)
+        counter.IncrementBy(wrapper1)
+        counter.IncrementBy(wrapper2)
+        counter.IncrementBy(wrapper3)
+        test <@ observer.ObservedValues.Length = 3 @>
+        test <@ observer.ObservedValues.[0].Delta = wrapper1.Value @>
+        test <@ observer.ObservedValues.[1].Delta = wrapper2.Value @>
+        test <@ observer.ObservedValues.[2].Delta = wrapper3.Value @>
 
 module ``Test Counter<int>`` =
     [<Property>]

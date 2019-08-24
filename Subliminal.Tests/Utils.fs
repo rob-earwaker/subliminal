@@ -15,3 +15,5 @@ type TestObserver<'Value>() =
         
         member this.OnError(error) =
             raise <| exn("Observable raised an error", error)
+            
+type Wrapper<'TValue> = { Value: 'TValue }
