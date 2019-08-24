@@ -9,16 +9,16 @@ open System.Reactive
 open System.Reactive.Linq
 open System.Reactive.Subjects
 
-module ``Test DerivedCounter<TIncrement>`` =
-    type DerivedCounterFactory =
-        DerivedCounterFactory of deriveCounter:(IObservable<obj> -> ICounter<obj>) with
-        static member Arb =
-            [ fun observable -> DerivedCounter<obj>.FromObservable(observable) :> ICounter<obj>
-              fun observable -> observable.AsCounter<obj>() ]
-            |> Gen.elements
-            |> Gen.map DerivedCounterFactory
-            |> Arb.fromGen
+type DerivedCounterFactory<'TIncrement> =
+    DerivedCounterFactory of deriveCounter:(IObservable<'TIncrement> -> ICounter<'TIncrement>) with
+    static member Arb =
+        [ fun observable -> DerivedCounter<'TIncrement>.FromObservable(observable) :> ICounter<'TIncrement>
+          fun observable -> observable.AsCounter<'TIncrement>() ]
+        |> Gen.elements
+        |> Gen.map DerivedCounterFactory
+        |> Arb.fromGen
 
+module ``Test DerivedCounter<TIncrement>`` =
     [<Property>]
     let ``emits increments`` (increment1: obj) (increment2: obj) =
         let test (DerivedCounterFactory deriveCounter) =
@@ -79,4 +79,36 @@ module ``Test DerivedCounter<TIncrement>`` =
             subject.OnCompleted()
             // The only observed value should be the second value.
             test <@ observer.ObservedValues = [ increment2 ] @>
+        Prop.forAll DerivedCounterFactory.Arb test
+        
+    [<Property>]
+    let ``rate returns original values as deltas`` (value1: obj) (value2: obj) (value3: obj) =
+        let test (DerivedCounterFactory deriveCounter) =
+            use subject = new Subject<obj>()
+            let counter = deriveCounter subject
+            let observer = TestObserver()
+            use subscription = counter.Rate().Subscribe(observer)
+            subject.OnNext(value1)
+            subject.OnNext(value2)
+            subject.OnNext(value3)
+            test <@ observer.ObservedValues.Length = 3 @>
+            test <@ observer.ObservedValues.[0].Delta = value1 @>
+            test <@ observer.ObservedValues.[1].Delta = value2 @>
+            test <@ observer.ObservedValues.[2].Delta = value3 @>
+        Prop.forAll DerivedCounterFactory.Arb test
+
+    [<Property>]
+    let ``rate returns intervals between values`` (value1: obj) (value2: obj) (value3: obj) =
+        let test (DerivedCounterFactory deriveCounter) =
+            use subject = new Subject<obj>()
+            let counter = deriveCounter subject
+            let observer = TestObserver()
+            use subscription = counter.Rate().Subscribe(observer)
+            subject.OnNext(value1)
+            subject.OnNext(value2)
+            subject.OnNext(value3)
+            test <@ observer.ObservedValues.Length = 3 @>
+            test <@ observer.ObservedValues.[0].Interval > TimeSpan.Zero @>
+            test <@ observer.ObservedValues.[1].Interval > TimeSpan.Zero @>
+            test <@ observer.ObservedValues.[2].Interval > TimeSpan.Zero @>
         Prop.forAll DerivedCounterFactory.Arb test

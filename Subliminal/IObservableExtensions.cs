@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reactive;
-using System.Reactive.Linq;
 
 namespace Subliminal
 {
@@ -39,13 +38,6 @@ namespace Subliminal
         public static IGauge<TValue> AsGauge<TValue>(this IObservable<TValue> observable)
         {
             return DerivedGauge<TValue>.FromObservable(observable);
-        }
-
-        public static IObservable<Rate<TValue>> Rate<TValue>(this IObservable<TValue> observable)
-        {
-            return observable
-                .TimeInterval()
-                .Select(increment => new Rate<TValue>(increment.Value, increment.Interval));
         }
     }
 }
