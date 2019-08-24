@@ -25,6 +25,26 @@ module ``Test IObservable<TValue>`` =
         let observer = TestObserver()
         use subscription = observable.Subscribe(observer)
         test <@ observer.ObservedValues = [ result; result ] @>
+        
+    [<Property>]
+    let ``rate returns interval between values`` (value1: obj) (value2: obj) (value3: obj) =
+        let observable = [ value1; value2; value3 ].ToObservable().Rate()
+        let observer = TestObserver()
+        use subscription = observable.Subscribe(observer)
+        test <@ observer.ObservedValues.Length = 3 @>
+        test <@ observer.ObservedValues.[0].Interval > TimeSpan.Zero @>
+        test <@ observer.ObservedValues.[1].Interval > TimeSpan.Zero @>
+        test <@ observer.ObservedValues.[2].Interval > TimeSpan.Zero @>
+        
+    [<Property>]
+    let ``rate returns original values as deltas`` (value1: obj) (value2: obj) (value3: obj) =
+        let observable = [ value1; value2; value3 ].ToObservable().Rate()
+        let observer = TestObserver()
+        use subscription = observable.Subscribe(observer)
+        test <@ observer.ObservedValues.Length = 3 @>
+        test <@ observer.ObservedValues.[0].Delta = value1 @>
+        test <@ observer.ObservedValues.[1].Delta = value2 @>
+        test <@ observer.ObservedValues.[2].Delta = value3 @>
                 
 module ``Test IObservable<int>`` =
     [<Property>]
