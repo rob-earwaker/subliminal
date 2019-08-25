@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 
 namespace Subliminal
 {
-    public class DerivedEvent<TEvent> : IEvent<TEvent>
+    public sealed class DerivedEvent<TEvent> : IEvent<TEvent>
     {
         private readonly IObservable<TEvent> _raised;
 
@@ -31,7 +31,7 @@ namespace Subliminal
         }
     }
 
-    public class DerivedEvent : IEvent
+    public sealed class DerivedEvent : IEvent
     {
         private readonly IEvent<Unit> _event;
 

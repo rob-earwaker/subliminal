@@ -1,6 +1,6 @@
 ﻿namespace Subliminal
 {
-    public class ThreadPoolUsage
+    public sealed class ThreadPoolUsage
     {
         public ThreadPoolUsage(
             int minWorkerThreads, int minCompletionPortThreads,

@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public class OperationCompleted<TContext>
+    public sealed class OperationCompleted<TContext>
     {
         internal OperationCompleted(string operationId, TContext context, TimeSpan duration)
         {
@@ -21,7 +21,7 @@ namespace Subliminal
         }
     }
 
-    public class OperationCompleted
+    public sealed class OperationCompleted
     {
         internal OperationCompleted(string operationId, TimeSpan duration)
         {

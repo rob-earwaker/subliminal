@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public class Process
+    public sealed class Process
     {
         public Process(
             int processId, TimeSpan totalProcessorTime, long workingSet,

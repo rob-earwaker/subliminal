@@ -5,7 +5,7 @@ using System.Reactive.Subjects;
 
 namespace Subliminal
 {
-    public class Event<TEvent> : IEvent<TEvent>
+    public sealed class Event<TEvent> : IEvent<TEvent>
     {
         private readonly ISubject<TEvent> _eventSubject;
         private readonly IEvent<TEvent> _derivedEvent;
@@ -32,7 +32,7 @@ namespace Subliminal
         }
     }
 
-    public class Event : IEvent
+    public sealed class Event : IEvent
     {
         private readonly Event<Unit> _event;
 

@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 
 namespace Subliminal
 {
-    public class ProcessMonitor
+    public sealed class ProcessMonitor
     {
         private ProcessMonitor(
             IGauge<Process> process, ILog<string> standardOutput, ILog<string> standardError, IEvent<ProcessExited> exited)

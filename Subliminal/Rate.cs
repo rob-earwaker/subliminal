@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public class Rate<TDelta>
+    public sealed class Rate<TDelta>
     {
         public Rate(TDelta delta, TimeSpan interval)
         {

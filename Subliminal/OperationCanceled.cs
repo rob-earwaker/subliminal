@@ -1,6 +1,6 @@
 ﻿namespace Subliminal
 {
-    public class OperationCanceled<TContext>
+    public sealed class OperationCanceled<TContext>
     {
         internal OperationCanceled(string operationId, TContext context)
         {
@@ -17,7 +17,7 @@
         }
     }
 
-    public class OperationCanceled
+    public sealed class OperationCanceled
     {
         internal OperationCanceled(string operationId)
         {

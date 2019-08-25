@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public class Gauge<TValue> : IGauge<TValue>
+    public sealed class Gauge<TValue> : IGauge<TValue>
     {
         private Log<TValue> _valueLog;
         private IGauge<TValue> _derivedGauge;

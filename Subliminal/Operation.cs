@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Subliminal
 {
-    public class Operation<TContext> : IOperation<TContext>
+    public sealed class Operation<TContext> : IOperation<TContext>
     {
         private readonly EventLog<OperationStarted<TContext>> _started;
 
@@ -87,7 +87,7 @@ namespace Subliminal
         }
     }
 
-    public class Operation : IOperation
+    public sealed class Operation : IOperation
     {
         private readonly Operation<Unit> _operation;
 

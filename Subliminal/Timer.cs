@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace Subliminal
 {
-    public class Timer : IDisposable
+    public sealed class Timer : IDisposable
     {
         private readonly Stopwatch _stopwatch;
         private readonly Event<TimerStopped> _stopped;

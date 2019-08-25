@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public class ProcessorUsage
+    public sealed class ProcessorUsage
     {
         public ProcessorUsage(TimeSpan timeUsed, TimeSpan interval, int processorCount)
         {

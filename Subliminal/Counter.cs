@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public class Counter<TIncrement> : ICounter<TIncrement>
+    public sealed class Counter<TIncrement> : ICounter<TIncrement>
     {
         private readonly Log<TIncrement> _incrementLog;
         private readonly ICounter<TIncrement> _derivedCounter;

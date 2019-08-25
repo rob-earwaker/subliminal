@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Subliminal
 {
-    public class ThreadPoolMonitor
+    public sealed class ThreadPoolMonitor
     {
         private ThreadPoolMonitor(IGauge<ThreadPoolUsage> threadPoolUsage)
         {

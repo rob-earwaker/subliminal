@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 
 namespace Subliminal
 {
-    public class DerivedEventLog<TEvent> : IEventLog<TEvent>
+    public sealed class DerivedEventLog<TEvent> : IEventLog<TEvent>
     {
         private readonly ILog<TEvent> _eventLog;
 
@@ -26,7 +26,7 @@ namespace Subliminal
         }
     }
 
-    public class DerivedEventLog : IEventLog
+    public sealed class DerivedEventLog : IEventLog
     {
         private readonly IEventLog<Unit> _eventLog;
 

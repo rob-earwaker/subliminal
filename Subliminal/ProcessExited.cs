@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public class ProcessExited
+    public sealed class ProcessExited
     {
         public ProcessExited(int processId, DateTime exitTime, int exitCode)
         {

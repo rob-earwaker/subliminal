@@ -1,6 +1,6 @@
 ﻿namespace Subliminal
 {
-    public class Delta<TValue>
+    public sealed class Delta<TValue>
     {
         public Delta(TValue previousValue, TValue currentValue)
         {

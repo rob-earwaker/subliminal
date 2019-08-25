@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public class OperationStarted<TContext>
+    public sealed class OperationStarted<TContext>
     {
         private readonly IEvent<TimerStopped> _timerStopped;
 
@@ -47,7 +47,7 @@ namespace Subliminal
         }
     }
 
-    public class OperationStarted
+    public sealed class OperationStarted
     {
         internal OperationStarted(string operationId, IEvent<OperationCompleted> completed, IEvent<OperationCanceled> canceled)
         {
