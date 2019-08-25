@@ -1,6 +1,6 @@
 ﻿namespace Subliminal
 {
-    public interface IGauge<TValue> : ILog<TValue>
+    public interface IGauge<out TValue> : ILog<TValue>
     {
     }
 }

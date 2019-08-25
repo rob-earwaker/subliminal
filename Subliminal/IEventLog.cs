@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    public interface IEventLog<TEvent> : ILog<TEvent>
+    public interface IEventLog<out TEvent> : ILog<TEvent>
     {
         ICounter<long> EventCounter { get; }
     }

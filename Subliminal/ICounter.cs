@@ -1,6 +1,6 @@
 ﻿namespace Subliminal
 {
-    public interface ICounter<TIncrement> : ILog<TIncrement>
+    public interface ICounter<out TIncrement> : ILog<TIncrement>
     {
     }
 }
