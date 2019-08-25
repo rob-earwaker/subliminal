@@ -159,9 +159,24 @@ module ``Test Gauge<TValue>`` =
         test <@ observer.ObservedValues.[1].Delta.CurrentValue = value3 @>
         
     [<Property>]
+    let ``rate of change combines value selector results pairwise`` wrapper1 wrapper2 wrapper3 =
+        let gauge = Gauge<Wrapper<obj>>()
+        let observable = gauge.RateOfChange(fun wrapper -> wrapper.Value)
+        let observer = TestObserver()
+        use subscription = observable.Subscribe(observer)
+        gauge.LogValue(wrapper1)
+        gauge.LogValue(wrapper2)
+        gauge.LogValue(wrapper3)
+        test <@ observer.ObservedValues.Length = 2 @>
+        test <@ observer.ObservedValues.[0].Delta.PreviousValue = wrapper1.Value @>
+        test <@ observer.ObservedValues.[0].Delta.CurrentValue = wrapper2.Value @>
+        test <@ observer.ObservedValues.[1].Delta.PreviousValue = wrapper2.Value @>
+        test <@ observer.ObservedValues.[1].Delta.CurrentValue = wrapper3.Value @>
+
+    [<Property>]
     let ``rate of change returns delta selector results from pairwise values`` value1 value2 value3 =
         let gauge = Gauge<obj>()
-        let observable = gauge.RateOfChange(fun delta -> { Value = delta })
+        let observable = gauge.RateOfChange((fun value -> value), (fun delta -> { Value = delta }))
         let observer = TestObserver()
         use subscription = observable.Subscribe(observer)
         gauge.LogValue(value1)
@@ -172,6 +187,63 @@ module ``Test Gauge<TValue>`` =
         test <@ observer.ObservedValues.[0].Delta.Value.CurrentValue = value2 @>
         test <@ observer.ObservedValues.[1].Delta.Value.PreviousValue = value2 @>
         test <@ observer.ObservedValues.[1].Delta.Value.CurrentValue = value3 @>
+        
+    [<Property>]
+    let ``rate of change returns delta selector results from pairwise value selector results`` wrapper1 wrapper2 wrapper3 =
+        let gauge = Gauge<Wrapper<obj>>()
+        let observable = gauge.RateOfChange((fun wrapper -> wrapper.Value), (fun delta -> { Value = delta }))
+        let observer = TestObserver()
+        use subscription = observable.Subscribe(observer)
+        gauge.LogValue(wrapper1)
+        gauge.LogValue(wrapper2)
+        gauge.LogValue(wrapper3)
+        test <@ observer.ObservedValues.Length = 2 @>
+        test <@ observer.ObservedValues.[0].Delta.Value.PreviousValue = wrapper1.Value @>
+        test <@ observer.ObservedValues.[0].Delta.Value.CurrentValue = wrapper2.Value @>
+        test <@ observer.ObservedValues.[1].Delta.Value.PreviousValue = wrapper2.Value @>
+        test <@ observer.ObservedValues.[1].Delta.Value.CurrentValue = wrapper3.Value @>
+        
+    [<Property>]
+    let ``rate of change subtracts int value selector results pairwise`` wrapper1 wrapper2 wrapper3 =
+        let gauge = Gauge<Wrapper<int>>()
+        let observable = gauge.RateOfChange(fun wrapper -> wrapper.Value)
+        let observer = TestObserver()
+        use subscription = observable.Subscribe(observer)
+        gauge.LogValue(wrapper1)
+        gauge.LogValue(wrapper2)
+        gauge.LogValue(wrapper3)
+        test <@ observer.ObservedValues.Length = 2 @>
+        test <@ observer.ObservedValues.[0].Delta = wrapper2.Value - wrapper1.Value @>
+        test <@ observer.ObservedValues.[1].Delta = wrapper3.Value - wrapper2.Value @>
+        
+    [<Property>]
+    let ``rate of change subtracts long value selector results pairwise`` wrapper1 wrapper2 wrapper3 =
+        let gauge = Gauge<Wrapper<int64>>()
+        let observable = gauge.RateOfChange(fun wrapper -> wrapper.Value)
+        let observer = TestObserver()
+        use subscription = observable.Subscribe(observer)
+        gauge.LogValue(wrapper1)
+        gauge.LogValue(wrapper2)
+        gauge.LogValue(wrapper3)
+        test <@ observer.ObservedValues.Length = 2 @>
+        test <@ observer.ObservedValues.[0].Delta = wrapper2.Value - wrapper1.Value @>
+        test <@ observer.ObservedValues.[1].Delta = wrapper3.Value - wrapper2.Value @>
+        
+    [<Property>]
+    let ``rate of change subtracts time span value selector results pairwise`` value1 value2 value3 =
+        let wrapper1 = { Value = TimeSpan.FromTicks(value1) }
+        let wrapper2 = { Value = TimeSpan.FromTicks(value2) }
+        let wrapper3 = { Value = TimeSpan.FromTicks(value3) }
+        let gauge = Gauge<Wrapper<TimeSpan>>()
+        let observable = gauge.RateOfChange(fun wrapper -> wrapper.Value)
+        let observer = TestObserver()
+        use subscription = observable.Subscribe(observer)
+        gauge.LogValue(wrapper1)
+        gauge.LogValue(wrapper2)
+        gauge.LogValue(wrapper3)
+        test <@ observer.ObservedValues.Length = 2 @>
+        test <@ observer.ObservedValues.[0].Delta = wrapper2.Value - wrapper1.Value @>
+        test <@ observer.ObservedValues.[1].Delta = wrapper3.Value - wrapper2.Value @>
         
 module ``Test Gauge<int>`` =
     [<Property>]
