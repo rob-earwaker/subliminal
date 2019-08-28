@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Subliminal
 {
-    public static class OperationId
+    internal static class OperationId
     {
         private const string Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         private static readonly Random Random = new Random();

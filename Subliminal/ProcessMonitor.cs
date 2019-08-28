@@ -4,6 +4,9 @@ using System.Reactive.Linq;
 
 namespace Subliminal
 {
+    /// <summary>
+    /// A monitor that provides information about the state of a process.
+    /// </summary>
     public sealed class ProcessMonitor
     {
         private ProcessMonitor(
@@ -28,6 +31,10 @@ namespace Subliminal
                 .AsGauge();
         }
 
+        /// <summary>
+        /// Create a monitor for a process. This will emit metrics containing information about the
+        /// state of the process according to the sampling interval.
+        /// </summary>
         public static ProcessMonitor ForProcess(System.Diagnostics.Process process, TimeSpan samplingInterval)
         {
             return new ProcessMonitor(
@@ -64,6 +71,10 @@ namespace Subliminal
                     .AsEvent());
         }
 
+        /// <summary>
+        /// Create a monitor for the current process. This will emit metrics containing information
+        /// about the state of the process according to the sampling interval.
+        /// </summary>
         public static ProcessMonitor ForCurrentProcess(TimeSpan samplingInterval)
         {
             return ForProcess(System.Diagnostics.Process.GetCurrentProcess(), samplingInterval);
@@ -82,15 +93,50 @@ namespace Subliminal
             }
         }
 
+        /// <summary>
+        /// A gauge representing the current state of the process.
+        /// </summary>
         public IGauge<Process> Process { get; }
+
+        /// <summary>
+        /// A log of all standard output text emitted by the process.
+        /// </summary>
         public ILog<string> StandardOutput { get; }
+
+        /// <summary>
+        /// A log of all standard error text emitted by the process.
+        /// </summary>
         public ILog<string> StandardError { get; }
+
+        /// <summary>
+        /// An event that is raised when the process is exited.
+        /// </summary>
         public IEvent<ProcessExited> Exited { get; }
 
+        /// <summary>
+        /// A gauge representing the current private memory size of the process in bytes.
+        /// </summary>
         public IGauge<long> PrivateMemorySize { get; }
+
+        /// <summary>
+        /// A gauge representing the current virtual memory size of the process in bytes.
+        /// </summary>
         public IGauge<long> VirtualMemorySize { get; }
+
+
+        /// <summary>
+        /// A gauge representing the current working set size of the process in bytes.
+        /// </summary>
         public IGauge<long> WorkingSet { get; }
+
+        /// <summary>
+        /// A gauge representing the total processor time used by the process.
+        /// </summary>
         public IGauge<TimeSpan> TotalProcessorTime { get; }
+
+        /// <summary>
+        /// A gauge representing the current processor usage of the process.
+        /// </summary>
         public IGauge<ProcessorUsage> ProcessorUsage { get; }
     }
 }
