@@ -21,6 +21,10 @@ namespace Subliminal.Sample.Api
                 fileWritten.Raise(fileStream.Name);
                 // "Written file '...\Temp\tmpF9E.tmp'"
             }
+
+            fileWritten.Subscribe(fileName =>
+                Console.WriteLine($"Already written file '{fileName}'"));
+            // "Already written file '...\Temp\tmpF9E.tmp'"
         }
     }
 }

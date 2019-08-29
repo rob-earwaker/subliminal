@@ -20,6 +20,9 @@ namespace Subliminal.Sample.Api
 
             streamDisposed.Raise();
             // "Stream disposed"
+
+            streamDisposed.Subscribe(_ => Console.WriteLine("Stream still disposed"));
+            // "Stream still disposed"
         }
     }
 }
