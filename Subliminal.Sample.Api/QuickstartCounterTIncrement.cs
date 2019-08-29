@@ -23,6 +23,8 @@ namespace Subliminal.Sample.Api
             foreach (var entityPage in entityPages)
             {
                 entitiesRetrieved.IncrementBy(entityPage.EntityCount);
+
+                // ...
             }
             // "Retrieved another 100 entities"
             // "Retrieved another 100 entities"

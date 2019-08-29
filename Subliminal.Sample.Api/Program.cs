@@ -6,8 +6,11 @@ namespace Subliminal.Sample.Api
     {
         private static readonly ISample[] Samples = {
             new QuickstartCounterTIncrement(),
+            new QuickstartEvent(),
+            new QuickstartEventTEvent(),
             new QuickstartEventLog(),
             new QuickstartEventLogTEvent(),
+            new QuickstartLogTEntry(),
             new QuickstartGaugeTValue(),
             new QuickstartOperation(),
             new QuickstartOperationTContext(),
