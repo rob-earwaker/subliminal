@@ -1,8 +1,9 @@
-﻿using System;
-
-namespace Subliminal
+﻿namespace Subliminal
 {
-    public interface ICounter<TIncrement> : IObservable<TIncrement>
+    /// <summary>
+    /// An observable log of increments.
+    /// </summary>
+    public interface ICounter<out TIncrement> : ILog<TIncrement>
     {
     }
 }

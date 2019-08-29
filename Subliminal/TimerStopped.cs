@@ -2,7 +2,7 @@
 
 namespace Subliminal
 {
-    internal class TimerStopped
+    internal sealed class TimerStopped
     {
         public TimerStopped(TimeSpan duration, bool wasCanceled)
         {

@@ -3,7 +3,10 @@ using System.Diagnostics;
 
 namespace Subliminal
 {
-    public class Timer : IDisposable
+    /// <summary>
+    /// A timer used to provide information about operation timings.
+    /// </summary>
+    public sealed class Timer : IDisposable
     {
         private readonly Stopwatch _stopwatch;
         private readonly Event<TimerStopped> _stopped;
@@ -21,11 +24,17 @@ namespace Subliminal
 
         internal IEvent<TimerStopped> Stopped => _stopped;
 
+        /// <summary>
+        /// Stop the timer to mark the operation as completed.
+        /// </summary>
         public void Stop()
         {
             Stop(wasCanceled: false);
         }
 
+        /// <summary>
+        /// Cancel the timer to ignore the timing information for this operation.
+        /// </summary>
         public void Cancel()
         {
             Stop(wasCanceled: true);

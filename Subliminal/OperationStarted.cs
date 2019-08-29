@@ -2,7 +2,10 @@
 
 namespace Subliminal
 {
-    public class OperationStarted<TContext>
+    /// <summary>
+    /// An event containing information about a started operation.
+    /// </summary>
+    public sealed class OperationStarted<TContext>
     {
         private readonly IEvent<TimerStopped> _timerStopped;
 
@@ -13,7 +16,14 @@ namespace Subliminal
             _timerStopped = timerStopped;
         }
 
+        /// <summary>
+        /// An identifier for the operation.
+        /// </summary>
         public string OperationId { get; }
+
+        /// <summary>
+        /// Context data associated with the operation.
+        /// </summary>
         public TContext Context { get; }
 
         internal IEvent<OperationCompleted<TContext>> Completed
@@ -47,7 +57,10 @@ namespace Subliminal
         }
     }
 
-    public class OperationStarted
+    /// <summary>
+    /// An event containing information about a started operation.
+    /// </summary>
+    public sealed class OperationStarted
     {
         internal OperationStarted(string operationId, IEvent<OperationCompleted> completed, IEvent<OperationCanceled> canceled)
         {
@@ -56,7 +69,11 @@ namespace Subliminal
             Canceled = canceled;
         }
 
+        /// <summary>
+        /// An identifier for the operation.
+        /// </summary>
         public string OperationId { get; }
+
         internal IEvent<OperationCompleted> Completed { get; }
         internal IEvent<OperationCanceled> Canceled { get; }
     }
