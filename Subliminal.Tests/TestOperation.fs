@@ -4,6 +4,7 @@ open FsCheck.Xunit
 open Subliminal
 open Swensen.Unquote
 open System
+open System.Threading
 open System.Threading.Tasks
 
 module ``Test Operation<TContext>`` =
@@ -114,6 +115,7 @@ module ``Test Operation<TContext>`` =
         use subscription = operation.Completed.Subscribe(observer)
         use timer = operation.StartNewTimer(context)
         test <@ observer.ObservedValues = [] @>
+        Thread.Sleep(1)
         timer.Stop()
         test <@ observer.ObservedValues.Length = 1 @>
         test <@ observer.ObservedValues.[0].Context = context @>
@@ -127,6 +129,7 @@ module ``Test Operation<TContext>`` =
         use subscription = operation.Completed.Subscribe(observer)
         use timer = operation.StartNewTimer(context)
         test <@ observer.ObservedValues = [] @>
+        Thread.Sleep(1)
         (timer :> IDisposable).Dispose()
         test <@ observer.ObservedValues.Length = 1 @>
         test <@ observer.ObservedValues.[0].Context = context @>
@@ -140,6 +143,7 @@ module ``Test Operation<TContext>`` =
         use subscription = operation.Completed.Subscribe(observer)
         use timer = operation.StartNewTimer(context)
         test <@ observer.ObservedValues = [] @>
+        Thread.Sleep(1)
         timer.Stop()
         timer.Stop()
         timer.Cancel()
@@ -154,7 +158,7 @@ module ``Test Operation<TContext>`` =
         let operation = Operation<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
-        operation.Time(context, fun () -> ())
+        operation.Time(context, fun () -> Thread.Sleep(1))
         test <@ observer.ObservedValues.Length = 1 @>
         test <@ observer.ObservedValues.[0].Context = context @>
         test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
@@ -165,7 +169,10 @@ module ``Test Operation<TContext>`` =
         let operation = Operation<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
-        let returnValue' = operation.Time(context, fun () -> returnValue)
+        let returnValue' =
+            operation.Time(context, fun () ->
+                Thread.Sleep(1)
+                returnValue)
         test <@ returnValue' = returnValue @>
         test <@ observer.ObservedValues.Length = 1 @>
         test <@ observer.ObservedValues.[0].Context = context @>
@@ -177,7 +184,7 @@ module ``Test Operation<TContext>`` =
         let operation = Operation<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
-        operation.TimeAsync(context, fun () -> Task.CompletedTask)
+        operation.TimeAsync(context, fun () -> Task.Delay(1))
         |> Async.AwaitTask
         |> Async.RunSynchronously
         test <@ observer.ObservedValues.Length = 1 @>
@@ -191,7 +198,11 @@ module ``Test Operation<TContext>`` =
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         let returnValue' =
-            operation.TimeAsync(context, fun () -> Task.FromResult(returnValue))
+            operation.TimeAsync(context, fun () ->
+                Async.StartAsTask <| async {
+                    do! Async.Sleep 1
+                    return returnValue
+                })
             |> Async.AwaitTask
             |> Async.RunSynchronously
         test <@ returnValue' = returnValue @>
@@ -205,7 +216,7 @@ module ``Test Operation<TContext>`` =
         let operation = Operation<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
-        operation.Time(context, fun (timer: Timer) -> ())
+        operation.Time(context, fun (timer: Subliminal.Timer) -> Thread.Sleep(1))
         test <@ observer.ObservedValues.Length = 1 @>
         test <@ observer.ObservedValues.[0].Context = context @>
         test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
@@ -216,7 +227,10 @@ module ``Test Operation<TContext>`` =
         let operation = Operation<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
-        let returnValue' = operation.Time(context, fun (timer: Timer) -> returnValue)
+        let returnValue' =
+            operation.Time(context, fun (timer: Subliminal.Timer) ->
+                Thread.Sleep(1)
+                returnValue)
         test <@ returnValue' = returnValue @>
         test <@ observer.ObservedValues.Length = 1 @>
         test <@ observer.ObservedValues.[0].Context = context @>
@@ -228,7 +242,7 @@ module ``Test Operation<TContext>`` =
         let operation = Operation<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
-        operation.TimeAsync(context, fun (timer: Timer) -> Task.CompletedTask)
+        operation.TimeAsync(context, fun (timer: Subliminal.Timer) -> Task.Delay(1))
         |> Async.AwaitTask
         |> Async.RunSynchronously
         test <@ observer.ObservedValues.Length = 1 @>
@@ -242,7 +256,11 @@ module ``Test Operation<TContext>`` =
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         let returnValue' =
-            operation.TimeAsync(context, fun (timer: Timer) -> Task.FromResult(returnValue))
+            operation.TimeAsync(context, fun (timer: Subliminal.Timer) ->
+                Async.StartAsTask <| async {
+                    do! Async.Sleep 1
+                    return returnValue
+                })
             |> Async.AwaitTask
             |> Async.RunSynchronously
         test <@ returnValue' = returnValue @>
@@ -330,6 +348,7 @@ module ``Test Operation`` =
         use subscription = operation.Completed.Subscribe(observer)
         use timer = operation.StartNewTimer()
         test <@ observer.ObservedValues = [] @>
+        Thread.Sleep(1)
         timer.Stop()
         test <@ observer.ObservedValues.Length = 1 @>
         test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
@@ -342,6 +361,7 @@ module ``Test Operation`` =
         use subscription = operation.Completed.Subscribe(observer)
         use timer = operation.StartNewTimer()
         test <@ observer.ObservedValues = [] @>
+        Thread.Sleep(1)
         (timer :> IDisposable).Dispose()
         test <@ observer.ObservedValues.Length = 1 @>
         test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
@@ -354,6 +374,7 @@ module ``Test Operation`` =
         use subscription = operation.Completed.Subscribe(observer)
         use timer = operation.StartNewTimer()
         test <@ observer.ObservedValues = [] @>
+        Thread.Sleep(1)
         timer.Stop()
         timer.Stop()
         timer.Cancel()
@@ -367,7 +388,7 @@ module ``Test Operation`` =
         let operation = Operation()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
-        operation.Time(fun () -> ())
+        operation.Time(fun () -> Thread.Sleep(1))
         test <@ observer.ObservedValues.Length = 1 @>
         test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
         test <@ not observer.ObservableCompleted @>
@@ -377,7 +398,10 @@ module ``Test Operation`` =
         let operation = Operation()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
-        let returnValue' = operation.Time(fun () -> returnValue)
+        let returnValue' =
+            operation.Time(fun () ->
+                Thread.Sleep(1)
+                returnValue)
         test <@ returnValue' = returnValue @>
         test <@ observer.ObservedValues.Length = 1 @>
         test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
@@ -388,7 +412,7 @@ module ``Test Operation`` =
         let operation = Operation()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
-        operation.TimeAsync(fun () -> Task.CompletedTask)
+        operation.TimeAsync(fun () -> Task.Delay(1))
         |> Async.AwaitTask
         |> Async.RunSynchronously
         test <@ observer.ObservedValues.Length = 1 @>
@@ -401,7 +425,11 @@ module ``Test Operation`` =
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         let returnValue' =
-            operation.TimeAsync(fun () -> Task.FromResult(returnValue))
+            operation.TimeAsync(fun () ->
+                Async.StartAsTask <| async {
+                    do! Async.Sleep 1
+                    return returnValue
+                })
             |> Async.AwaitTask
             |> Async.RunSynchronously
         test <@ returnValue' = returnValue @>
@@ -414,7 +442,7 @@ module ``Test Operation`` =
         let operation = Operation()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
-        operation.Time(fun (timer: Timer) -> ())
+        operation.Time(fun (timer: Subliminal.Timer) -> Thread.Sleep(1))
         test <@ observer.ObservedValues.Length = 1 @>
         test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
         test <@ not observer.ObservableCompleted @>
@@ -424,7 +452,10 @@ module ``Test Operation`` =
         let operation = Operation()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
-        let returnValue' = operation.Time(fun (timer: Timer) -> returnValue)
+        let returnValue' =
+            operation.Time(fun (timer: Subliminal.Timer) ->
+                Thread.Sleep(1)
+                returnValue)
         test <@ returnValue' = returnValue @>
         test <@ observer.ObservedValues.Length = 1 @>
         test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
@@ -435,7 +466,7 @@ module ``Test Operation`` =
         let operation = Operation()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
-        operation.TimeAsync(fun (timer: Timer) -> Task.CompletedTask)
+        operation.TimeAsync(fun (timer: Subliminal.Timer) -> Task.Delay(1))
         |> Async.AwaitTask
         |> Async.RunSynchronously
         test <@ observer.ObservedValues.Length = 1 @>
@@ -448,7 +479,11 @@ module ``Test Operation`` =
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         let returnValue' =
-            operation.TimeAsync(fun (timer: Timer) -> Task.FromResult(returnValue))
+            operation.TimeAsync(fun (timer: Subliminal.Timer) ->
+                Async.StartAsTask <| async {
+                    do! Async.Sleep 1
+                    return returnValue
+                })
             |> Async.AwaitTask
             |> Async.RunSynchronously
         test <@ returnValue' = returnValue @>
