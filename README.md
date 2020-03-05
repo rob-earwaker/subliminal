@@ -4,13 +4,13 @@
 [![AppVeyor branch](https://img.shields.io/appveyor/ci/rob-earwaker/subliminal/master?logo=appveyor&logoColor=white)](https://ci.appveyor.com/project/rob-earwaker/subliminal/branch/master)
 [![AppVeyor tests (branch)](https://img.shields.io/appveyor/tests/rob-earwaker/subliminal/master?logo=appveyor&logoColor=white&compact_message)](https://ci.appveyor.com/project/rob-earwaker/subliminal/branch/master/tests)
 
-Subliminal allows you to simply and concisely capture custom application metrics and expose them as streams of observable events that can be consumed with the powerful capabilities of [Reactive Extensions](https://github.com/dotnet/reactive).
+Subliminal lets you simply and concisely capture application metrics in library code, without having to worry about things like: where the data should be sent, what exactly gets recorded, or even whether the data is recorded at all! Metrics are exposed as streams of observable events that applications can consume with the powerful capabilities of [Reactive Extensions](https://github.com/dotnet/reactive) - unlocking operations such as transformation, sampling, aggregation and many more.
 
 Key design principles of Subliminal:
 
 - **Simple and concise metric capture.** Capture of metrics focuses on data collection only. The final destination of metric data, and even whether or not it gets recorded, is not specified by the metric source.
 - **Always-available, not always-on.** By exposing metrics to the consumer as observable streams of data that are not recorded by default, consumers can choose only the metrics that are important to their application.
-- **Configurable, not configured.** Configuration of the final destination for metric data and the specific values that are recorded is done by the consumer, not by the metric source. This gives consumers the flexibility of choosing what metric data gets sent where.
+- **Configurable, not configured.** Configuration of the final destination for metric data, as well as any custom filtering or transformation, is done by the consumer not by the metric source. This gives consumers the flexibility of choosing what metric data gets sent where.
 
 Metric types:
 
