@@ -8,7 +8,7 @@ namespace Subliminal.Sample.Serilog
 {
     internal static class Program
     {
-        public static void Main(string[] args)
+        public static void Main()
         {
             MainAsync().GetAwaiter().GetResult();
         }
