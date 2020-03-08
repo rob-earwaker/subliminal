@@ -9,19 +9,14 @@ namespace Subliminal.Sample.Serilog
         private static readonly Random _random = new Random();
         private static readonly object _randomLockObject = new object();
 
-        private static readonly Gauge<int> _randomGauge = new Gauge<int>();
-        private static readonly Counter<long> _bytesReadCounter = new Counter<long>();
-        private static readonly Operation _readRandomBytesOperation = new Operation();
-        private static readonly Operation _readRandomByteOperation = new Operation();
-        
-        public static IGauge<int> RandomGauge => _randomGauge;
-        public static ICounter<long> BytesReadCounter => _bytesReadCounter;
-        public static IOperation ReadRandomBytesOperation => _readRandomBytesOperation;
-        public static IOperation ReadRandomByteOperation => _readRandomByteOperation;
+        public static readonly Gauge<int> RandomGauge = new Gauge<int>();
+        public static readonly Counter<long> BytesReadCounter = new Counter<long>();
+        public static readonly Operation ReadRandomBytesOperation = new Operation();
+        public static readonly Operation ReadRandomByteOperation = new Operation();
 
         public async Task<byte[]> ReadRandomBytesAsync(int bufferSize)
         {
-            using (_readRandomBytesOperation.StartNewTimer())
+            using (ReadRandomBytesOperation.StartNewTimer())
             {
                 var readRandomByteTasks = new object[bufferSize].Select(_ => ReadRandomByteAsync()).ToArray();
                 var buffer = await Task.WhenAll(readRandomByteTasks).ConfigureAwait(false);
@@ -31,7 +26,7 @@ namespace Subliminal.Sample.Serilog
 
         private async Task<byte> ReadRandomByteAsync()
         {
-            using (_readRandomByteOperation.StartNewTimer())
+            using (ReadRandomByteOperation.StartNewTimer())
             {
                 var buffer = new byte[1];
                 double randomDelay;
@@ -46,8 +41,8 @@ namespace Subliminal.Sample.Serilog
 
                 await Task.Delay(TimeSpan.FromSeconds(randomDelay)).ConfigureAwait(false);
 
-                _randomGauge.LogValue(randomValue);
-                _bytesReadCounter.IncrementBy(1);
+                RandomGauge.LogValue(randomValue);
+                BytesReadCounter.IncrementBy(1);
 
                 return buffer[0];
             }
