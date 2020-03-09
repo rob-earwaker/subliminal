@@ -42,7 +42,7 @@ namespace Subliminal.Sample.Serilog
                 await Task.Delay(TimeSpan.FromSeconds(randomDelay)).ConfigureAwait(false);
 
                 RandomGauge.LogValue(randomValue);
-                BytesReadCounter.IncrementBy(1);
+                BytesReadCounter.IncrementBy(buffer.Length);
 
                 return buffer[0];
             }
