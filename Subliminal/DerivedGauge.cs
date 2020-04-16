@@ -5,11 +5,11 @@ namespace Subliminal
     /// <summary>
     /// A gauge that is derived from an observable source.
     /// </summary>
-    public sealed class DerivedGauge<TValue> : IGauge<TValue>
+    public sealed class DerivedGauge : IGauge
     {
-        private readonly ILog<TValue> _valueLog;
+        private readonly ILog<double> _valueLog;
 
-        private DerivedGauge(ILog<TValue> valueLog)
+        private DerivedGauge(ILog<double> valueLog)
         {
             _valueLog = valueLog;
         }
@@ -18,9 +18,9 @@ namespace Subliminal
         /// Creates a gauge from an observable source. This creates a subscription
         /// to the source observable that will start consuming items immediately.
         /// </summary>
-        public static DerivedGauge<TValue> FromObservable(IObservable<TValue> observable)
+        public static DerivedGauge FromObservable(IObservable<double> observable)
         {
-            return new DerivedGauge<TValue>(observable.AsLog());
+            return new DerivedGauge(observable.AsLog());
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Subliminal
         /// by the gauge. The returned <see cref="IDisposable" /> can be used to
         /// cancel this subscription.
         /// </summary>
-        public IDisposable Subscribe(IObserver<TValue> observer)
+        public IDisposable Subscribe(IObserver<double> observer)
         {
             return _valueLog.Subscribe(observer);
         }

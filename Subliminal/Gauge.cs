@@ -5,24 +5,24 @@ namespace Subliminal
     /// <summary>
     /// A gauge that both captures and emits values.
     /// </summary>
-    public sealed class Gauge<TValue> : IGauge<TValue>
+    public sealed class Gauge : IGauge
     {
-        private Log<TValue> _valueLog;
-        private IGauge<TValue> _derivedGauge;
+        private Log<double> _valueLog;
+        private IGauge _derivedGauge;
 
         /// <summary>
         /// Creates a gauge that both captures and emits values.
         /// </summary>
         public Gauge()
         {
-            _valueLog = new Log<TValue>();
+            _valueLog = new Log<double>();
             _derivedGauge = _valueLog.AsGauge();
         }
 
         /// <summary>
         /// Captures a value and emits it to all observers.
         /// </summary>
-        public void LogValue(TValue value)
+        public void LogValue(double value)
         {
             _valueLog.Append(value);
         }
@@ -32,7 +32,7 @@ namespace Subliminal
         /// by the gauge. The returned <see cref="IDisposable" /> can be used to
         /// cancel this subscription.
         /// </summary>
-        public IDisposable Subscribe(IObserver<TValue> observer)
+        public IDisposable Subscribe(IObserver<double> observer)
         {
             return _derivedGauge.Subscribe(observer);
         }

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace Subliminal.Sample.Api
 {
-    internal class QuickstartGaugeTValue : ISample
+    internal class QuickstartGauge : ISample
     {
-        public string SampleName => "Quickstart: Gauge<TValue>";
+        public string SampleName => "Quickstart: Gauge";
 
         public void RunSample()
         {
-            var queueSize = new Gauge<int>();
+            var queueSize = new Gauge();
 
             queueSize.Subscribe(value =>
                 Console.WriteLine($"Current queue size is {value}"));

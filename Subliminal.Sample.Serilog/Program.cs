@@ -22,11 +22,11 @@ namespace Subliminal.Sample.Serilog
 
             var currentProcessMonitor = ProcessMonitor.ForCurrentProcess(TimeSpan.FromSeconds(5));
 
-            currentProcessMonitor.ProcessorUsage
-                .Subscribe(processorUsage =>
-                    Log.Information(
-                        "Total processor usage over the last {Interval} was {Percentage}%",
-                        processorUsage.Interval, processorUsage.TotalPercentage));
+            //currentProcessMonitor.ProcessorUsage
+            //    .Subscribe(processorUsage =>
+            //        Log.Information(
+            //            "Total processor usage over the last {Interval} was {Percentage}%",
+            //            processorUsage.Interval, processorUsage.TotalPercentage));
 
             currentProcessMonitor.WorkingSet
                 .RateOfChange()

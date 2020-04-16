@@ -3,7 +3,7 @@
     /// <summary>
     /// An observable log of values.
     /// </summary>
-    public interface IGauge<out TValue> : ILog<TValue>
+    public interface IGauge : ILog<double>
     {
     }
 }

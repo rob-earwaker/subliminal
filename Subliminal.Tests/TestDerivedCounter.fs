@@ -10,7 +10,7 @@ open System.Reactive.Linq
 open System.Reactive.Subjects
 
 type DerivedCounterFactory =
-    DerivedCounterFactory of deriveCounter:(IObservable<double> -> ICounter) with
+    DerivedCounterFactory of deriveCounter:(IObservable<float> -> ICounter) with
     static member Arb =
         [ fun observable -> DerivedCounter.FromObservable(observable) :> ICounter
           fun observable -> observable.AsCounter() ]
@@ -22,7 +22,7 @@ module ``Test DerivedCounter`` =
     [<Property>]
     let ``emits increments`` (NormalFloat increment1) (NormalFloat increment2) =
         let test (DerivedCounterFactory deriveCounter) =
-            use subject = new Subject<double>()
+            use subject = new Subject<float>()
             let counter = deriveCounter subject
             let observer = TestObserver()
             use subscription = counter.Subscribe(observer)
@@ -37,7 +37,7 @@ module ``Test DerivedCounter`` =
             // Create an observable that emits two values after a
             // subject is completed. This is a cold observable and
             // will emit different values to each observer.
-            use subject = new Subject<double>()
+            use subject = new Subject<float>()
             let observable =
                 Observable.Concat(
                     subject,
@@ -62,7 +62,7 @@ module ``Test DerivedCounter`` =
         let test (DerivedCounterFactory deriveCounter) =
             // Create an observable that emits one value immediately
             // and a second value when a subject is completed.
-            use subject = new Subject<double>()
+            use subject = new Subject<float>()
             let observable =
                 Observable.Concat(
                     Observable.Return(increment1),
@@ -84,7 +84,7 @@ module ``Test DerivedCounter`` =
     [<Property>]
     let ``rate returns original values as deltas`` (NormalFloat value1) (NormalFloat value2) (NormalFloat value3) =
         let test (DerivedCounterFactory deriveCounter) =
-            use subject = new Subject<double>()
+            use subject = new Subject<float>()
             let counter = deriveCounter subject
             let observable = counter.Rate()
             let observer = TestObserver()
@@ -101,7 +101,7 @@ module ``Test DerivedCounter`` =
     [<Property>]
     let ``rate returns intervals between values`` (NormalFloat value1) (NormalFloat value2) (NormalFloat value3) =
         let test (DerivedCounterFactory deriveCounter) =
-            use subject = new Subject<double>()
+            use subject = new Subject<float>()
             let counter = deriveCounter subject
             let observable = counter.Rate()
             let observer = TestObserver()

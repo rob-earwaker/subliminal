@@ -68,9 +68,9 @@ namespace Subliminal
         /// Creates a gauge from an observable source. This creates a subscription
         /// to the source observable that will start consuming items immediately.
         /// </summary>
-        public static IGauge<TValue> AsGauge<TValue>(this IObservable<TValue> observable)
+        public static IGauge AsGauge(this IObservable<double> observable)
         {
-            return DerivedGauge<TValue>.FromObservable(observable);
+            return DerivedGauge.FromObservable(observable);
         }
     }
 }

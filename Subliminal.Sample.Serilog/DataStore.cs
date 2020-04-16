@@ -9,7 +9,7 @@ namespace Subliminal.Sample.Serilog
         private static readonly Random _random = new Random();
         private static readonly object _randomLockObject = new object();
 
-        public static readonly Gauge<int> RandomGauge = new Gauge<int>();
+        public static readonly Gauge RandomGauge = new Gauge();
         public static readonly Counter BytesReadCounter = new Counter();
         public static readonly Operation ReadRandomBytesOperation = new Operation();
         public static readonly Operation ReadRandomByteOperation = new Operation();
@@ -30,13 +30,13 @@ namespace Subliminal.Sample.Serilog
             {
                 var buffer = new byte[1];
                 double randomDelay;
-                int randomValue;
+                double randomValue;
 
                 lock (_randomLockObject)
                 {
                     _random.NextBytes(buffer);
                     randomDelay = _random.NextDouble();
-                    randomValue = _random.Next();
+                    randomValue = _random.NextDouble();
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(randomDelay)).ConfigureAwait(false);

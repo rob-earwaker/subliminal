@@ -9,7 +9,7 @@ namespace Subliminal
     /// </summary>
     public sealed class ThreadPoolMonitor
     {
-        private ThreadPoolMonitor(IGauge<ThreadPoolUsage> threadPoolUsage)
+        private ThreadPoolMonitor(ILog<ThreadPoolUsage> threadPoolUsage)
         {
             ThreadPoolUsage = threadPoolUsage;
         }
@@ -23,7 +23,7 @@ namespace Subliminal
             return new ThreadPoolMonitor(Observable
                 .Interval(samplingFrequency)
                 .Select(_ => GetManagedThreadPoolUsage())
-                .AsGauge());
+                .AsLog());
         }
 
         private static ThreadPoolUsage GetManagedThreadPoolUsage()
@@ -41,70 +41,70 @@ namespace Subliminal
         /// <summary>
         /// A gauge representing the current thread pool usage.
         /// </summary>
-        public IGauge<ThreadPoolUsage> ThreadPoolUsage { get; }
+        public ILog<ThreadPoolUsage> ThreadPoolUsage { get; }
 
         /// <summary>
         /// A gauge representing the current minimum number of worker threads in the pool.
         /// </summary>
-        public IGauge<int> MinWorkerThreads
+        public IGauge MinWorkerThreads
         {
-            get { return ThreadPoolUsage.Select(usage => usage.MinWorkerThreads).AsGauge(); }
+            get { return ThreadPoolUsage.Select(usage => (double) usage.MinWorkerThreads).AsGauge(); }
         }
 
         /// <summary>
         /// A gauge representing the current maximum number of worker threads in the pool.
         /// </summary>
-        public IGauge<int> MaxWorkerThreads
+        public IGauge MaxWorkerThreads
         {
-            get { return ThreadPoolUsage.Select(usage => usage.MaxWorkerThreads).AsGauge(); }
+            get { return ThreadPoolUsage.Select(usage => (double) usage.MaxWorkerThreads).AsGauge(); }
         }
 
         /// <summary>
         /// A gauge representing the current number of available worker threads in the pool.
         /// </summary>
-        public IGauge<int> AvailableWorkerThreads
+        public IGauge AvailableWorkerThreads
         {
-            get { return ThreadPoolUsage.Select(usage => usage.AvailableWorkerThreads).AsGauge(); }
+            get { return ThreadPoolUsage.Select(usage => (double) usage.AvailableWorkerThreads).AsGauge(); }
         }
 
         /// <summary>
         /// A gauge representing the current number of active worker threads in the pool.
         /// </summary>
-        public IGauge<int> ActiveWorkerThreads
+        public IGauge ActiveWorkerThreads
         {
-            get { return ThreadPoolUsage.Select(usage => usage.ActiveWorkerThreads).AsGauge(); }
+            get { return ThreadPoolUsage.Select(usage => (double) usage.ActiveWorkerThreads).AsGauge(); }
         }
 
         /// <summary>
         /// A gauge representing the current minimum number of completion port threads in the pool.
         /// </summary>
-        public IGauge<int> MinCompletionPortThreads
+        public IGauge MinCompletionPortThreads
         {
-            get { return ThreadPoolUsage.Select(usage => usage.MinCompletionPortThreads).AsGauge(); }
+            get { return ThreadPoolUsage.Select(usage => (double) usage.MinCompletionPortThreads).AsGauge(); }
         }
 
         /// <summary>
         /// A gauge representing the current maximum number of completion port threads in the pool.
         /// </summary>
-        public IGauge<int> MaxCompletionPortThreads
+        public IGauge MaxCompletionPortThreads
         {
-            get { return ThreadPoolUsage.Select(usage => usage.MaxCompletionPortThreads).AsGauge(); }
+            get { return ThreadPoolUsage.Select(usage => (double) usage.MaxCompletionPortThreads).AsGauge(); }
         }
 
         /// <summary>
         /// A gauge representing the current number of available completion port threads in the pool.
         /// </summary>
-        public IGauge<int> AvailableCompletionPortThreads
+        public IGauge AvailableCompletionPortThreads
         {
-            get { return ThreadPoolUsage.Select(usage => usage.AvailableCompletionPortThreads).AsGauge(); }
+            get { return ThreadPoolUsage.Select(usage => (double) usage.AvailableCompletionPortThreads).AsGauge(); }
         }
 
         /// <summary>
         /// A gauge representing the current number of active completion port threads in the pool.
         /// </summary>
-        public IGauge<int> ActiveCompletionPortThreads
+        public IGauge ActiveCompletionPortThreads
         {
-            get { return ThreadPoolUsage.Select(usage => usage.ActiveCompletionPortThreads).AsGauge(); }
+            get { return ThreadPoolUsage.Select(usage => (double) usage.ActiveCompletionPortThreads).AsGauge(); }
         }
     }
 }

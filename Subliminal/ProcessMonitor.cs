@@ -10,25 +10,25 @@ namespace Subliminal
     public sealed class ProcessMonitor
     {
         private ProcessMonitor(
-            IGauge<Process> process, ILog<string> standardOutput, ILog<string> standardError, IEvent<ProcessExited> exited)
+            ILog<Process> process, ILog<string> standardOutput, ILog<string> standardError, IEvent<ProcessExited> exited)
         {
             Process = process;
             StandardOutput = standardOutput;
             StandardError = standardError;
             Exited = exited;
 
-            PrivateMemorySize = process.Select(processSample => processSample.PrivateMemorySize).AsGauge();
-            VirtualMemorySize = process.Select(processSample => processSample.VirtualMemorySize).AsGauge();
-            WorkingSet = process.Select(processSample => processSample.WorkingSet).AsGauge();
-            TotalProcessorTime = process.Select(processSample => processSample.TotalProcessorTime).AsGauge();
+            PrivateMemorySize = process.Select(processSample => (double) processSample.PrivateMemorySize).AsGauge();
+            VirtualMemorySize = process.Select(processSample => (double) processSample.VirtualMemorySize).AsGauge();
+            WorkingSet = process.Select(processSample => (double) processSample.WorkingSet).AsGauge();
+            //TotalProcessorTime = process.Select(processSample => (double) processSample.TotalProcessorTime).AsGauge();
 
-            ProcessorUsage = process
-                .RateOfChange(processSample => processSample.TotalProcessorTime)
-                .Select(rate => new ProcessorUsage(
-                    timeUsed: rate.Delta,
-                    interval: rate.Interval,
-                    processorCount: Environment.ProcessorCount))
-                .AsGauge();
+            //ProcessorUsage = process
+            //    .RateOfChange(processSample => processSample.TotalProcessorTime)
+            //    .Select(rate => new ProcessorUsage(
+            //        timeUsed: rate.Delta,
+            //        interval: rate.Interval,
+            //        processorCount: Environment.ProcessorCount))
+            //    .AsGauge();
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Subliminal
                         workingSet: process.WorkingSet64,
                         privateMemorySize: process.PrivateMemorySize64,
                         virtualMemorySize: process.VirtualMemorySize64))
-                    .AsGauge(),
+                    .AsLog(),
                 standardOutput: Observable
                     .FromEventPattern<DataReceivedEventHandler, DataReceivedEventArgs>(
                         handler => process.OutputDataReceived += handler,
@@ -96,7 +96,7 @@ namespace Subliminal
         /// <summary>
         /// A gauge representing the current state of the process.
         /// </summary>
-        public IGauge<Process> Process { get; }
+        public ILog<Process> Process { get; }
 
         /// <summary>
         /// A log of all standard output text emitted by the process.
@@ -116,27 +116,27 @@ namespace Subliminal
         /// <summary>
         /// A gauge representing the current private memory size of the process in bytes.
         /// </summary>
-        public IGauge<long> PrivateMemorySize { get; }
+        public IGauge PrivateMemorySize { get; }
 
         /// <summary>
         /// A gauge representing the current virtual memory size of the process in bytes.
         /// </summary>
-        public IGauge<long> VirtualMemorySize { get; }
+        public IGauge VirtualMemorySize { get; }
 
 
         /// <summary>
         /// A gauge representing the current working set size of the process in bytes.
         /// </summary>
-        public IGauge<long> WorkingSet { get; }
+        public IGauge WorkingSet { get; }
 
         /// <summary>
         /// A gauge representing the total processor time used by the process.
         /// </summary>
-        public IGauge<TimeSpan> TotalProcessorTime { get; }
+        public IGauge TotalProcessorTime { get; }
 
         /// <summary>
         /// A gauge representing the current processor usage of the process.
         /// </summary>
-        public IGauge<ProcessorUsage> ProcessorUsage { get; }
+        public IGauge ProcessorUsage { get; }
     }
 }
