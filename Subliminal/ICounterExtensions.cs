@@ -12,11 +12,11 @@ namespace Subliminal
         /// Measures the increment rate of a counter by recording the
         /// time interval between emitted increments.
         /// </summary>
-        public static IObservable<Rate<double>> Rate(this ICounter counter)
+        public static IObservable<Rate> Rate(this ICounter counter)
         {
             return counter
                 .TimeInterval()
-                .Select(increment => new Rate<double>(
+                .Select(increment => new Rate(
                     delta: increment.Value,
                     interval: increment.Interval));
         }

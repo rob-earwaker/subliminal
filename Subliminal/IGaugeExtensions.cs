@@ -27,7 +27,7 @@ namespace Subliminal
         /// Measures the rate of change between values emitted from a gauge by combining the difference
         /// between each value and the previous one in the sequence with the time interval between them.
         /// </summary>
-        public static IObservable<Rate<double>> RateOfChange(this IGauge gauge)
+        public static IObservable<Rate> RateOfChange(this IGauge gauge)
         {
             return gauge
                 // Time interval must be determined before buffering otherwise the interval of the first
@@ -39,7 +39,7 @@ namespace Subliminal
                 // that value. A delta can not be calculated from a single value, so ignore it. The delta
                 // between this final value and its predecessor will already have been emitted.
                 .Where(buffer => buffer.Count == 2)
-                .Select(buffer => new Rate<double>(
+                .Select(buffer => new Rate(
                     delta: buffer[1].Value - buffer[0].Value,
                     interval: buffer[1].Interval));
         }

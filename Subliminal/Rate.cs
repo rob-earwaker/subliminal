@@ -3,16 +3,16 @@
 namespace Subliminal
 {
     /// <summary>
-    /// Represents the rate at which a value has changed between an observed
-    /// value and the previous value in the sequence.
+    /// Represents the rate at which a value has changed between
+    /// consecutive values in a sequence.
     /// </summary>
-    public sealed class Rate<TDelta>
+    public sealed class Rate
     {
         /// <summary>
         /// Creates a representation of the rate at which a value has changed
-        /// between an observed value and the previous value in the sequence.
+        /// between consecutive values in a sequence.
         /// </summary>
-        public Rate(TDelta delta, TimeSpan interval)
+        public Rate(double delta, TimeSpan interval)
         {
             Delta = delta;
             Interval = interval;
@@ -21,7 +21,7 @@ namespace Subliminal
         /// <summary>
         /// The amount the value has changed since the previous value in the sequence.
         /// </summary>
-        public TDelta Delta { get; }
+        public double Delta { get; }
 
         /// <summary>
         /// The elapsed time since the previous value in the sequence.

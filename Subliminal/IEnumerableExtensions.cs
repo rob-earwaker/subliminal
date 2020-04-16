@@ -28,52 +28,13 @@ namespace Subliminal
         }
 
         /// <summary>
-        /// Computes the average of a sequence of <see cref="Rate{TDelta}"/> values such that the
+        /// Computes the average of a sequence of <see cref="Rate"/> values such that the
         /// resulting delta contains the sum of all deltas and intervals in the input sequence.
         /// </summary>
-        public static Rate<int> Average(this IEnumerable<Rate<int>> rates)
+        public static Rate Average(this IEnumerable<Rate> rates)
         {
-            return rates.Average(deltas => deltas.Sum());
-        }
-
-        /// <summary>
-        /// Computes the average of a sequence of <see cref="Rate{TDelta}"/> values such that the
-        /// resulting delta contains the sum of all deltas and intervals in the input sequence.
-        /// </summary>
-        public static Rate<long> Average(this IEnumerable<Rate<long>> rates)
-        {
-            return rates.Average(deltas => deltas.Sum());
-        }
-
-        /// <summary>
-        /// Computes the average of a sequence of <see cref="Rate{TDelta}"/> values such that the
-        /// resulting delta contains the sum of all deltas and intervals in the input sequence.
-        /// </summary>
-        public static Rate<double> Average(this IEnumerable<Rate<double>> rates)
-        {
-            return rates.Average(deltas => deltas.Sum());
-        }
-
-        /// <summary>
-        /// Computes the average of a sequence of <see cref="Rate{TDelta}"/> values such
-        /// that the resulting delta contains the value of all deltas and the sum of all
-        /// intervals in the input sequence.
-        /// </summary>
-        public static Rate<IList<TDelta>> Average<TDelta>(this IEnumerable<Rate<TDelta>> rates)
-        {
-            return rates.Average<TDelta, IList<TDelta>>(deltas => deltas.ToList());
-        }
-
-        /// <summary>
-        /// Computes the average of a sequence of <see cref="Rate{TDelta}"/> values such
-        /// that the resulting delta contains the transformed value of all deltas and the
-        /// sum of all intervals in the input sequence.
-        /// </summary>
-        public static Rate<TDeltaSum> Average<TDelta, TDeltaSum>(
-            this IEnumerable<Rate<TDelta>> rates, Func<IEnumerable<TDelta>, TDeltaSum> sumDeltas)
-        {
-            return new Rate<TDeltaSum>(
-                delta: sumDeltas(rates.Select(rate => rate.Delta)),
+            return new Rate(
+                delta: rates.Select(rate => rate.Delta).Sum(),
                 interval: rates.Select(rate => rate.Interval).Sum());
         }
 
