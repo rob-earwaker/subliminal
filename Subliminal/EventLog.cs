@@ -23,7 +23,7 @@ namespace Subliminal
         /// <summary>
         /// A counter that increments every time an event is raised.
         /// </summary>
-        public ICounter<long> EventCounter => _derivedEventLog.EventCounter;
+        public ICounter EventCounter => _derivedEventLog.EventCounter;
 
         /// <summary>
         /// Captures an event and emits it to all observers.
@@ -62,7 +62,7 @@ namespace Subliminal
         /// <summary>
         /// A counter that increments every time an event is raised.
         /// </summary>
-        public ICounter<long> EventCounter => _eventLog.EventCounter;
+        public ICounter EventCounter => _eventLog.EventCounter;
 
         /// <summary>
         /// Captures an event and emits it to all observers.

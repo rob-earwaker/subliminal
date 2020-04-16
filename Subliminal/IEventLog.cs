@@ -10,7 +10,7 @@ namespace Subliminal
         /// <summary>
         /// A counter that increments every time an event is raised.
         /// </summary>
-        ICounter<long> EventCounter { get; }
+        ICounter EventCounter { get; }
     }
 
     /// <summary>

@@ -5,7 +5,7 @@ namespace Subliminal.Sample.Api
     internal static class Program
     {
         private static readonly ISample[] Samples = {
-            new QuickstartCounterTIncrement(),
+            new QuickstartCounter(),
             new QuickstartEvent(),
             new QuickstartEventTEvent(),
             new QuickstartEventLog(),

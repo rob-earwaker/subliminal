@@ -59,9 +59,9 @@ namespace Subliminal
         /// Creates a counter from an observable source. This creates a subscription
         /// to the source observable that will start consuming items immediately.
         /// </summary>
-        public static ICounter<TIncrement> AsCounter<TIncrement>(this IObservable<TIncrement> observable)
+        public static ICounter AsCounter(this IObservable<double> observable)
         {
-            return DerivedCounter<TIncrement>.FromObservable(observable);
+            return DerivedCounter.FromObservable(observable);
         }
 
         /// <summary>

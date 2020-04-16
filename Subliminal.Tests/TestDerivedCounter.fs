@@ -9,20 +9,20 @@ open System.Reactive
 open System.Reactive.Linq
 open System.Reactive.Subjects
 
-type DerivedCounterFactory<'TIncrement> =
-    DerivedCounterFactory of deriveCounter:(IObservable<'TIncrement> -> ICounter<'TIncrement>) with
+type DerivedCounterFactory =
+    DerivedCounterFactory of deriveCounter:(IObservable<double> -> ICounter) with
     static member Arb =
-        [ fun observable -> DerivedCounter<'TIncrement>.FromObservable(observable) :> ICounter<'TIncrement>
-          fun observable -> observable.AsCounter<'TIncrement>() ]
+        [ fun observable -> DerivedCounter.FromObservable(observable) :> ICounter
+          fun observable -> observable.AsCounter() ]
         |> Gen.elements
         |> Gen.map DerivedCounterFactory
         |> Arb.fromGen
 
-module ``Test DerivedCounter<TIncrement>`` =
+module ``Test DerivedCounter`` =
     [<Property>]
-    let ``emits increments`` (increment1: obj) (increment2: obj) =
+    let ``emits increments`` (NormalFloat increment1) (NormalFloat increment2) =
         let test (DerivedCounterFactory deriveCounter) =
-            use subject = new Subject<obj>()
+            use subject = new Subject<double>()
             let counter = deriveCounter subject
             let observer = TestObserver()
             use subscription = counter.Subscribe(observer)
@@ -37,12 +37,12 @@ module ``Test DerivedCounter<TIncrement>`` =
             // Create an observable that emits two values after a
             // subject is completed. This is a cold observable and
             // will emit different values to each observer.
-            use subject = new Subject<obj>()
+            use subject = new Subject<double>()
             let observable =
                 Observable.Concat(
                     subject,
-                    Observable.Return(Unit.Default).Select(fun _ -> obj()),
-                    Observable.Return(Unit.Default).Select(fun _ -> obj()))
+                    Observable.Return(Unit.Default).Select(fun _ -> 1.23),
+                    Observable.Return(Unit.Default).Select(fun _ -> 4.56))
             let counter = deriveCounter observable
             let observer1 = TestObserver()
             let observer2 = TestObserver()
@@ -58,11 +58,11 @@ module ``Test DerivedCounter<TIncrement>`` =
         Prop.forAll DerivedCounterFactory.Arb test
     
     [<Property>]
-    let ``starts emitting increments immediately`` (increment1: obj) (increment2: obj) =
+    let ``starts emitting increments immediately`` (NormalFloat increment1) (NormalFloat increment2) =
         let test (DerivedCounterFactory deriveCounter) =
             // Create an observable that emits one value immediately
             // and a second value when a subject is completed.
-            use subject = new Subject<obj>()
+            use subject = new Subject<double>()
             let observable =
                 Observable.Concat(
                     Observable.Return(increment1),
@@ -82,9 +82,9 @@ module ``Test DerivedCounter<TIncrement>`` =
         Prop.forAll DerivedCounterFactory.Arb test
         
     [<Property>]
-    let ``rate returns original values as deltas`` value1 value2 value3 =
+    let ``rate returns original values as deltas`` (NormalFloat value1) (NormalFloat value2) (NormalFloat value3) =
         let test (DerivedCounterFactory deriveCounter) =
-            use subject = new Subject<obj>()
+            use subject = new Subject<double>()
             let counter = deriveCounter subject
             let observable = counter.Rate()
             let observer = TestObserver()
@@ -99,9 +99,9 @@ module ``Test DerivedCounter<TIncrement>`` =
         Prop.forAll DerivedCounterFactory.Arb test
 
     [<Property>]
-    let ``rate returns intervals between values`` (value1: obj) (value2: obj) (value3: obj) =
+    let ``rate returns intervals between values`` (NormalFloat value1) (NormalFloat value2) (NormalFloat value3) =
         let test (DerivedCounterFactory deriveCounter) =
-            use subject = new Subject<obj>()
+            use subject = new Subject<double>()
             let counter = deriveCounter subject
             let observable = counter.Rate()
             let observer = TestObserver()
@@ -113,21 +113,4 @@ module ``Test DerivedCounter<TIncrement>`` =
             test <@ observer.ObservedValues.[0].Interval > TimeSpan.Zero @>
             test <@ observer.ObservedValues.[1].Interval > TimeSpan.Zero @>
             test <@ observer.ObservedValues.[2].Interval > TimeSpan.Zero @>
-        Prop.forAll DerivedCounterFactory.Arb test
-        
-    [<Property>]
-    let ``rate returns increment selector result as delta`` wrapper1 wrapper2 wrapper3 =
-        let test (DerivedCounterFactory deriveCounter) =
-            use subject = new Subject<Wrapper<obj>>()
-            let counter = deriveCounter subject
-            let observable = counter.Rate(fun increment -> increment.Value)
-            let observer = TestObserver()
-            use subscription = observable.Subscribe(observer)
-            subject.OnNext(wrapper1)
-            subject.OnNext(wrapper2)
-            subject.OnNext(wrapper3)
-            test <@ observer.ObservedValues.Length = 3 @>
-            test <@ observer.ObservedValues.[0].Delta = wrapper1.Value @>
-            test <@ observer.ObservedValues.[1].Delta = wrapper2.Value @>
-            test <@ observer.ObservedValues.[2].Delta = wrapper3.Value @>
         Prop.forAll DerivedCounterFactory.Arb test

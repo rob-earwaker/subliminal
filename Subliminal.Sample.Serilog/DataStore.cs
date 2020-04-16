@@ -10,7 +10,7 @@ namespace Subliminal.Sample.Serilog
         private static readonly object _randomLockObject = new object();
 
         public static readonly Gauge<int> RandomGauge = new Gauge<int>();
-        public static readonly Counter<long> BytesReadCounter = new Counter<long>();
+        public static readonly Counter BytesReadCounter = new Counter();
         public static readonly Operation ReadRandomBytesOperation = new Operation();
         public static readonly Operation ReadRandomByteOperation = new Operation();
 

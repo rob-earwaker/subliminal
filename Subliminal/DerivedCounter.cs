@@ -5,11 +5,11 @@ namespace Subliminal
     /// <summary>
     /// A counter that is derived from an observable source.
     /// </summary>
-    public sealed class DerivedCounter<TIncrement> : ICounter<TIncrement>
+    public sealed class DerivedCounter : ICounter
     {
-        private readonly ILog<TIncrement> _incrementLog;
+        private readonly ILog<double> _incrementLog;
 
-        private DerivedCounter(ILog<TIncrement> incrementLog)
+        private DerivedCounter(ILog<double> incrementLog)
         {
             _incrementLog = incrementLog;
         }
@@ -18,9 +18,9 @@ namespace Subliminal
         /// Creates a counter from an observable source. This creates a subscription
         /// to the source observable that will start consuming items immediately.
         /// </summary>
-        public static DerivedCounter<TIncrement> FromObservable(IObservable<TIncrement> observable)
+        public static DerivedCounter FromObservable(IObservable<double> observable)
         {
-            return new DerivedCounter<TIncrement>(observable.AsLog());
+            return new DerivedCounter(observable.AsLog());
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Subliminal
         /// by the counter. The returned <see cref="IDisposable" /> can be used to
         /// cancel this subscription.
         /// </summary>
-        public IDisposable Subscribe(IObserver<TIncrement> observer)
+        public IDisposable Subscribe(IObserver<double> observer)
         {
             return _incrementLog.Subscribe(observer);
         }

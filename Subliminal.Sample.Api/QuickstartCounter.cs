@@ -2,13 +2,13 @@
 
 namespace Subliminal.Sample.Api
 {
-    internal class QuickstartCounterTIncrement : ISample
+    internal class QuickstartCounter : ISample
     {
-        public string SampleName => "Quickstart: Counter<TIncrement>";
+        public string SampleName => "Quickstart: Counter";
 
         public void RunSample()
         {
-            var entitiesRetrieved = new Counter<long>();
+            var entitiesRetrieved = new Counter();
 
             entitiesRetrieved.Subscribe(entityCount =>
                 Console.WriteLine($"Retrieved another {entityCount} entities"));

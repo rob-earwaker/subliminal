@@ -35,7 +35,7 @@ module ``Test EventLog<TEvent>`` =
         use subscription = eventLog.EventCounter.Subscribe(observer)
         eventLog.LogOccurrence(event1)
         eventLog.LogOccurrence(event2)
-        test <@ observer.ObservedValues = [ 1L; 1L ] @>
+        test <@ observer.ObservedValues = [ 1.0; 1.0 ] @>
     
 module ``Test EventLog`` =
     [<Property>]
@@ -67,4 +67,4 @@ module ``Test EventLog`` =
         use subscription = eventLog.EventCounter.Subscribe(observer)
         eventLog.LogOccurrence()
         eventLog.LogOccurrence()
-        test <@ observer.ObservedValues = [ 1L; 1L ] @>
+        test <@ observer.ObservedValues = [ 1.0; 1.0 ] @>

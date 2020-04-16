@@ -19,7 +19,7 @@ namespace Subliminal
         /// <summary>
         /// A counter that increments every time an event is raised.
         /// </summary>
-        public ICounter<long> EventCounter => _eventLog.Select(_ => 1L).AsCounter();
+        public ICounter EventCounter => _eventLog.Select(_ => 1.0).AsCounter();
 
         /// <summary>
         /// Creates an event log from an observable source. This creates a subscription
@@ -56,7 +56,7 @@ namespace Subliminal
         /// <summary>
         /// A counter that increments every time an event is raised.
         /// </summary>
-        public ICounter<long> EventCounter => _eventLog.EventCounter;
+        public ICounter EventCounter => _eventLog.EventCounter;
 
         /// <summary>
         /// Creates an event log from an observable source. This creates a subscription

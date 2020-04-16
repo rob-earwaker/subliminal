@@ -46,6 +46,15 @@ namespace Subliminal
         }
 
         /// <summary>
+        /// Computes the average of a sequence of <see cref="Rate{TDelta}"/> values such that the
+        /// resulting delta contains the sum of all deltas and intervals in the input sequence.
+        /// </summary>
+        public static Rate<double> Average(this IEnumerable<Rate<double>> rates)
+        {
+            return rates.Average(deltas => deltas.Sum());
+        }
+
+        /// <summary>
         /// Computes the average of a sequence of <see cref="Rate{TDelta}"/> values such
         /// that the resulting delta contains the value of all deltas and the sum of all
         /// intervals in the input sequence.

@@ -90,7 +90,7 @@ module ``Test DerivedEventLog<TEvent>`` =
             use subscription = eventLog.EventCounter.Subscribe(observer)
             subject.OnNext(event1)
             subject.OnNext(event2)
-            test <@ observer.ObservedValues = [ 1L; 1L ] @>
+            test <@ observer.ObservedValues = [ 1.0; 1.0 ] @>
         Prop.forAll DerivedEventLogFactory.Arb test
         
 type DerivedEventLogFactory =
@@ -148,5 +148,5 @@ module ``Test DerivedEventLog`` =
             use subscription = eventLog.EventCounter.Subscribe(observer)
             subject.OnNext(Unit.Default)
             subject.OnNext(Unit.Default)
-            test <@ observer.ObservedValues = [ 1L; 1L ] @>
+            test <@ observer.ObservedValues = [ 1.0; 1.0 ] @>
         Prop.forAll DerivedEventLogFactory.Arb test
