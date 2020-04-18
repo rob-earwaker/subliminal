@@ -3,7 +3,7 @@
     /// <summary>
     /// A group of metrics relating to execution of an operation.
     /// </summary>
-    public interface IOperation<TContext>
+    public interface IOperationLog<TContext>
     {
         /// <summary>
         /// An event log that emits an event every time a new operation timer is started.
@@ -24,7 +24,7 @@
     /// <summary>
     /// A group of metrics relating to execution of an operation.
     /// </summary>
-    public interface IOperation
+    public interface IOperationLog
     {
         /// <summary>
         /// An event log that emits an event every time a new operation timer is started.

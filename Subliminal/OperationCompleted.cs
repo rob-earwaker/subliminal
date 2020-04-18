@@ -7,7 +7,7 @@ namespace Subliminal
     /// </summary>
     public sealed class OperationCompleted<TContext>
     {
-        internal OperationCompleted(string operationId, TContext context, TimeSpan duration)
+        internal OperationCompleted(Guid operationId, TContext context, TimeSpan duration)
         {
             OperationId = operationId;
             Context = context;
@@ -17,7 +17,7 @@ namespace Subliminal
         /// <summary>
         /// An identifier for the operation.
         /// </summary>
-        public string OperationId { get; }
+        public Guid OperationId { get; }
 
         /// <summary>
         /// Context data associated with the operation.
@@ -40,7 +40,7 @@ namespace Subliminal
     /// </summary>
     public sealed class OperationCompleted
     {
-        internal OperationCompleted(string operationId, TimeSpan duration)
+        internal OperationCompleted(Guid operationId, TimeSpan duration)
         {
             OperationId = operationId;
             Duration = duration;
@@ -49,7 +49,7 @@ namespace Subliminal
         /// <summary>
         /// An identifier for the operation.
         /// </summary>
-        public string OperationId { get; }
+        public Guid OperationId { get; }
 
         /// <summary>
         /// The time taken to complete the operation.

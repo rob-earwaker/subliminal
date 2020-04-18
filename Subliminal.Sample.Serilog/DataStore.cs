@@ -11,8 +11,8 @@ namespace Subliminal.Sample.Serilog
 
         public static readonly Gauge RandomGauge = new Gauge();
         public static readonly Counter BytesReadCounter = new Counter();
-        public static readonly Operation ReadRandomBytesOperation = new Operation();
-        public static readonly Operation ReadRandomByteOperation = new Operation();
+        public static readonly OperationLog ReadRandomBytesOperation = new OperationLog();
+        public static readonly OperationLog ReadRandomByteOperation = new OperationLog();
 
         public async Task<byte[]> ReadRandomBytesAsync(int bufferSize)
         {

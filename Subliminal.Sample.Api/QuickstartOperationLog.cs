@@ -3,13 +3,13 @@ using System.Threading;
 
 namespace Subliminal.Sample.Api
 {
-    internal class QuickstartOperation : ISample
+    internal class QuickstartOperationLog : ISample
     {
-        public string SampleName => "Quickstart: Operation";
+        public string SampleName => "Quickstart: OperationLog";
 
         public void RunSample()
         {
-            var addToBasket = new Operation();
+            var addToBasket = new OperationLog();
 
             addToBasket.Started.Subscribe(started =>
                 Console.WriteLine($"Started AddToBasket operation {started.OperationId}"));

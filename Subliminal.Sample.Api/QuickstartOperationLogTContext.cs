@@ -3,9 +3,9 @@ using System.Threading;
 
 namespace Subliminal.Sample.Api
 {
-    internal class QuickstartOperationTContext : ISample
+    internal class QuickstartOperationLogTContext : ISample
     {
-        public string SampleName => "Quickstart: Operation<TContext>";
+        public string SampleName => "Quickstart: OperationLog<TContext>";
 
         public class RegisterUser
         {
@@ -14,7 +14,7 @@ namespace Subliminal.Sample.Api
 
         public void RunSample()
         {
-            var registerUser = new Operation<RegisterUser>();
+            var registerUser = new OperationLog<RegisterUser>();
 
             registerUser.Started.Subscribe(started =>
                 Console.WriteLine($"Started RegisterUser operation for {started.Context.Name}"));

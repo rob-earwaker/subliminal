@@ -17,7 +17,7 @@ Metric types:
 - `Gauge` - A gauge is the simplest type of metric. It provides absolute values of a particular quantity, e.g. the number of messages on a queue or the current processor usage.
 - `Counter` - A counter provides incremental values that measure the relative changes of a particular quantity over time, e.g. the number of entities retrieved from a database or the number of bytes read from disk. Unlike a gauge, the values produced by a counter represent relative changes of the quantity not absolute values.
 - `EventLog` `EventLog<TEvent>` - An event log provides notifications whenever a particular event occurs, e.g. when a message is handled or a file is deleted. Each event can optionally include context information.
-- `Operation` `Operation<TContext>` - An operation provides execution timing information for a particular action, e.g. adding an item to the basket or registering a new user. It is made up of several different event logs that record when an operation is started, completed or canceled. Each operation execution can optionally include context information.
+- `OperationLog` `OperationLog<TContext>` - An operation provides execution timing information for a particular action, e.g. adding an item to the basket or registering a new user. It is made up of several different event logs that record when an operation is started, completed or canceled. Each operation execution can optionally include context information.
 - `Log<TEntry>` - A log is a sequence of entries that provide some information, where each entry is independent of all others. In the simplest case, a log might provide debug messages in the form of text.
 - `Event` `Event<TEvent>` - An event represents an action that only occurs once and will therefore only provide a single value before completing the observable sequence. All future subscribers will still receive the event value despite not having an active subscription when the event was raised.
 
@@ -26,8 +26,8 @@ Quickstart samples:
 [`Counter`](Subliminal.Sample.Api/QuickstartCounter.cs)
 [`EventLog`](Subliminal.Sample.Api/QuickstartEventLog.cs)
 [`EventLog<TEvent>`](Subliminal.Sample.Api/QuickstartEventLogTEvent.cs)
-[`Operation`](Subliminal.Sample.Api/QuickstartOperation.cs)
-[`Operation<TContext>`](Subliminal.Sample.Api/QuickstartOperationTContext.cs)
+[`OperationLog`](Subliminal.Sample.Api/QuickstartOperationLog.cs)
+[`OperationLog<TContext>`](Subliminal.Sample.Api/QuickstartOperationLogTContext.cs)
 [`Log<TEntry>`](Subliminal.Sample.Api/QuickstartLogTEntry.cs)
 [`Event`](Subliminal.Sample.Api/QuickstartEvent.cs)
 [`Event<TEvent>`](Subliminal.Sample.Api/QuickstartEventTEvent.cs)

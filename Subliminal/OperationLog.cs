@@ -9,7 +9,7 @@ namespace Subliminal
     /// An operation that can be used to start operation timers
     /// and that emits operation metrics.
     /// </summary>
-    public sealed class Operation<TContext> : IOperation<TContext>
+    public sealed class OperationLog<TContext> : IOperationLog<TContext>
     {
         private readonly EventLog<OperationStarted<TContext>> _started;
 
@@ -17,7 +17,7 @@ namespace Subliminal
         /// Creates an operation that can be used to start operation timers
         /// and that emits operation metrics.
         /// </summary>
-        public Operation()
+        public OperationLog()
         {
             _started = new EventLog<OperationStarted<TContext>>();
         }
@@ -30,7 +30,7 @@ namespace Subliminal
         public Timer StartNewTimer(TContext context)
         {
             var timer = new Timer();
-            _started.LogOccurrence(new OperationStarted<TContext>(OperationId.New(), context, timer.Stopped));
+            _started.LogOccurrence(new OperationStarted<TContext>(Guid.NewGuid(), context, timer.Stopped));
             timer.Start();
             return timer;
         }
@@ -149,17 +149,17 @@ namespace Subliminal
     /// An operation that can be used to start operation timers
     /// and that emits operation metrics.
     /// </summary>
-    public sealed class Operation : IOperation
+    public sealed class OperationLog : IOperationLog
     {
-        private readonly Operation<Unit> _operation;
+        private readonly OperationLog<Unit> _operationLog;
 
         /// <summary>
         /// Creates an operation that can be used to start operation timers
         /// and that emits operation metrics.
         /// </summary>
-        public Operation()
+        public OperationLog()
         {
-            _operation = new Operation<Unit>();
+            _operationLog = new OperationLog<Unit>();
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Subliminal
         /// </summary>
         public Timer StartNewTimer()
         {
-            return _operation.StartNewTimer(Unit.Default);
+            return _operationLog.StartNewTimer(Unit.Default);
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace Subliminal
         /// </summary>
         public IEventLog<OperationStarted> Started
         {
-            get { return _operation.Started.Select(started => started.WithoutContext()).AsEventLog(); }
+            get { return _operationLog.Started.Select(started => started.WithoutContext()).AsEventLog(); }
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace Subliminal
         /// </summary>
         public IEventLog<OperationCompleted> Completed
         {
-            get { return _operation.Completed.Select(completed => completed.WithoutContext()).AsEventLog(); }
+            get { return _operationLog.Completed.Select(completed => completed.WithoutContext()).AsEventLog(); }
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace Subliminal
         /// </summary>
         public IEventLog<OperationCanceled> Canceled
         {
-            get { return _operation.Canceled.Select(canceled => canceled.WithoutContext()).AsEventLog(); }
+            get { return _operationLog.Canceled.Select(canceled => canceled.WithoutContext()).AsEventLog(); }
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace Subliminal
         /// </summary>
         public void Time(Action<Timer> operation)
         {
-            _operation.Time(Unit.Default, operation);
+            _operationLog.Time(Unit.Default, operation);
         }
 
         /// <summary>
@@ -212,7 +212,7 @@ namespace Subliminal
         /// </summary>
         public void Time(Action operation)
         {
-            _operation.Time(Unit.Default, operation);
+            _operationLog.Time(Unit.Default, operation);
         }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace Subliminal
         /// </summary>
         public TResult Time<TResult>(Func<Timer, TResult> operation)
         {
-            return _operation.Time(Unit.Default, operation);
+            return _operationLog.Time(Unit.Default, operation);
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace Subliminal
         /// </summary>
         public TResult Time<TResult>(Func<TResult> operation)
         {
-            return _operation.Time(Unit.Default, operation);
+            return _operationLog.Time(Unit.Default, operation);
         }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace Subliminal
         /// </summary>
         public Task TimeAsync(Func<Timer, Task> operation)
         {
-            return _operation.TimeAsync(Unit.Default, operation);
+            return _operationLog.TimeAsync(Unit.Default, operation);
         }
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace Subliminal
         /// </summary>
         public Task TimeAsync(Func<Task> operation)
         {
-            return _operation.TimeAsync(Unit.Default, operation);
+            return _operationLog.TimeAsync(Unit.Default, operation);
         }
 
         /// <summary>
@@ -260,7 +260,7 @@ namespace Subliminal
         /// </summary>
         public Task<TResult> TimeAsync<TResult>(Func<Timer, Task<TResult>> operation)
         {
-            return _operation.TimeAsync(Unit.Default, operation);
+            return _operationLog.TimeAsync(Unit.Default, operation);
         }
 
         /// <summary>
@@ -269,7 +269,7 @@ namespace Subliminal
         /// </summary>
         public Task<TResult> TimeAsync<TResult>(Func<Task<TResult>> operation)
         {
-            return _operation.TimeAsync(Unit.Default, operation);
+            return _operationLog.TimeAsync(Unit.Default, operation);
         }
     }
 }

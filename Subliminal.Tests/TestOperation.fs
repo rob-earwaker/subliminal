@@ -7,10 +7,10 @@ open System
 open System.Threading
 open System.Threading.Tasks
 
-module ``Test Operation<TContext>`` =
+module ``Test OperationLog<TContext>`` =
     [<Property>]
     let ``ids are unique`` (context1: obj) (context2: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Started.Subscribe(observer)
         use timer1 = operation.StartNewTimer(context1)
@@ -21,7 +21,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``id in canceled operation matches started operation`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let startedObserver = TestObserver()
         let canceledObserver = TestObserver()
         use startedSubscription = operation.Started.Subscribe(startedObserver)
@@ -34,7 +34,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``context in canceled operation matches started operation`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let startedObserver = TestObserver()
         let canceledObserver = TestObserver()
         use startedSubscription = operation.Started.Subscribe(startedObserver)
@@ -47,7 +47,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``id in completed operation matches started operation`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let startedObserver = TestObserver()
         let completedObserver = TestObserver()
         use startedSubscription = operation.Started.Subscribe(startedObserver)
@@ -60,7 +60,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``context in completed operation matches started operation`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let startedObserver = TestObserver()
         let completedObserver = TestObserver()
         use startedSubscription = operation.Started.Subscribe(startedObserver)
@@ -73,7 +73,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``emits started operation when timer started`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Started.Subscribe(observer)
         use timer = operation.StartNewTimer(context)
@@ -83,7 +83,7 @@ module ``Test Operation<TContext>`` =
         
     [<Property>]
     let ``emits canceled operation when timer canceled`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Canceled.Subscribe(observer)
         use timer = operation.StartNewTimer(context)
@@ -95,7 +95,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``emits single canceled operation`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Canceled.Subscribe(observer)
         use timer = operation.StartNewTimer(context)
@@ -110,7 +110,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``emits completed operation when timer stopped`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         use timer = operation.StartNewTimer(context)
@@ -124,7 +124,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``emits completed operation when timer disposed`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         use timer = operation.StartNewTimer(context)
@@ -138,7 +138,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``emits single completed operation`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         use timer = operation.StartNewTimer(context)
@@ -155,7 +155,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``times operation with no return value`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         operation.Time(context, fun () -> Thread.Sleep(1))
@@ -166,7 +166,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``times operation with return value`` (context: obj) (returnValue: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         let returnValue' =
@@ -181,7 +181,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``times async operation with no return value`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         operation.TimeAsync(context, fun () -> Task.Delay(1))
@@ -194,7 +194,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``times async operation with return value`` (context: obj) (returnValue: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         let returnValue' =
@@ -213,7 +213,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``times operation with timer context and no return value`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         operation.Time(context, fun (timer: Subliminal.Timer) -> Thread.Sleep(1))
@@ -224,7 +224,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``times operation with timer context and return value`` (context: obj) (returnValue: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         let returnValue' =
@@ -239,7 +239,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``times async operation with timer context and no return value`` (context: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         operation.TimeAsync(context, fun (timer: Subliminal.Timer) -> Task.Delay(1))
@@ -252,7 +252,7 @@ module ``Test Operation<TContext>`` =
     
     [<Property>]
     let ``times async operation with timer context and return value`` (context: obj) (returnValue: obj) =
-        let operation = Operation<obj>()
+        let operation = OperationLog<obj>()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         let returnValue' =
@@ -269,10 +269,10 @@ module ``Test Operation<TContext>`` =
         test <@ observer.ObservedValues.[0].Duration > TimeSpan.Zero @>
         test <@ not observer.ObservableCompleted @>
     
-module ``Test Operation`` =
+module ``Test OperationLog`` =
     [<Property>]
     let ``ids are unique`` () =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Started.Subscribe(observer)
         use timer1 = operation.StartNewTimer()
@@ -283,7 +283,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``id in canceled operation matches started operation`` () =
-        let operation = Operation()
+        let operation = OperationLog()
         let startedObserver = TestObserver()
         let canceledObserver = TestObserver()
         use startedSubscription = operation.Started.Subscribe(startedObserver)
@@ -296,7 +296,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``id in completed operation matches started operation`` () =
-        let operation = Operation()
+        let operation = OperationLog()
         let startedObserver = TestObserver()
         let completedObserver = TestObserver()
         use startedSubscription = operation.Started.Subscribe(startedObserver)
@@ -309,7 +309,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``emits started operation when timer started`` () =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Started.Subscribe(observer)
         use timer = operation.StartNewTimer()
@@ -318,7 +318,7 @@ module ``Test Operation`` =
             
     [<Property>]
     let ``emits canceled operation when timer canceled`` () =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Canceled.Subscribe(observer)
         use timer = operation.StartNewTimer()
@@ -329,7 +329,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``emits single canceled operation`` () =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Canceled.Subscribe(observer)
         use timer = operation.StartNewTimer()
@@ -343,7 +343,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``emits completed operation when timer stopped`` () =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         use timer = operation.StartNewTimer()
@@ -356,7 +356,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``emits completed operation when timer disposed`` () =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         use timer = operation.StartNewTimer()
@@ -369,7 +369,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``emits single completed operation`` () =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         use timer = operation.StartNewTimer()
@@ -385,7 +385,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``times operation with no return value`` () =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         operation.Time(fun () -> Thread.Sleep(1))
@@ -395,7 +395,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``times operation with return value`` (returnValue: obj) =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         let returnValue' =
@@ -409,7 +409,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``times async operation with no return value`` () =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         operation.TimeAsync(fun () -> Task.Delay(1))
@@ -421,7 +421,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``times async operation with return value`` (returnValue: obj) =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         let returnValue' =
@@ -439,7 +439,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``times operation with timer context and no return value`` () =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         operation.Time(fun (timer: Subliminal.Timer) -> Thread.Sleep(1))
@@ -449,7 +449,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``times operation with timer context and return value`` (returnValue: obj) =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         let returnValue' =
@@ -463,7 +463,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``times async operation with timer context and no return value`` () =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         operation.TimeAsync(fun (timer: Subliminal.Timer) -> Task.Delay(1))
@@ -475,7 +475,7 @@ module ``Test Operation`` =
         
     [<Property>]
     let ``times async operation with timer context and return value`` (returnValue: obj) =
-        let operation = Operation()
+        let operation = OperationLog()
         let observer = TestObserver()
         use subscription = operation.Completed.Subscribe(observer)
         let returnValue' =

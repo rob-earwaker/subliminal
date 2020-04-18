@@ -12,8 +12,8 @@ namespace Subliminal.Sample.Api
             new QuickstartEventLogTEvent(),
             new QuickstartLogTEntry(),
             new QuickstartGauge(),
-            new QuickstartOperation(),
-            new QuickstartOperationTContext(),
+            new QuickstartOperationLog(),
+            new QuickstartOperationLogTContext(),
         };
 
         public static void Main(string[] args)
