@@ -3,18 +3,11 @@ using System.Reactive.Linq;
 
 namespace Subliminal
 {
-    /// <summary>
-    /// Contains extensions for the <see cref="IGauge" /> interface.
-    /// </summary>
     public static class IGaugeExtensions
     {
-        /// <summary>
-        /// Measures the delta between values emitted from a gauge by calculating the difference
-        /// between each value and the previous one in the sequence.
-        /// </summary>
-        public static IObservable<double> Delta(this IGauge gauge)
+        public static IObservable<double> Delta(this ILog<Measure<double>> log)
         {
-            return gauge
+            return log
                 .Buffer(count: 2, skip: 1)
                 // If the observable completes, the last value will be emitted in a buffer containing just
                 // that value. A delta can not be calculated from a single value, so ignore it. The delta
@@ -23,10 +16,6 @@ namespace Subliminal
                 .Select(buffer => buffer[1] - buffer[0]);
         }
 
-        /// <summary>
-        /// Measures the rate of change between values emitted from a gauge by combining the difference
-        /// between each value and the previous one in the sequence with the time interval between them.
-        /// </summary>
         public static IObservable<Rate> RateOfChange(this IGauge gauge)
         {
             return gauge

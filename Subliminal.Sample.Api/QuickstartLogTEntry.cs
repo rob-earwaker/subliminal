@@ -13,10 +13,10 @@ namespace Subliminal.Sample.Api
             messageLog.Subscribe(message =>
                 Console.WriteLine($"Received message '{message}'"));
 
-            messageLog.Append("hello");
+            messageLog.Log("hello");
             // "Received message 'hello'"
 
-            messageLog.Append("world");
+            messageLog.Log("world");
             // "Received message 'world'"
         }
     }

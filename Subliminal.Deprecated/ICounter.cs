@@ -3,7 +3,7 @@
     /// <summary>
     /// An observable log of increments.
     /// </summary>
-    public interface ICounter : ILog<double>
+    public interface ICounter : ILog<Count>
     {
     }
 }

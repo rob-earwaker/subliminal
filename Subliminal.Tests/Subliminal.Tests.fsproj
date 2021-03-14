@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Subliminal\Subliminal.csproj" />
+    <ProjectReference Include="..\Subliminal\Subliminal.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

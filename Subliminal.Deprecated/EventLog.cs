@@ -30,7 +30,7 @@ namespace Subliminal
         /// </summary>
         public void LogOccurrence(TEvent @event)
         {
-            _eventLog.Append(@event);
+            _eventLog.Log(@event);
         }
 
         /// <summary>
