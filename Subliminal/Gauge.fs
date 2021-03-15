@@ -122,6 +122,15 @@ module Gauge =
     let subscribeForever' onNext (gauge: IGauge<'Context>) =
         gauge.Sampled |> Log.subscribeForever onNext
 
+[<RequireQualifiedAccess>]
+module Distribution =
+    let ofBuffer (buffer: Buffer<float>) =
+        Distribution(buffer.Values, buffer.Interval)
+
+    let ofBuffer' (mapper: 'Value -> float) (buffer: Buffer<'Value>) =
+        let values = buffer.Values |> Seq.map mapper
+        Distribution(values, buffer.Interval)
+
 type Gauge<'Context>() =
     let sampled = Log<Measure<'Context>>()
     let gauge = Gauge.ofLog' sampled
