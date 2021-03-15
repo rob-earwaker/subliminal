@@ -15,12 +15,6 @@ type ICount =
 type ICount<'Context> =
     abstract member Incremented : ILog<Increment<'Context>>
 
-type Rate(delta: float, interval: TimeSpan) =
-    let deltaPerSecond = lazy(delta / interval.TotalSeconds)
-    member val Delta = delta
-    member val Interval = interval
-    member this.DeltaPerSecond = deltaPerSecond.Value
-
 [<RequireQualifiedAccess>]
 module private Increment =
     let withoutContext (increment: Increment<'Context>) =
@@ -75,8 +69,8 @@ module Count =
         count.Incremented
         |> bufferer
         |> Log.map (fun buffer ->
-            let delta = buffer.Values |> Seq.sumBy (fun increment -> increment.Value)
-            Rate(delta, buffer.Interval))
+            let total = buffer.Values |> Seq.sumBy (fun increment -> increment.Value)
+            Rate(total, buffer.Interval))
 
     let rateByInterval interval count =
         count |> rate (Log.bufferByInterval interval)

@@ -15,12 +15,22 @@ type IGauge =
 type IGauge<'Context> =
     abstract member Sampled : ILog<Measure<'Context>>
 
+type Rate(total: float, interval: TimeSpan) =
+    let perSecond = lazy (total / interval.TotalSeconds)
+    member val Total = total
+    member val Interval = interval
+    member this.PerSecond = perSecond.Value
+
 type Distribution(values: float seq, interval: TimeSpan) =
     let values = Array.ofSeq values
     let valuesSorted = lazy Array.sort values
     let min = lazy Array.head valuesSorted.Value
     let max = lazy Array.last valuesSorted.Value
     let mean = lazy Array.average values
+    let total = lazy Array.sum values
+    let rate = lazy Rate(total.Value, interval)
+    // TODO: RateOfChange
+    // TODO: Should Rate and/or RateOfChange be a Distribution?
 
     member val Values = values
     member val Interval = interval
@@ -28,6 +38,8 @@ type Distribution(values: float seq, interval: TimeSpan) =
     member this.Min = min.Value
     member this.Max = max.Value
     member this.Mean = mean.Value
+    member this.Total = total.Value
+    member this.Rate = rate.Value
 
 [<RequireQualifiedAccess>]
 module private Measure =
@@ -83,7 +95,7 @@ module Gauge =
         gauge.Sampled
         |> bufferer
         |> Log.map (fun buffer ->
-            let values = buffer.Values |> Seq.map (fun measure -> measure.Value) |> Seq.cache
+            let values = buffer.Values |> Seq.map (fun measure -> measure.Value)
             Distribution(values, buffer.Interval))
 
     let distByInterval interval gauge =
