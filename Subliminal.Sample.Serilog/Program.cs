@@ -15,7 +15,7 @@ namespace Subliminal.Sample.Serilog
 
         private static async Task MainAsync()
         {
-            Log.Logger = new LoggerConfiguration()
+            global::Serilog.Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .WriteTo.Console()
                 .CreateLogger();

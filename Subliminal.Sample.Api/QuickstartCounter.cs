@@ -8,7 +8,7 @@ namespace Subliminal.Sample.Api
 
         public void RunSample()
         {
-            var entitiesRetrieved = new Counter();
+            var entitiesRetrieved = new Count();
 
             entitiesRetrieved.Subscribe(entityCount =>
                 Console.WriteLine($"Retrieved another {entityCount} entities"));

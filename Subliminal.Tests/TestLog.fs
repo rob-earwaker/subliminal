@@ -5,7 +5,7 @@ open Subliminal
 open Swensen.Unquote
 open System
 
-module ``Test Log<TEntry>`` =
+module ``Test Log<'Entry>`` =
     [<Property>]
     let ``emits entries when entries appended`` (entry1: obj) (entry2: obj) =
         let log = Log<obj>()

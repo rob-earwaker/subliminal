@@ -30,6 +30,7 @@ type Distribution(values: float seq, interval: TimeSpan) =
     let total = lazy Array.sum values
     let rate = lazy Rate(total.Value, interval)
     // TODO: RateOfChange
+    // TODO: Median, Percentile(), Percentile99, Percentile50, Percentile90, Percentile05
     // TODO: Should Rate and/or RateOfChange be a Distribution?
 
     member val Values = values

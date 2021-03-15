@@ -10,13 +10,13 @@ namespace Subliminal.Sample.Serilog
         private static readonly object _randomLockObject = new object();
 
         public static readonly Gauge RandomGauge = new Gauge();
-        public static readonly Counter BytesReadCounter = new Counter();
-        public static readonly OperationLog ReadRandomBytesOperation = new OperationLog();
-        public static readonly OperationLog ReadRandomByteOperation = new OperationLog();
+        public static readonly Count BytesReadCounter = new Count();
+        public static readonly Operation ReadRandomBytesOperation = new Operation();
+        public static readonly Operation ReadRandomByteOperation = new Operation();
 
         public async Task<byte[]> ReadRandomBytesAsync(int bufferSize)
         {
-            using (ReadRandomBytesOperation.StartNewTimer())
+            using (ReadRandomBytesOperation.StartNew())
             {
                 var readRandomByteTasks = new object[bufferSize].Select(_ => ReadRandomByteAsync()).ToArray();
                 var buffer = await Task.WhenAll(readRandomByteTasks).ConfigureAwait(false);
@@ -26,7 +26,7 @@ namespace Subliminal.Sample.Serilog
 
         private async Task<byte> ReadRandomByteAsync()
         {
-            using (ReadRandomByteOperation.StartNewTimer())
+            using (ReadRandomByteOperation.StartNew())
             {
                 var buffer = new byte[1];
                 double randomDelay;
