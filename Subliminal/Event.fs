@@ -103,11 +103,11 @@ module Event =
         event.Occurred |> Log.subscribeForever onNext
 
 type Event<'Event>() =
-    let occurred = Log<'Event>()
-    let event = Event.ofLog' occurred
+    let log = Log<'Event>()
+    let event = Event.ofLog' log
 
     member this.LogOccurrence(event) =
-        occurred.LogEntry(event)
+        log.Log(event)
 
     member this.Occurred = event.Occurred
 

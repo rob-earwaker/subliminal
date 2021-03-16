@@ -4,9 +4,9 @@ open System
 open System.Reactive.Linq
 open System.Reactive.Subjects
 
-/// An observable log of entries.
-type ILog<'Entry> =
-    abstract member EntryLogged : IObservable<'Entry>
+/// An observable log of data.
+type ILog<'Data> =
+    abstract member Data : IObservable<'Data>
 
 type Buffer<'Value> internal (values: 'Value seq, interval: TimeSpan) =
     member val Values = values
@@ -14,72 +14,72 @@ type Buffer<'Value> internal (values: 'Value seq, interval: TimeSpan) =
 
 [<RequireQualifiedAccess>]
 module Log =
-    let private create entryLogged =
-        { new ILog<'Entry> with
-            member this.EntryLogged = entryLogged }
+    let private create data =
+        { new ILog<'Data> with
+            member this.Data = data }
 
     /// Creates a log from an observable source. This creates a subscription
     /// to the source observable that will start consuming items immediately.
-    let ofObservable (observable: IObservable<'Entry>) =
+    let ofObservable (observable: IObservable<'Data>) =
         // Publish the observable to ensure that all observers receive
-        // the same entries.
-        let entryLogged = observable |> Observable.Publish
-        // Connect to the published observable to start emitting entries
+        // the same data.
+        let data = observable |> Observable.Publish
+        // Connect to the published observable to start emitting data
         // from the underlying source immediately.
-        entryLogged.Connect() |> ignore
-        create entryLogged
+        data.Connect() |> ignore
+        create data
 
-    let asLog (log: ILog<'Entry>) =
-        create log.EntryLogged
+    let asLog (log: ILog<'Data>) =
+        create log.Data
 
-    let asObservable (log: ILog<'Entry>) =
-        log.EntryLogged
+    let asObservable (log: ILog<'Data>) =
+        log.Data
 
-    let entryLogged (log: ILog<'Entry>) =
-        log.EntryLogged
+    let data (log: ILog<'Data>) =
+        log.Data
 
-    let map (mapper: 'Entry -> 'Mapped) (log: ILog<'Entry>) =
-        log.EntryLogged
+    let map (mapper: 'Data -> 'Mapped) (log: ILog<'Data>) =
+        log.Data
         |> Observable.map mapper
         |> create
 
-    let internal bind (binder: 'Entry -> ITrigger<'Context>) (log: ILog<'Entry>) =
-        log.EntryLogged
-        |> fun obs -> obs.SelectMany(fun entry -> binder entry |> Trigger.fired)
+    let internal bind (binder: 'Data -> ITrigger<'Context>) (log: ILog<'Data>) =
+        log.Data
+        |> fun obs -> obs.SelectMany(fun data -> binder data |> Trigger.fired)
         |> create
 
-    let private buffer (bufferer: IObservable<'Entry> -> IObservable<#seq<'Entry>>) (log: ILog<'Entry>) =
-        log.EntryLogged
+    let private buffer (bufferer: IObservable<'Data> -> IObservable<#seq<'Data>>) (log: ILog<'Data>) =
+        log.Data
         |> bufferer
         |> Observable.TimeInterval
-        |> Observable.map (fun buffer -> Buffer<'Entry>(buffer.Value, buffer.Interval))
+        |> Observable.map (fun buffer -> Buffer<'Data>(buffer.Value, buffer.Interval))
         |> create
 
-    let bufferByInterval (interval: TimeSpan) (log: ILog<'Entry>) =
-        log |> buffer (fun entries -> entries.Buffer(interval))
+    let bufferByInterval (interval: TimeSpan) (log: ILog<'Data>) =
+        log |> buffer (fun data -> data.Buffer(interval))
 
-    let bufferByBoundaries (boundaries: IObservable<'Boundary>) (log: ILog<'Entry>) =
-        log |> buffer (fun entries -> entries.Buffer(boundaries))
+    let bufferByBoundaries (boundaries: IObservable<'Boundary>) (log: ILog<'Data>) =
+        log |> buffer (fun data -> data.Buffer(boundaries))
 
-    let subscribe onNext (log: ILog<'Entry>) =
-        log.EntryLogged |> Observable.subscribe onNext
+    let subscribe onNext (log: ILog<'Data>) =
+        log.Data |> Observable.subscribe onNext
 
-    let subscribeForever onNext (log: ILog<'Entry>) =
+    let subscribeForever onNext (log: ILog<'Data>) =
         log |> subscribe onNext |> ignore
 
-/// A log that both captures and emits entries.
-type Log<'Entry>
-    /// A log that both captures and emits entries.
+/// A log that both captures and emits data.
+type Log<'Data>
+    /// A log that both captures and emits data.
     public () =
-    // Synchronize the subject to ensure that multiple entries
-    // are not logged at the same time and therefore that all
-    // subscribers receive entries in the same order.
-    let entryLogged = new Subject<'Entry>() |> Subject.Synchronize
+    // Synchronize the subject to ensure that data is not
+    // logged at the same time and therefore that all
+    // subscribers receive data in the same order.
+    let subject = new Subject<'Data>() |> Subject.Synchronize
 
-    member this.LogEntry(entry) =
-        entryLogged.OnNext(entry)
+    member this.Log(data) =
+        subject.OnNext(data)
 
-    member this.EntryLogged = entryLogged |> Observable.AsObservable
+    member this.Data = subject |> Observable.AsObservable
 
-    interface ILog<'Entry> with
-        member this.EntryLogged = this.EntryLogged
+    interface ILog<'Data> with
+        member this.Data = this.Data

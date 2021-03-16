@@ -73,22 +73,6 @@ type GaugeExtensions =
         gauge |> Gauge.asGauge'
 
     [<Extension>]
-    static member AsLog(gauge) =
-        gauge |> Gauge.asLog
-
-    [<Extension>]
-    static member AsLog(gauge: IGauge<'Context>) =
-        gauge |> Gauge.asLog'
-
-    [<Extension>]
-    static member AsObservable(gauge) =
-        gauge |> Gauge.asObservable
-
-    [<Extension>]
-    static member AsObservable(gauge: IGauge<'Context>) =
-        gauge |> Gauge.asObservable'
-
-    [<Extension>]
     static member WithoutContext(gauge: IGauge<'Context>) =
         gauge |> Gauge.withoutContext
 

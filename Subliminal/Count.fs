@@ -97,15 +97,15 @@ module Count =
         count.Incremented |> Log.subscribeForever onNext
 
 type Count<'Context>() =
-    let incremented = Log<Increment<'Context>>()
-    let count = Count.ofLog' incremented
+    let log = Log<Increment<'Context>>()
+    let count = Count.ofLog' log
 
     member this.Increment(context) =
         this.IncrementBy(1.0, context)
 
     member this.IncrementBy(value, context) =
         if value >= 0.0
-        then incremented.LogEntry(Increment<'Context>(value, context))
+        then log.Log(Increment<'Context>(value, context))
 
     member this.Incremented = count.Incremented
 

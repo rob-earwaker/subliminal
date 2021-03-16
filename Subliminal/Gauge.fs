@@ -10,10 +10,10 @@ type Measure<'Context>(value: float, context: 'Context) =
     member val Context = context
 
 type IGauge =
-    abstract member Sampled : ILog<Measure>
+    inherit ILog<Measure>
 
 type IGauge<'Context> =
-    abstract member Sampled : ILog<Measure<'Context>>
+    inherit ILog<Measure<'Context>>
 
 type Rate(total: float, interval: TimeSpan) =
     let perSecond = lazy (total / interval.TotalSeconds)
@@ -49,51 +49,33 @@ module private Measure =
 
 [<RequireQualifiedAccess>]
 module Gauge =
-    let private create sampled =
+    let private create measures =
         { new IGauge with
-            member this.Sampled = sampled }
+            member this.Data = measures }
 
-    let private create' sampled =
+    let private create' measures =
         { new IGauge<'Context> with
-            member this.Sampled = sampled }
+            member this.Data = measures }
 
-    let ofLog log =
-        create log
+    let ofLog (log: ILog<Measure>) =
+        create log.Data
 
     let ofLog' (log: ILog<Measure<'Context>>) =
-        create' log
+        create' log.Data
 
     let asGauge (gauge: IGauge) =
-        create gauge.Sampled
+        create gauge.Data
 
     let asGauge' (gauge: IGauge<'Context>) =
-        create' gauge.Sampled
-
-    let asLog (gauge: IGauge) =
-        gauge.Sampled
-
-    let asLog' (gauge: IGauge<'Context>) =
-        gauge.Sampled
-
-    let asObservable gauge =
-        gauge |> asLog |> Log.asObservable
-
-    let asObservable' (gauge: IGauge<'Context>) =
-        gauge |> asLog' |> Log.asObservable
-
-    let sampled (gauge: IGauge) =
-        gauge.Sampled
-
-    let sampled' (gauge: IGauge<'Context>) =
-        gauge.Sampled
+        create' gauge.Data
 
     let withoutContext (gauge: IGauge<'Context>) =
-        gauge.Sampled
+        gauge
         |> Log.map Measure.withoutContext
-        |> create
+        |> ofLog
 
     let private dist (bufferer: ILog<Measure> -> ILog<Buffer<Measure>>) (gauge: IGauge) =
-        gauge.Sampled
+        gauge
         |> bufferer
         |> Log.map (fun buffer ->
             let values = buffer.Values |> Seq.map (fun measure -> measure.Value)
@@ -112,16 +94,16 @@ module Gauge =
         gauge |> withoutContext |> distByBoundaries boundaries
 
     let subscribe onNext (gauge: IGauge) =
-        gauge.Sampled |> Log.subscribe onNext
+        gauge |> Log.subscribe onNext
 
     let subscribe' onNext (gauge: IGauge<'Context>) =
-        gauge.Sampled |> Log.subscribe onNext
+        gauge |> Log.subscribe onNext
 
     let subscribeForever onNext (gauge: IGauge) =
-        gauge.Sampled |> Log.subscribeForever onNext
+        gauge |> Log.subscribeForever onNext
 
     let subscribeForever' onNext (gauge: IGauge<'Context>) =
-        gauge.Sampled |> Log.subscribeForever onNext
+        gauge |> Log.subscribeForever onNext
 
 [<RequireQualifiedAccess>]
 module Distribution =
@@ -133,16 +115,16 @@ module Distribution =
         Distribution(values, buffer.Interval)
 
 type Gauge<'Context>() =
-    let sampled = Log<Measure<'Context>>()
-    let gauge = Gauge.ofLog' sampled
+    let log = Log<Measure<'Context>>()
+    let gauge = Gauge.ofLog' log
 
     member this.LogValue(value, context) =
-        sampled.LogEntry(Measure<'Context>(value, context))
+        log.Log(Measure<'Context>(value, context))
 
-    member this.Sampled = gauge.Sampled
+    member this.Data = gauge.Data
 
     interface IGauge<'Context> with
-        member this.Sampled = this.Sampled
+        member this.Data = this.Data
 
 type Gauge() =
     let gauge = Gauge<unit>()
@@ -150,7 +132,7 @@ type Gauge() =
     member this.LogValue(value) =
         gauge.LogValue(value, ())
 
-    member this.Sampled = gauge |> Gauge.withoutContext |> Gauge.sampled
+    member this.Data = gauge |> Gauge.withoutContext |> Log.data
 
     interface IGauge with
-        member this.Sampled = this.Sampled
+        member this.Data = this.Data
