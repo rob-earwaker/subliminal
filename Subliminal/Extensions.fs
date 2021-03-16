@@ -35,6 +35,26 @@ type LogExtensions =
         log |> Log.bufferByBoundaries boundaries
 
     [<Extension>]
+    static member Count(log) =
+        log |> Log.count
+
+    [<Extension>]
+    static member Rate(log, interval) =
+        log |> Log.rateByInterval interval
+
+    [<Extension>]
+    static member Rate(log: ILog<Increment<'Context>>, interval) =
+        log |> Log.rateByInterval' interval
+
+    [<Extension>]
+    static member Rate(log, boundaries: IObservable<'Boundary>) =
+        log |> Log.rateByBoundaries boundaries
+
+    [<Extension>]
+    static member Rate(log: ILog<Increment<'Context>>, boundaries: IObservable<'Boundary>) =
+        log |> Log.rateByBoundaries' boundaries
+
+    [<Extension>]
     static member Subscribe(log: ILog<'Entry>, onNext: Action<'Entry>) =
         log |> Log.subscribe onNext.Invoke
 
@@ -106,22 +126,6 @@ type CountExtensions =
     static member WithoutContext(count: ICount<'Context>) =
         count |> Count.withoutContext
 
-    [<Extension>]
-    static member Rate(count, interval) =
-        count |> Count.rateByInterval interval
-
-    [<Extension>]
-    static member Rate(count: ICount<'Context>, interval) =
-        count |> Count.rateByInterval' interval
-
-    [<Extension>]
-    static member Rate(count, boundaries: IObservable<'Boundary>) =
-        count |> Count.rateByBoundaries boundaries
-
-    [<Extension>]
-    static member Rate(count: ICount<'Context>, boundaries: IObservable<'Boundary>) =
-        count |> Count.rateByBoundaries' boundaries
-
 [<Extension>]
 type EventExtensions =
     [<Extension>]
@@ -135,27 +139,3 @@ type EventExtensions =
     [<Extension>]
     static member WithoutContext(event: IEvent<'Event>) =
         event |> Event.withoutContext
-
-    [<Extension>]
-    static member Count(event) =
-        event |> Event.count
-
-    [<Extension>]
-    static member Count(event: IEvent<'Event>) =
-        event |> Event.count'
-
-    [<Extension>]
-    static member Rate(event, interval) =
-        event |> Event.rateByInterval interval
-
-    [<Extension>]
-    static member Rate(event: IEvent<'Event>, interval) =
-        event |> Event.rateByInterval' interval
-
-    [<Extension>]
-    static member Rate(event, boundaries: IObservable<'Boundary>) =
-        event |> Event.rateByBoundaries boundaries
-
-    [<Extension>]
-    static member Rate(event: IEvent<'Event>, boundaries: IObservable<'Boundary>) =
-        event |> Event.rateByBoundaries' boundaries

@@ -12,6 +12,24 @@ type Buffer<'Value> internal (values: 'Value seq, interval: TimeSpan) =
     member val Values = values
     member val Interval = interval
 
+type Increment(value: float) =
+    member val Value = value
+
+type Increment<'Context>(value: float, context: 'Context) =
+    member val Value = value
+    member val Context = context
+
+type Rate(total: float, interval: TimeSpan) =
+    let perSecond = lazy (total / interval.TotalSeconds)
+    member val Total = total
+    member val Interval = interval
+    member this.PerSecond = perSecond.Value
+
+[<RequireQualifiedAccess>]
+module private Increment =
+    let withoutContext (increment: Increment<'Context>) =
+        Increment(increment.Value)
+
 [<RequireQualifiedAccess>]
 module Log =
     let private create data =
@@ -48,6 +66,9 @@ module Log =
         |> fun obs -> obs.SelectMany(fun data -> binder data |> Trigger.fired)
         |> create
 
+    let count (log: ILog<'Data>) =
+        log |> map (fun _ -> Increment(1.0))
+
     let private buffer (bufferer: IObservable<'Data> -> IObservable<#seq<'Data>>) (log: ILog<'Data>) =
         log.Data
         |> bufferer
@@ -60,6 +81,29 @@ module Log =
 
     let bufferByBoundaries (boundaries: IObservable<'Boundary>) (log: ILog<'Data>) =
         log |> buffer (fun data -> data.Buffer(boundaries))
+
+    let private rate (bufferer: ILog<Increment> -> ILog<Buffer<Increment>>) (log: ILog<Increment>) =
+        log
+        |> bufferer
+        |> map (fun buffer ->
+            let total = buffer.Values |> Seq.sumBy (fun increment -> increment.Value)
+            Rate(total, buffer.Interval))
+
+    let rateByInterval interval log =
+        log |> rate (bufferByInterval interval)
+
+    let rateByInterval' interval (log: ILog<Increment<'Context>>) =
+        log
+        |> map Increment.withoutContext
+        |> rateByInterval interval
+
+    let rateByBoundaries (boundaries: IObservable<'Boundary>) log =
+        log |> rate (bufferByBoundaries boundaries)
+
+    let rateByBoundaries' (boundaries: IObservable<'Boundary>) (log: ILog<Increment<'Context>>) =
+        log
+        |> map Increment.withoutContext
+        |> rateByBoundaries boundaries
 
     let subscribe onNext (log: ILog<'Data>) =
         log.Data |> Observable.subscribe onNext

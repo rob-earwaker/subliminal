@@ -15,12 +15,6 @@ type IGauge =
 type IGauge<'Context> =
     inherit ILog<Measure<'Context>>
 
-type Rate(total: float, interval: TimeSpan) =
-    let perSecond = lazy (total / interval.TotalSeconds)
-    member val Total = total
-    member val Interval = interval
-    member this.PerSecond = perSecond.Value
-
 type Distribution(values: float seq, interval: TimeSpan) =
     let values = Array.ofSeq values
     let valuesSorted = lazy Array.sort values

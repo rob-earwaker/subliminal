@@ -36,28 +36,6 @@ module Event =
         |> Log.map ignore
         |> ofLog
 
-    let count (event: IEvent) =
-        event
-        |> Log.map (fun _ -> Increment(1.0))
-        |> Count.ofLog
-    
-    let count' (event: IEvent<'Event>) =
-        event
-        |> Log.map (fun event -> Increment<'Event>(1.0, event))
-        |> Count.ofLog'
-
-    let rateByInterval interval event =
-        event |> count |> Count.rateByInterval interval
-
-    let rateByInterval' interval (event: IEvent<'Context>) =
-        event |> count' |> Count.rateByInterval' interval
-
-    let rateByBoundaries (boundaries: IObservable<'Boundary>) event =
-        event |> count |> Count.rateByBoundaries boundaries
-
-    let rateByBoundaries' (boundaries: IObservable<'Boundary>) (event: IEvent<'Context>) =
-        event |> count' |> Count.rateByBoundaries' boundaries
-
 type Event<'Event>() =
     let log = Log<'Event>()
     let event = Event.ofLog' log

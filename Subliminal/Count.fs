@@ -2,23 +2,11 @@
 
 open System
 
-type Increment(value: float) =
-    member val Value = value
-
-type Increment<'Context>(value: float, context: 'Context) =
-    member val Value = value
-    member val Context = context
-
 type ICount =
     inherit ILog<Increment>
 
 type ICount<'Context> =
     inherit ILog<Increment<'Context>>
-
-[<RequireQualifiedAccess>]
-module private Increment =
-    let withoutContext (increment: Increment<'Context>) =
-        Increment(increment.Value)
 
 [<RequireQualifiedAccess>]
 module Count =
@@ -46,25 +34,6 @@ module Count =
         count
         |> Log.map Increment.withoutContext
         |> ofLog
-
-    let private rate (bufferer: ILog<Increment> -> ILog<Buffer<Increment>>) (count: ICount) =
-        count
-        |> bufferer
-        |> Log.map (fun buffer ->
-            let total = buffer.Values |> Seq.sumBy (fun increment -> increment.Value)
-            Rate(total, buffer.Interval))
-
-    let rateByInterval interval count =
-        count |> rate (Log.bufferByInterval interval)
-
-    let rateByInterval' interval (count: ICount<'Context>) =
-        count |> withoutContext |> rateByInterval interval
-
-    let rateByBoundaries (boundaries: IObservable<'Boundary>) count =
-        count |> rate (Log.bufferByBoundaries boundaries)
-
-    let rateByBoundaries' (boundaries: IObservable<'Boundary>) (count: ICount<'Context>) =
-        count |> withoutContext |> rateByBoundaries boundaries
 
 type Count<'Context>() =
     let log = Log<Increment<'Context>>()
