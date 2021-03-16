@@ -111,22 +111,6 @@ type CountExtensions =
         count |> Count.asCount'
 
     [<Extension>]
-    static member AsLog(count) =
-        count |> Count.asLog
-
-    [<Extension>]
-    static member AsLog(count: ICount<'Context>) =
-        count |> Count.asLog'
-
-    [<Extension>]
-    static member AsObservable(count) =
-        count |> Count.asObservable
-
-    [<Extension>]
-    static member AsObservable(count: ICount<'Context>) =
-        count |> Count.asObservable'
-
-    [<Extension>]
     static member WithoutContext(count: ICount<'Context>) =
         count |> Count.withoutContext
 

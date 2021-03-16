@@ -10,10 +10,10 @@ type Increment<'Context>(value: float, context: 'Context) =
     member val Context = context
 
 type ICount =
-    abstract member Incremented : ILog<Increment>
+    inherit ILog<Increment>
 
 type ICount<'Context> =
-    abstract member Incremented : ILog<Increment<'Context>>
+    inherit ILog<Increment<'Context>>
 
 [<RequireQualifiedAccess>]
 module private Increment =
@@ -22,51 +22,33 @@ module private Increment =
 
 [<RequireQualifiedAccess>]
 module Count =
-    let private create incremented =
+    let private create increments =
         { new ICount with
-            member this.Incremented = incremented }
+            member this.Data = increments }
 
-    let private create' incremented =
+    let private create' increments =
         { new ICount<'Context> with
-            member this.Incremented = incremented }
+            member this.Data = increments }
 
-    let ofLog log =
-        create log
+    let ofLog (log: ILog<Increment>) =
+        create log.Data
 
     let ofLog' (log: ILog<Increment<'Context>>) =
-        create' log
+        create' log.Data
 
     let asCount (count: ICount) =
-        create count.Incremented
+        create count.Data
 
     let asCount' (count: ICount<'Context>) =
-        create' count.Incremented
-
-    let asLog (count: ICount) =
-        count.Incremented
-
-    let asLog' (count: ICount<'Context>) =
-        count.Incremented
-
-    let asObservable count =
-        count |> asLog |> Log.asObservable
-
-    let asObservable' (count: ICount<'Context>) =
-        count |> asLog' |> Log.asObservable
-
-    let incremented (count: ICount) =
-        count.Incremented
-
-    let incremented' (count: ICount<'Context>) =
-        count.Incremented
+        create' count.Data
 
     let withoutContext (count: ICount<'Context>) =
-        count.Incremented
+        count
         |> Log.map Increment.withoutContext
-        |> create
+        |> ofLog
 
     let private rate (bufferer: ILog<Increment> -> ILog<Buffer<Increment>>) (count: ICount) =
-        count.Incremented
+        count
         |> bufferer
         |> Log.map (fun buffer ->
             let total = buffer.Values |> Seq.sumBy (fun increment -> increment.Value)
@@ -85,16 +67,16 @@ module Count =
         count |> withoutContext |> rateByBoundaries boundaries
 
     let subscribe onNext (count: ICount) =
-        count.Incremented |> Log.subscribe onNext
+        count |> Log.subscribe onNext
 
     let subscribe' onNext (count: ICount<'Context>) =
-        count.Incremented |> Log.subscribe onNext
+        count |> Log.subscribe onNext
 
     let subscribeForever onNext (count: ICount) =
-        count.Incremented |> Log.subscribeForever onNext
+        count |> Log.subscribeForever onNext
 
     let subscribeForever' onNext (count: ICount<'Context>) =
-        count.Incremented |> Log.subscribeForever onNext
+        count |> Log.subscribeForever onNext
 
 type Count<'Context>() =
     let log = Log<Increment<'Context>>()
@@ -107,10 +89,10 @@ type Count<'Context>() =
         if value >= 0.0
         then log.Log(Increment<'Context>(value, context))
 
-    member this.Incremented = count.Incremented
+    member this.Data = count.Data
 
     interface ICount<'Context> with
-        member this.Incremented = this.Incremented
+        member this.Data = this.Data
 
 type Count() =
     let count = Count<unit>()
@@ -121,7 +103,7 @@ type Count() =
     member this.IncrementBy(value) =
         count.IncrementBy(value, ())
 
-    member this.Incremented = count |> Count.withoutContext |> Count.incremented
+    member this.Data = count |> Count.withoutContext |> Log.data
 
     interface ICount with
-        member this.Incremented = this.Incremented
+        member this.Data = this.Data
