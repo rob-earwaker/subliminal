@@ -66,18 +66,6 @@ module Count =
     let rateByBoundaries' (boundaries: IObservable<'Boundary>) (count: ICount<'Context>) =
         count |> withoutContext |> rateByBoundaries boundaries
 
-    let subscribe onNext (count: ICount) =
-        count |> Log.subscribe onNext
-
-    let subscribe' onNext (count: ICount<'Context>) =
-        count |> Log.subscribe onNext
-
-    let subscribeForever onNext (count: ICount) =
-        count |> Log.subscribeForever onNext
-
-    let subscribeForever' onNext (count: ICount<'Context>) =
-        count |> Log.subscribeForever onNext
-
 type Count<'Context>() =
     let log = Log<Increment<'Context>>()
     let count = Count.ofLog' log

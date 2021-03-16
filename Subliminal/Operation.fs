@@ -241,9 +241,9 @@ type Operation<'Context>() =
         timer
 
     member this.Started = started |> Event.asEvent'
-    member this.Stopped = started |> Event.bind OperationStarted.stopped'
-    member this.Completed = started |> Event.bind OperationStarted.completed'
-    member this.Canceled = started |> Event.bind OperationStarted.canceled'
+    member this.Stopped = started |> Log.bind OperationStarted.stopped' |> Event.ofLog'
+    member this.Completed = started |> Log.bind OperationStarted.completed' |> Event.ofLog'
+    member this.Canceled = started |> Log.bind OperationStarted.canceled' |> Event.ofLog'
 
     interface IOperation<'Context> with
         member this.Started = this.Started
@@ -307,10 +307,10 @@ type Operation() =
     member this.StartNew() =
         operation'.StartNew(())
 
-    member this.Started = operation'.Started |> Event.map' OperationStarted.withoutContext |> Event.ofLog'
-    member this.Stopped = operation'.Stopped |> Event.map' OperationStopped.withoutContext |> Event.ofLog'
-    member this.Completed = operation'.Completed |> Event.map' OperationCompleted.withoutContext |> Event.ofLog'
-    member this.Canceled = operation'.Canceled |> Event.map' OperationCanceled.withoutContext |> Event.ofLog'
+    member this.Started = operation'.Started |> Log.map OperationStarted.withoutContext |> Event.ofLog'
+    member this.Stopped = operation'.Stopped |> Log.map OperationStopped.withoutContext |> Event.ofLog'
+    member this.Completed = operation'.Completed |> Log.map OperationCompleted.withoutContext |> Event.ofLog'
+    member this.Canceled = operation'.Canceled |> Log.map OperationCanceled.withoutContext |> Event.ofLog'
 
     interface IOperation with
         member this.Started = this.Started

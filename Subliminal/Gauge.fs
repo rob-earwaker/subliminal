@@ -93,18 +93,6 @@ module Gauge =
     let distByBoundaries' (boundaries: IObservable<'Boundary>) (gauge: IGauge<'Context>) =
         gauge |> withoutContext |> distByBoundaries boundaries
 
-    let subscribe onNext (gauge: IGauge) =
-        gauge |> Log.subscribe onNext
-
-    let subscribe' onNext (gauge: IGauge<'Context>) =
-        gauge |> Log.subscribe onNext
-
-    let subscribeForever onNext (gauge: IGauge) =
-        gauge |> Log.subscribeForever onNext
-
-    let subscribeForever' onNext (gauge: IGauge<'Context>) =
-        gauge |> Log.subscribeForever onNext
-
 [<RequireQualifiedAccess>]
 module Distribution =
     let ofBuffer (buffer: Buffer<float>) =

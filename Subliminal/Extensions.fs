@@ -92,14 +92,6 @@ type GaugeExtensions =
     static member Distribution(gauge: IGauge<'Context>, boundaries: IObservable<'Boundary>) =
         gauge |> Gauge.distByBoundaries' boundaries
 
-    [<Extension>]
-    static member Subscribe(gauge, onNext: Action<Measure>) =
-        gauge |> Gauge.subscribe onNext.Invoke
-
-    [<Extension>]
-    static member Subscribe(gauge: IGauge<'Context>, onNext: Action<Measure<'Context>>) =
-        gauge |> Gauge.subscribe' onNext.Invoke
-
 [<Extension>]
 type CountExtensions =
     [<Extension>]
@@ -130,14 +122,6 @@ type CountExtensions =
     static member Rate(count: ICount<'Context>, boundaries: IObservable<'Boundary>) =
         count |> Count.rateByBoundaries' boundaries
 
-    [<Extension>]
-    static member Subscribe(count, onNext: Action<Increment>) =
-        count |> Count.subscribe onNext.Invoke
-
-    [<Extension>]
-    static member Subscribe(count: ICount<'Context>, onNext: Action<Increment<'Context>>) =
-        count |> Count.subscribe' onNext.Invoke
-
 [<Extension>]
 type EventExtensions =
     [<Extension>]
@@ -149,32 +133,8 @@ type EventExtensions =
         event |> Event.asEvent'
 
     [<Extension>]
-    static member AsLog(event) =
-        event |> Event.asLog
-
-    [<Extension>]
-    static member AsLog(event: IEvent<'Event>) =
-        event |> Event.asLog'
-
-    [<Extension>]
-    static member AsObservable(event) =
-        event |> Event.asObservable
-
-    [<Extension>]
-    static member AsObservable(event: IEvent<'Event>) =
-        event |> Event.asObservable'
-
-    [<Extension>]
     static member WithoutContext(event: IEvent<'Event>) =
         event |> Event.withoutContext
-
-    [<Extension>]
-    static member Select(event, selector: Func<'Mapped>) =
-        event |> Event.map selector.Invoke
-
-    [<Extension>]
-    static member Select(event: IEvent<'Event>, selector: Func<'Event, 'Mapped>) =
-        event |> Event.map' selector.Invoke
 
     [<Extension>]
     static member Count(event) =
@@ -183,14 +143,6 @@ type EventExtensions =
     [<Extension>]
     static member Count(event: IEvent<'Event>) =
         event |> Event.count'
-
-    [<Extension>]
-    static member Buffer(event: IEvent<'Event>, interval) =
-        event |> Event.bufferByInterval' interval
-
-    [<Extension>]
-    static member Buffer(event: IEvent<'Event>, boundaries: IObservable<'Boundary>) =
-        event |> Event.bufferByBoundaries' boundaries
 
     [<Extension>]
     static member Rate(event, interval) =
@@ -207,11 +159,3 @@ type EventExtensions =
     [<Extension>]
     static member Rate(event: IEvent<'Event>, boundaries: IObservable<'Boundary>) =
         event |> Event.rateByBoundaries' boundaries
-
-    [<Extension>]
-    static member Subscribe(event, onNext: Action) =
-        event |> Event.subscribe onNext.Invoke
-
-    [<Extension>]
-    static member Subscribe(event: IEvent<'Event>, onNext: Action<'Event>) =
-        event |> Event.subscribe' onNext.Invoke
