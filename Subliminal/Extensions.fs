@@ -4,6 +4,12 @@ open Subliminal
 open System
 open System.Runtime.CompilerServices
 
+type Group<'Key, 'Data> internal (key: 'Key, data: 'Data seq, interval: TimeSpan) =
+    let data = Array.ofSeq data
+    member val Key = key
+    member val Data = data
+    member val Interval = interval
+
 [<Extension>]
 type ObservableExtensions =
     /// Creates a log from an observable source. This creates a subscription
@@ -24,7 +30,10 @@ type BufferExtensions =
 
     [<Extension>]
     static member GroupBy(buffer, keySelector: Func<'Data, 'Key>) =
-        buffer |> Buffer.groupBy keySelector.Invoke
+        buffer
+        |> Buffer.groupBy keySelector.Invoke
+        |> Seq.map (fun (key, buffer) ->
+            Group<'Key, 'Data>(key, buffer.Data, buffer.Interval))
 
     [<Extension>]
     static member Rate(buffer) =

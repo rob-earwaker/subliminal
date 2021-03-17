@@ -22,15 +22,6 @@ type Buffer<'Data> internal (data: 'Data seq, interval: TimeSpan) =
     member val Count = data.Length
     member this.DataRate = dataRate.Value
 
-type Group<'Key, 'Data> internal (key: 'Key, data: 'Data seq, interval: TimeSpan) =
-    let data = Array.ofSeq data
-    let dataRate = lazy Rate(float data.Length, interval)
-    member val Key = key
-    member val Data = data
-    member val Interval = interval
-    member val Count = data.Length
-    member this.DataRate = dataRate.Value
-
 type Distribution(values: float seq, interval: TimeSpan) =
     let values = Array.ofSeq values
     let valuesSorted = lazy Array.sort values
@@ -71,7 +62,8 @@ module Buffer =
         buffer.Data
         |> Seq.groupBy selectKey
         |> Seq.map (fun (key, data) ->
-            Group<'Key, 'Data>(key, data, buffer.Interval))
+            let buffer = Buffer<'Data>(data, buffer.Interval)
+            key, buffer)
 
     let rate (buffer: Buffer<double>) =
         let total = Array.sum buffer.Data
@@ -90,11 +82,8 @@ module Buffer =
 
 [<RequireQualifiedAccess>]
 module Group =
-    let key (group: Group<'Key, 'Data>) =
-        group.Key
-
-    let dataRate (group: Group<'Key, 'Data>) =
-        group.DataRate
+    let key (key: 'Key, data: 'Data) =
+        key
 
 [<RequireQualifiedAccess>]
 module Log =
