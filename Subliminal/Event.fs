@@ -1,7 +1,5 @@
 ﻿namespace Subliminal
 
-open System
-
 type IEvent =
     // TODO: should maybe use Unit here instead to allow creation form a log in C#
     inherit ILog<unit>

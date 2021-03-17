@@ -1,7 +1,5 @@
 ﻿namespace Subliminal
 
-open System
-
 type ICount =
     inherit ILog<Increment>
 
