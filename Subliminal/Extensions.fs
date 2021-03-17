@@ -40,10 +40,6 @@ type BufferExtensions =
         buffer |> Buffer.rate
 
     [<Extension>]
-    static member Rate(buffer: Buffer<'Data>) =
-        buffer |> Buffer.rateOfData
-
-    [<Extension>]
     static member Rate(buffer: Buffer<'Data>, incrementSelector: Func<'Data, float>) =
         buffer |> Buffer.rateOf incrementSelector.Invoke
 
@@ -95,10 +91,6 @@ type LogExtensions =
     [<Extension>]
     static member Rate(log) =
         log |> Log.rate
-
-    [<Extension>]
-    static member Rate(log: ILog<Buffer<'Data>>) =
-        log |> Log.rateOfData
 
     [<Extension>]
     static member Rate(log: ILog<Buffer<'Data>>, incrementSelector: Func<'Data, float>) =

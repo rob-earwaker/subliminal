@@ -8,17 +8,19 @@ open System.Reactive.Subjects
 type ILog<'Data> =
     abstract member Data : IObservable<'Data>
 
-type Buffer<'Data> internal (data: 'Data seq, interval: TimeSpan) =
-    let data = Array.ofSeq data
-    member val Data = data
-    member val Interval = interval
-    member val Count = data.Length
-
 type Rate(total: float, interval: TimeSpan) =
     let perSecond = lazy (total / interval.TotalSeconds)
     member val Total = total
     member val Interval = interval
     member this.PerSecond = perSecond.Value
+
+type Buffer<'Data> internal (data: 'Data seq, interval: TimeSpan) =
+    let data = Array.ofSeq data
+    let dataRate = lazy Rate(float data.Length, interval)
+    member val Data = data
+    member val Interval = interval
+    member val Count = data.Length
+    member this.DataRate = dataRate.Value
 
 type Distribution(values: float seq, interval: TimeSpan) =
     let values = Array.ofSeq values
@@ -43,6 +45,9 @@ type Distribution(values: float seq, interval: TimeSpan) =
 
 [<RequireQualifiedAccess>]
 module Buffer =
+    let dataRate (buffer: Buffer<'Data>) =
+        buffer.DataRate
+
     let sort (buffer: Buffer<'Data>) =
         let data = buffer.Data |> Seq.sort
         Buffer<'Data>(data, buffer.Interval)
@@ -60,10 +65,6 @@ module Buffer =
 
     let rate (buffer: Buffer<double>) =
         let total = Array.sum buffer.Data
-        Rate(total, buffer.Interval)
-
-    let rateOfData (buffer: Buffer<'Data>) =
-        let total = float buffer.Count
         Rate(total, buffer.Interval)
 
     let rateOf (selectIncrement: 'Data -> float) (buffer: Buffer<'Data>) =
@@ -139,9 +140,6 @@ module Log =
 
     let rate (log: ILog<Buffer<float>>) =
         log |> map Buffer.rate
-
-    let rateOfData (log: ILog<Buffer<'Data>>) =
-        log |> map Buffer.rateOfData
 
     let rateOf selectIncrement (log: ILog<Buffer<'Data>>) =
         log |> map (Buffer.rateOf selectIncrement)
