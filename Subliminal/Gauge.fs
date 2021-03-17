@@ -1,7 +1,5 @@
 ﻿namespace Subliminal
 
-open System
-
 type Measure(value: float) =
     member val Value = value
 
@@ -15,29 +13,14 @@ type IGauge =
 type IGauge<'Context> =
     inherit ILog<Measure<'Context>>
 
-type Distribution(values: float seq, interval: TimeSpan) =
-    let values = Array.ofSeq values
-    let valuesSorted = lazy Array.sort values
-    let min = lazy Array.head valuesSorted.Value
-    let max = lazy Array.last valuesSorted.Value
-    let mean = lazy Array.average values
-    let total = lazy Array.sum values
-    let rate = lazy Rate(total.Value, interval)
-    // TODO: RateOfChange
-    // TODO: Median, Percentile(), Percentile99, Percentile50, Percentile90, Percentile05
-    // TODO: Should Rate and/or RateOfChange be a Distribution?
-
-    member val Values = values
-    member val Interval = interval
-
-    member this.Min = min.Value
-    member this.Max = max.Value
-    member this.Mean = mean.Value
-    member this.Total = total.Value
-    member this.Rate = rate.Value
-
 [<RequireQualifiedAccess>]
-module private Measure =
+module Measure =
+    let value (measure: Measure) =
+        measure.Value
+
+    let value' (measure: Measure<'Context>) =
+        measure.Value
+
     let withoutContext (measure: Measure<'Context>) =
         Measure(measure.Value)
 
@@ -67,34 +50,6 @@ module Gauge =
         gauge
         |> Log.map Measure.withoutContext
         |> ofLog
-
-    let private dist (bufferer: ILog<Measure> -> ILog<Buffer<Measure>>) (gauge: IGauge) =
-        gauge
-        |> bufferer
-        |> Log.map (fun buffer ->
-            let values = buffer.Data |> Seq.map (fun measure -> measure.Value)
-            Distribution(values, buffer.Interval))
-
-    let distByInterval interval gauge =
-        gauge |> dist (Log.bufferByInterval interval)
-
-    let distByInterval' interval (gauge: IGauge<'Context>) =
-        gauge |> withoutContext |> distByInterval interval
-
-    let distByBoundaries (boundaries: IObservable<'Boundary>) gauge =
-        gauge |> dist (Log.bufferByBoundaries boundaries)
-
-    let distByBoundaries' (boundaries: IObservable<'Boundary>) (gauge: IGauge<'Context>) =
-        gauge |> withoutContext |> distByBoundaries boundaries
-
-[<RequireQualifiedAccess>]
-module Distribution =
-    let ofBuffer (buffer: Buffer<float>) =
-        Distribution(buffer.Data, buffer.Interval)
-
-    let ofBuffer' (mapper: 'Data -> float) (buffer: Buffer<'Data>) =
-        let values = buffer.Data |> Seq.map mapper
-        Distribution(values, buffer.Interval)
 
 type Gauge<'Context>() =
     let log = Log<Measure<'Context>>()

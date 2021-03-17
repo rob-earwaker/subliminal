@@ -1,10 +1,28 @@
 ﻿namespace Subliminal
 
+type Increment(value: float) =
+    member val Value = value
+
+type Increment<'Context>(value: float, context: 'Context) =
+    member val Value = value
+    member val Context = context
+
 type ICount =
     inherit ILog<Increment>
 
 type ICount<'Context> =
     inherit ILog<Increment<'Context>>
+
+[<RequireQualifiedAccess>]
+module Increment =
+    let value (increment: Increment) =
+        increment.Value
+
+    let value' (increment: Increment<'Context>) =
+        increment.Value
+
+    let withoutContext (increment: Increment<'Context>) =
+        Increment(increment.Value)
 
 [<RequireQualifiedAccess>]
 module Count =

@@ -14,23 +14,32 @@ type Buffer<'Data> internal (data: 'Data seq, interval: TimeSpan) =
     member val Interval = interval
     member val Count = data.Length
 
-type Increment(value: float) =
-    member val Value = value
-
-type Increment<'Context>(value: float, context: 'Context) =
-    member val Value = value
-    member val Context = context
-
 type Rate(total: float, interval: TimeSpan) =
     let perSecond = lazy (total / interval.TotalSeconds)
     member val Total = total
     member val Interval = interval
     member this.PerSecond = perSecond.Value
 
-[<RequireQualifiedAccess>]
-module private Increment =
-    let withoutContext (increment: Increment<'Context>) =
-        Increment(increment.Value)
+type Distribution(values: float seq, interval: TimeSpan) =
+    let values = Array.ofSeq values
+    let valuesSorted = lazy Array.sort values
+    let min = lazy Array.head valuesSorted.Value
+    let max = lazy Array.last valuesSorted.Value
+    let mean = lazy Array.average values
+    let total = lazy Array.sum values
+    let rate = lazy Rate(total.Value, interval)
+    // TODO: RateOfChange
+    // TODO: Median, Percentile(), Percentile99, Percentile50, Percentile90, Percentile05
+    // TODO: Should Rate and/or RateOfChange be a Distribution?
+
+    member val Values = values
+    member val Interval = interval
+
+    member this.Min = min.Value
+    member this.Max = max.Value
+    member this.Mean = mean.Value
+    member this.Total = total.Value
+    member this.Rate = rate.Value
 
 [<RequireQualifiedAccess>]
 module Buffer =
@@ -38,13 +47,20 @@ module Buffer =
         let total = Array.sum buffer.Data
         Rate(total, buffer.Interval)
 
-    let rateByCount (buffer: Buffer<'Data>) =
+    let rateOfData (buffer: Buffer<'Data>) =
         let total = float buffer.Count
         Rate(total, buffer.Interval)
 
-    let rateBy (mapper: 'Data -> float) (buffer: Buffer<'Data>) =
+    let rateOf (mapper: 'Data -> float) (buffer: Buffer<'Data>) =
         let total = buffer.Data |> Array.sumBy mapper
         Rate(total, buffer.Interval)
+
+    let dist (buffer: Buffer<double>) =
+        Distribution(buffer.Data, buffer.Interval)
+
+    let distOf (mapper: 'Data -> float) (buffer: Buffer<'Data>) =
+        let values = buffer.Data |> Seq.map mapper
+        Distribution(values, buffer.Interval)
 
 [<RequireQualifiedAccess>]
 module Log =
@@ -98,11 +114,17 @@ module Log =
     let rate (log: ILog<Buffer<float>>) =
         log |> map Buffer.rate
 
-    let rateByCount (log: ILog<Buffer<'Data>>) =
-        log |> map Buffer.rateByCount
+    let rateOfData (log: ILog<Buffer<'Data>>) =
+        log |> map Buffer.rateOfData
 
-    let rateBy mapper (log: ILog<Buffer<'Data>>) =
-        log |> map (Buffer.rateBy mapper)
+    let rateOf mapper (log: ILog<Buffer<'Data>>) =
+        log |> map (Buffer.rateOf mapper)
+
+    let dist (log: ILog<Buffer<float>>) =
+        log |> map Buffer.dist
+
+    let distOf mapper (log: ILog<Buffer<'Data>>) =
+        log |> map (Buffer.distOf mapper)
 
     let subscribe onNext (log: ILog<'Data>) =
         log.Data |> Observable.subscribe onNext

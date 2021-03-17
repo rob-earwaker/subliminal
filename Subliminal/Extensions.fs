@@ -20,11 +20,19 @@ type BufferExtensions =
 
     [<Extension>]
     static member Rate(buffer: Buffer<'Data>) =
-        buffer |> Buffer.rateByCount
+        buffer |> Buffer.rateOfData
 
     [<Extension>]
     static member Rate(buffer: Buffer<'Data>, selector: Func<'Data, float>) =
-        buffer |> Buffer.rateBy selector.Invoke
+        buffer |> Buffer.rateOf selector.Invoke
+
+    [<Extension>]
+    static member Distribution(buffer) =
+        buffer |> Buffer.dist
+
+    [<Extension>]
+    static member Distribution(buffer: Buffer<'Data>, selector: Func<'Data, float>) =
+        buffer |> Buffer.distOf selector.Invoke
 
 [<Extension>]
 type LogExtensions =
@@ -54,11 +62,19 @@ type LogExtensions =
 
     [<Extension>]
     static member Rate(log: ILog<Buffer<'Data>>) =
-        log |> Log.rateByCount
+        log |> Log.rateOfData
 
     [<Extension>]
     static member Rate(log: ILog<Buffer<'Data>>, selector: Func<'Data, float>) =
-        log |> Log.rateBy selector.Invoke
+        log |> Log.rateOf selector.Invoke
+
+    [<Extension>]
+    static member Distribution(log) =
+        log |> Log.dist
+
+    [<Extension>]
+    static member Distribution(log: ILog<Buffer<'Data>>, selector: Func<'Data, float>) =
+        log |> Log.distOf selector.Invoke
 
     [<Extension>]
     static member Subscribe(log: ILog<'Entry>, onNext: Action<'Entry>) =
@@ -101,22 +117,6 @@ type GaugeExtensions =
     [<Extension>]
     static member WithoutContext(gauge: IGauge<'Context>) =
         gauge |> Gauge.withoutContext
-
-    [<Extension>]
-    static member Distribution(gauge, interval) =
-        gauge |> Gauge.distByInterval interval
-
-    [<Extension>]
-    static member Distribution(gauge: IGauge<'Context>, interval) =
-        gauge |> Gauge.distByInterval' interval
-
-    [<Extension>]
-    static member Distribution(gauge, boundaries: IObservable<'Boundary>) =
-        gauge |> Gauge.distByBoundaries boundaries
-
-    [<Extension>]
-    static member Distribution(gauge: IGauge<'Context>, boundaries: IObservable<'Boundary>) =
-        gauge |> Gauge.distByBoundaries' boundaries
 
 [<Extension>]
 type CountExtensions =
