@@ -82,29 +82,6 @@ type LogExtensions =
         log |> Log.bufferByBoundaries boundaries
 
     [<Extension>]
-    static member GroupBy(log, keySelector: Func<'Data, 'Key>) =
-        log
-        |> Log.groupBy keySelector.Invoke
-        |> Log.map (fun (key, buffer) ->
-            Group<'Key, 'Data>(key, buffer.Data, buffer.Interval))
-
-    [<Extension>]
-    static member Rate(log) =
-        log |> Log.rate
-
-    [<Extension>]
-    static member Rate(log: ILog<Buffer<'Data>>, incrementSelector: Func<'Data, float>) =
-        log |> Log.rateOf incrementSelector.Invoke
-
-    [<Extension>]
-    static member Distribution(log) =
-        log |> Log.dist
-
-    [<Extension>]
-    static member Distribution(log: ILog<Buffer<'Data>>, sampleSelector: Func<'Data, float>) =
-        log |> Log.distOf sampleSelector.Invoke
-
-    [<Extension>]
     static member Subscribe(log: ILog<'Data>, onNext: Action<'Data>) =
         log |> Log.subscribe onNext.Invoke
 

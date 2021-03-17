@@ -135,21 +135,6 @@ module Log =
     let bufferByBoundaries (boundaries: IObservable<'Boundary>) (log: ILog<'Data>) =
         log |> buffer (fun data -> data.Buffer(boundaries))
 
-    let groupBy (selectKey: 'Data -> 'Key) (log: ILog<Buffer<'Data>>) =
-        log |> collect (Buffer.groupBy selectKey)
-
-    let rate (log: ILog<Buffer<float>>) =
-        log |> map Buffer.rate
-
-    let rateOf selectIncrement (log: ILog<Buffer<'Data>>) =
-        log |> map (Buffer.rateOf selectIncrement)
-
-    let dist (log: ILog<Buffer<float>>) =
-        log |> map Buffer.dist
-
-    let distOf selectSample (log: ILog<Buffer<'Data>>) =
-        log |> map (Buffer.distOf selectSample)
-
     let subscribe onNext (log: ILog<'Data>) =
         log.Data |> Observable.subscribe onNext
 
