@@ -8,9 +8,11 @@ open System.Reactive.Subjects
 type ILog<'Data> =
     abstract member Data : IObservable<'Data>
 
-type Buffer<'Value> internal (values: 'Value seq, interval: TimeSpan) =
-    member val Values = values
+type Buffer<'Data> internal (data: 'Data seq, interval: TimeSpan) =
+    let data = Array.ofSeq data
+    member val Data = data
     member val Interval = interval
+    member val Count = data.Length
 
 type Increment(value: float) =
     member val Value = value
@@ -29,6 +31,20 @@ type Rate(total: float, interval: TimeSpan) =
 module private Increment =
     let withoutContext (increment: Increment<'Context>) =
         Increment(increment.Value)
+
+[<RequireQualifiedAccess>]
+module Buffer =
+    let rate (buffer: Buffer<double>) =
+        let total = Array.sum buffer.Data
+        Rate(total, buffer.Interval)
+
+    let rateByCount (buffer: Buffer<'Data>) =
+        let total = float buffer.Count
+        Rate(total, buffer.Interval)
+
+    let rateBy (mapper: 'Data -> float) (buffer: Buffer<'Data>) =
+        let total = buffer.Data |> Array.sumBy mapper
+        Rate(total, buffer.Interval)
 
 [<RequireQualifiedAccess>]
 module Log =
@@ -66,9 +82,6 @@ module Log =
         |> fun obs -> obs.SelectMany(fun data -> binder data |> Trigger.fired)
         |> create
 
-    let count (log: ILog<'Data>) =
-        log |> map (fun _ -> Increment(1.0))
-
     let private buffer (bufferer: IObservable<'Data> -> IObservable<#seq<'Data>>) (log: ILog<'Data>) =
         log.Data
         |> bufferer
@@ -82,28 +95,14 @@ module Log =
     let bufferByBoundaries (boundaries: IObservable<'Boundary>) (log: ILog<'Data>) =
         log |> buffer (fun data -> data.Buffer(boundaries))
 
-    let private rate (bufferer: ILog<Increment> -> ILog<Buffer<Increment>>) (log: ILog<Increment>) =
-        log
-        |> bufferer
-        |> map (fun buffer ->
-            let total = buffer.Values |> Seq.sumBy (fun increment -> increment.Value)
-            Rate(total, buffer.Interval))
+    let rate (log: ILog<Buffer<float>>) =
+        log |> map Buffer.rate
 
-    let rateByInterval interval log =
-        log |> rate (bufferByInterval interval)
+    let rateByCount (log: ILog<Buffer<'Data>>) =
+        log |> map Buffer.rateByCount
 
-    let rateByInterval' interval (log: ILog<Increment<'Context>>) =
-        log
-        |> map Increment.withoutContext
-        |> rateByInterval interval
-
-    let rateByBoundaries (boundaries: IObservable<'Boundary>) log =
-        log |> rate (bufferByBoundaries boundaries)
-
-    let rateByBoundaries' (boundaries: IObservable<'Boundary>) (log: ILog<Increment<'Context>>) =
-        log
-        |> map Increment.withoutContext
-        |> rateByBoundaries boundaries
+    let rateBy mapper (log: ILog<Buffer<'Data>>) =
+        log |> map (Buffer.rateBy mapper)
 
     let subscribe onNext (log: ILog<'Data>) =
         log.Data |> Observable.subscribe onNext

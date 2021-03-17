@@ -13,6 +13,20 @@ type ObservableExtensions =
         Log.ofObservable observable
 
 [<Extension>]
+type BufferExtensions =
+    [<Extension>]
+    static member Rate(buffer) =
+        buffer |> Buffer.rate
+
+    [<Extension>]
+    static member Rate(buffer: Buffer<'Data>) =
+        buffer |> Buffer.rateByCount
+
+    [<Extension>]
+    static member Rate(buffer: Buffer<'Data>, selector: Func<'Data, float>) =
+        buffer |> Buffer.rateBy selector.Invoke
+
+[<Extension>]
 type LogExtensions =
     [<Extension>]
     static member AsLog(log: ILog<'Entry>) =
@@ -35,24 +49,16 @@ type LogExtensions =
         log |> Log.bufferByBoundaries boundaries
 
     [<Extension>]
-    static member Count(log) =
-        log |> Log.count
+    static member Rate(log) =
+        log |> Log.rate
 
     [<Extension>]
-    static member Rate(log, interval) =
-        log |> Log.rateByInterval interval
+    static member Rate(log: ILog<Buffer<'Data>>) =
+        log |> Log.rateByCount
 
     [<Extension>]
-    static member Rate(log: ILog<Increment<'Context>>, interval) =
-        log |> Log.rateByInterval' interval
-
-    [<Extension>]
-    static member Rate(log, boundaries: IObservable<'Boundary>) =
-        log |> Log.rateByBoundaries boundaries
-
-    [<Extension>]
-    static member Rate(log: ILog<Increment<'Context>>, boundaries: IObservable<'Boundary>) =
-        log |> Log.rateByBoundaries' boundaries
+    static member Rate(log: ILog<Buffer<'Data>>, selector: Func<'Data, float>) =
+        log |> Log.rateBy selector.Invoke
 
     [<Extension>]
     static member Subscribe(log: ILog<'Entry>, onNext: Action<'Entry>) =

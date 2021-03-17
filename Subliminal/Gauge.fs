@@ -72,7 +72,7 @@ module Gauge =
         gauge
         |> bufferer
         |> Log.map (fun buffer ->
-            let values = buffer.Values |> Seq.map (fun measure -> measure.Value)
+            let values = buffer.Data |> Seq.map (fun measure -> measure.Value)
             Distribution(values, buffer.Interval))
 
     let distByInterval interval gauge =
@@ -90,10 +90,10 @@ module Gauge =
 [<RequireQualifiedAccess>]
 module Distribution =
     let ofBuffer (buffer: Buffer<float>) =
-        Distribution(buffer.Values, buffer.Interval)
+        Distribution(buffer.Data, buffer.Interval)
 
-    let ofBuffer' (mapper: 'Value -> float) (buffer: Buffer<'Value>) =
-        let values = buffer.Values |> Seq.map mapper
+    let ofBuffer' (mapper: 'Data -> float) (buffer: Buffer<'Data>) =
+        let values = buffer.Data |> Seq.map mapper
         Distribution(values, buffer.Interval)
 
 type Gauge<'Context>() =
