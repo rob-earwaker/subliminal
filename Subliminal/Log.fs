@@ -30,6 +30,7 @@ type Distribution(values: float seq, interval: TimeSpan) =
     let mean = lazy Array.average values
     let total = lazy Array.sum values
     let rate = lazy Rate(total.Value, interval)
+    let sampleRate = lazy Rate(float values.Length, interval)
     // TODO: RateOfChange
     // TODO: Median, Percentile(), Percentile99, Percentile50, Percentile90, Percentile05
     // TODO: Should Rate and/or RateOfChange be a Distribution?
@@ -42,6 +43,7 @@ type Distribution(values: float seq, interval: TimeSpan) =
     member this.Mean = mean.Value
     member this.Total = total.Value
     member this.Rate = rate.Value
+    member this.SampleRate = sampleRate.Value
 
 [<RequireQualifiedAccess>]
 module Buffer =
