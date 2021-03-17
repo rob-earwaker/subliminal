@@ -48,8 +48,8 @@ type BufferExtensions =
         buffer |> Buffer.dist
 
     [<Extension>]
-    static member Distribution(buffer: Buffer<'Data>, sampleSelector: Func<'Data, float>) =
-        buffer |> Buffer.distOf sampleSelector.Invoke
+    static member Distribution(buffer: Buffer<'Data>, valueSelector: Func<'Data, float>) =
+        buffer |> Buffer.distOf valueSelector.Invoke
 
 [<Extension>]
 type LogExtensions =
