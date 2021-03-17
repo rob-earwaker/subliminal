@@ -43,6 +43,21 @@ type Distribution(values: float seq, interval: TimeSpan) =
 
 [<RequireQualifiedAccess>]
 module Buffer =
+    let sort (buffer: Buffer<'Data>) =
+        let data = buffer.Data |> Seq.sort
+        Buffer<'Data>(data, buffer.Interval)
+
+    let sortBy (selectKey: 'Data -> 'Key) (buffer: Buffer<'Data>) =
+        let data = buffer.Data |> Seq.sortBy selectKey
+        Buffer<'Data>(data, buffer.Interval)
+
+    let groupBy (selectKey: 'Data -> 'Key) (buffer: Buffer<'Data>) =
+        buffer.Data
+        |> Array.groupBy selectKey
+        |> Array.map (fun (key, data) ->
+            let buffer = Buffer<'Data>(data, buffer.Interval)
+            key, buffer)
+
     let rate (buffer: Buffer<double>) =
         let total = Array.sum buffer.Data
         Rate(total, buffer.Interval)
@@ -51,15 +66,15 @@ module Buffer =
         let total = float buffer.Count
         Rate(total, buffer.Interval)
 
-    let rateOf (mapper: 'Data -> float) (buffer: Buffer<'Data>) =
-        let total = buffer.Data |> Array.sumBy mapper
+    let rateOf (selectIncrement: 'Data -> float) (buffer: Buffer<'Data>) =
+        let total = buffer.Data |> Array.sumBy selectIncrement
         Rate(total, buffer.Interval)
 
     let dist (buffer: Buffer<double>) =
         Distribution(buffer.Data, buffer.Interval)
 
-    let distOf (mapper: 'Data -> float) (buffer: Buffer<'Data>) =
-        let values = buffer.Data |> Seq.map mapper
+    let distOf (selectSample: 'Data -> float) (buffer: Buffer<'Data>) =
+        let values = buffer.Data |> Seq.map selectSample
         Distribution(values, buffer.Interval)
 
 [<RequireQualifiedAccess>]
@@ -88,10 +103,18 @@ module Log =
     let data (log: ILog<'Data>) =
         log.Data
 
-    let map (mapper: 'Data -> 'Mapped) (log: ILog<'Data>) =
+    let map (mapping: 'Data -> 'Mapped) (log: ILog<'Data>) =
         log.Data
-        |> Observable.map mapper
+        |> Observable.map mapping
         |> create
+
+    let collect (mapping: 'Data -> #seq<'Mapped>) (log: ILog<'Data>) =
+        log.Data
+        |> fun obs -> obs.SelectMany(fun data -> mapping data :> seq<'Mapped>)
+        |> create
+
+    let concat (log: ILog<#seq<'Data>>) =
+        log |> collect id
 
     let internal bind (binder: 'Data -> ITrigger<'Context>) (log: ILog<'Data>) =
         log.Data
@@ -111,20 +134,23 @@ module Log =
     let bufferByBoundaries (boundaries: IObservable<'Boundary>) (log: ILog<'Data>) =
         log |> buffer (fun data -> data.Buffer(boundaries))
 
+    let groupBy (selectKey: 'Data -> 'Key) (log: ILog<Buffer<'Data>>) =
+        log |> collect (Buffer.groupBy selectKey)
+
     let rate (log: ILog<Buffer<float>>) =
         log |> map Buffer.rate
 
     let rateOfData (log: ILog<Buffer<'Data>>) =
         log |> map Buffer.rateOfData
 
-    let rateOf mapper (log: ILog<Buffer<'Data>>) =
-        log |> map (Buffer.rateOf mapper)
+    let rateOf selectIncrement (log: ILog<Buffer<'Data>>) =
+        log |> map (Buffer.rateOf selectIncrement)
 
     let dist (log: ILog<Buffer<float>>) =
         log |> map Buffer.dist
 
-    let distOf mapper (log: ILog<Buffer<'Data>>) =
-        log |> map (Buffer.distOf mapper)
+    let distOf selectSample (log: ILog<Buffer<'Data>>) =
+        log |> map (Buffer.distOf selectSample)
 
     let subscribe onNext (log: ILog<'Data>) =
         log.Data |> Observable.subscribe onNext

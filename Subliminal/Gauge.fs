@@ -8,6 +8,7 @@ type Measure<'Context>(value: float, context: 'Context) =
     member val Context = context
 
 type IGauge =
+    // TODO: maybe this should just be an ILog<float>
     inherit ILog<Measure>
 
 type IGauge<'Context> =
