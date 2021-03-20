@@ -24,8 +24,6 @@ type Distribution(values: float seq, interval: TimeSpan) =
     let rate = lazy Rate(total.Value, interval)
     let sampleRate = lazy Rate(float values.Length, interval)
     // TODO: RateOfChange
-    // TODO: Median, Percentile(), Percentile99, Percentile50, Percentile90, Percentile05
-    // TODO: Should Rate and/or RateOfChange be a Distribution?
 
     member val Values = values
     member val Interval = interval
@@ -36,6 +34,14 @@ type Distribution(values: float seq, interval: TimeSpan) =
     member this.Total = total.Value
     member this.Rate = rate.Value
     member this.SampleRate = sampleRate.Value
+    member this.Median = this.Quantile(0.50)
+
+    member this.Quantile(quantile) =
+        let index =
+            if quantile <= 0. then 0
+            else if quantile >= 1. then values.Length - 1
+            else int (float values.Length * quantile)
+        valuesSorted.Value.[index]
 
 type Buffer<'Data>(data: 'Data seq, interval: TimeSpan) =
     let data = Array.ofSeq data
