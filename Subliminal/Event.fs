@@ -1,8 +1,9 @@
 ﻿namespace Subliminal
 
+open System.Reactive
+
 type IEvent =
-    // TODO: should maybe use Unit here instead to allow creation form a log in C#
-    inherit ILog<unit>
+    inherit ILog<Unit>
 
 type IEvent<'Event> =
     inherit ILog<'Event>
@@ -17,7 +18,7 @@ module Event =
         { new IEvent<'Event> with
             member this.Data = occurrences }
 
-    let ofLog (log: ILog<unit>) =
+    let ofLog (log: ILog<Unit>) =
         create log.Data
 
     let ofLog' (log: ILog<'Event>) =
@@ -31,7 +32,7 @@ module Event =
 
     let withoutContext (event: IEvent<'Event>) =
         event
-        |> Log.map ignore
+        |> Log.map (fun _ -> Unit.Default)
         |> ofLog
 
 type Event<'Event>() =
@@ -47,12 +48,12 @@ type Event<'Event>() =
         member this.Data = this.Data
 
 type Event() =
-    let event = Event<unit>()
+    let event = Event<Unit>()
 
     member this.LogOccurrence() =
-        event.LogOccurrence(())
+        event.LogOccurrence(Unit.Default)
 
-    member this.Data = event |> Event.withoutContext |> Log.data
+    member this.Data = event.Data
 
     interface IEvent with
         member this.Data = this.Data
