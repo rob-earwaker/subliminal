@@ -4,7 +4,42 @@
 [![AppVeyor branch](https://img.shields.io/appveyor/ci/rob-earwaker/subliminal/master?logo=appveyor&logoColor=white)](https://ci.appveyor.com/project/rob-earwaker/subliminal/branch/master)
 [![AppVeyor tests (branch)](https://img.shields.io/appveyor/tests/rob-earwaker/subliminal/master?logo=appveyor&logoColor=white&compact_message)](https://ci.appveyor.com/project/rob-earwaker/subliminal/branch/master/tests)
 
-Subliminal lets you simply and concisely capture application metrics in library code, without having to worry about things like: where the data should be sent, what exactly gets recorded, or even whether the data is recorded at all! Metrics are exposed as streams of observable events that applications can consume with the powerful capabilities of [Reactive Extensions](https://github.com/dotnet/reactive) - unlocking operations such as transformation, sampling, aggregation and many more.
+Subliminal lets you instrument your library code in a simple and concise way, letting you focus on capturing data and not on the exact way in which the data will be consumed. Captured data is exposed as a stream that can be transformed, filtered, aggregated and subscribed to by consuming applications, and then sent to whichever monitoring solution the application happens to be using.
+
+```fsharp
+// Library
+
+module Processor =
+    // Create a new log that captures information about an operation.
+    let Operation = Operation()
+
+    let processData data =
+        // Start a new operation timer.
+        use timer = Operation.StartNew()
+        // Process the data.
+        // ...
+```
+
+```fsharp
+// Application
+
+// Subscribe to all completed operations.
+Processor.Operation.Completed
+|> Log.subscribeForever (fun completed ->
+    // Send information to the console.
+    printfn "Processing operation took %.4f seconds to complete"
+        completed.OperationId completed.Duration.TotalSeconds)
+
+// Do some data processing.
+for data in dataSet do
+    Processor.processData data
+
+// Output:
+// > Processing operation took 0.1204 seconds to complete
+// > Processing operation took 0.9371 seconds to complete
+// > Processing operation took 0.5710 seconds to complete
+// > ...
+```
 
 Key design principles of Subliminal:
 
