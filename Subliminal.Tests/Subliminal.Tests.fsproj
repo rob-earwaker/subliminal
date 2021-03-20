@@ -9,21 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Utils.fs" />
-    <Compile Include="TestCounter.fs" />
-    <Compile Include="TestDerivedCounter.fs" />
-    <Compile Include="TestDerivedEvent.fs" />
-    <Compile Include="TestDerivedEventLog.fs" />
-    <Compile Include="TestDerivedGauge.fs" />
-    <Compile Include="TestDerivedLog.fs" />
-    <Compile Include="TestEvent.fs" />
-    <Compile Include="TestEventLog.fs" />
-    <Compile Include="TestGauge.fs" />
-    <Compile Include="TestLog.fs" />
-    <Compile Include="TestOperation.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="FsCheck.Xunit" Version="2.15.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
     <PackageReference Include="Unquote" Version="5.0.0" />
