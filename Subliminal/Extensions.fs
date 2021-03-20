@@ -1,4 +1,4 @@
-﻿namespace Subliminal.Extensions
+﻿namespace Subliminal
 
 open Subliminal
 open System
