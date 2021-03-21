@@ -54,6 +54,21 @@ type Gauge<'Context>() =
     interface IGauge<'Context> with
         member this.Data = this.Data
 
+    member this.LogValue(value: float32, context) =
+        this.LogValue(float value, context)
+
+    member this.LogValue(value: int, context) =
+        this.LogValue(float value, context)
+
+    member this.LogValue(value: int64, context) =
+        this.LogValue(float value, context)
+
+    member this.LogValue(value: uint, context) =
+        this.LogValue(float value, context)
+
+    member this.LogValue(value: uint64, context) =
+        this.LogValue(float value, context)
+
 type Gauge() =
     let log = Log<float>()
 
@@ -64,3 +79,18 @@ type Gauge() =
 
     interface IGauge with
         member this.Data = this.Data
+
+    member this.LogValue(value: float32) =
+        this.LogValue(float value)
+
+    member this.LogValue(value: int) =
+        this.LogValue(float value)
+
+    member this.LogValue(value: int64) =
+        this.LogValue(float value)
+
+    member this.LogValue(value: uint32) =
+        this.LogValue(float value)
+
+    member this.LogValue(value: uint64) =
+        this.LogValue(float value)
