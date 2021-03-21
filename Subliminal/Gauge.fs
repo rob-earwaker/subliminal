@@ -1,29 +1,22 @@
 ﻿namespace Subliminal
 
-type Measure(value: float) =
-    member val Value = value
+type IGauge =
+    inherit ILog<float>
 
 type Measure<'Context>(value: float, context: 'Context) =
     member val Value = value
     member val Context = context
-
-type IGauge =
-    // TODO: maybe this should just be an ILog<float>
-    inherit ILog<Measure>
 
 type IGauge<'Context> =
     inherit ILog<Measure<'Context>>
 
 [<RequireQualifiedAccess>]
 module Measure =
-    let value (measure: Measure) =
+    let value (measure: Measure<'Context>) =
         measure.Value
 
-    let value' (measure: Measure<'Context>) =
-        measure.Value
-
-    let withoutContext (measure: Measure<'Context>) =
-        Measure(measure.Value)
+    let context (measure: Measure<'Context>) =
+        measure.Context
 
 [<RequireQualifiedAccess>]
 module Gauge =
@@ -35,7 +28,7 @@ module Gauge =
         { new IGauge<'Context> with
             member this.Data = measures }
 
-    let ofLog (log: ILog<Measure>) =
+    let ofLog (log: ILog<float>) =
         create log.Data
 
     let ofLog' (log: ILog<Measure<'Context>>) =
@@ -48,29 +41,26 @@ module Gauge =
         create' gauge.Data
 
     let withoutContext (gauge: IGauge<'Context>) =
-        gauge
-        |> Log.map Measure.withoutContext
-        |> ofLog
+        gauge |> Log.map Measure.value |> ofLog
 
 type Gauge<'Context>() =
     let log = Log<Measure<'Context>>()
-    let gauge = Gauge.ofLog' log
 
     member this.LogValue(value, context) =
         log.Log(Measure<'Context>(value, context))
 
-    member this.Data = gauge.Data
+    member this.Data = log.Data
 
     interface IGauge<'Context> with
         member this.Data = this.Data
 
 type Gauge() =
-    let gauge = Gauge<unit>()
+    let log = Log<float>()
 
     member this.LogValue(value) =
-        gauge.LogValue(value, ())
+        log.Log(value)
 
-    member this.Data = gauge |> Gauge.withoutContext |> Log.data
+    member this.Data = log.Data
 
     interface IGauge with
         member this.Data = this.Data
