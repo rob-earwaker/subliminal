@@ -14,7 +14,12 @@ type Rate(total: float, interval: TimeSpan) =
     member val Interval = interval
     member this.PerSecond = perSecond.Value
 
-type Distribution(values: float seq, interval: TimeSpan) =
+/// A collection of floating point values accumulated over an interval.
+type Distribution
+    /// <summary>A collection of floating point values accumulated over an interval.</summary>
+    /// <param name="values">The collection of values that make up the distribution.</param>
+    /// <param name="interval">The interval over which values were accumulated.</param>
+    (values: float seq, interval: TimeSpan) =
     let values = Array.ofSeq values
     let valuesSorted = lazy Array.sort values
     let min = lazy Array.head valuesSorted.Value
@@ -25,17 +30,33 @@ type Distribution(values: float seq, interval: TimeSpan) =
     let sampleRate = lazy Rate(float values.Length, interval)
     // TODO: RateOfChange
 
+    /// The collection of values that make up the distribution.
     member val Values = values
+    /// The interval over which values were accumulated.
     member val Interval = interval
-
+    
+    /// The number of values.
+    member this.Count = values.Length
+    /// The minimum value.
     member this.Min = min.Value
+    /// The maximum value.
     member this.Max = max.Value
+    /// The mean value.
     member this.Mean = mean.Value
+    /// The total of all values.
     member this.Total = total.Value
+    /// A rate based on the total of all values.
     member this.Rate = rate.Value
+    /// A rate based on the number of values.
     member this.SampleRate = sampleRate.Value
-    member this.Median = this.Quantile(0.50)
+    /// The median value.
+    member this.Median = this.Quantile(0.5)
 
+    /// <summary>Calculates a quantile of the distribution.</summary>
+    /// <param name="quantile">
+    /// The quantile to calculate, e.g. 0.25, 0.50 (median), 0.99.
+    /// Values will be clamped to the range 0.0 <= quantile <= 1.0.
+    /// </param>
     member this.Quantile(quantile) =
         let index =
             if quantile <= 0. then 0
@@ -43,12 +64,21 @@ type Distribution(values: float seq, interval: TimeSpan) =
             else int (float values.Length * quantile)
         valuesSorted.Value.[index]
 
-type Buffer<'Data>(data: 'Data seq, interval: TimeSpan) =
+/// A collection of data accumulated over an interval.
+type Buffer<'Data>
+    /// <summary>A collection of data accumulated over an interval.</summary>
+    /// <param name="data">The collection of data items accumulated in the buffer.</param>
+    /// <param name="interval">The interval over which data was accumulated.</param>
+    (data: 'Data seq, interval: TimeSpan) =
     let data = Array.ofSeq data
     let dataRate = lazy Rate(float data.Length, interval)
+    /// The collection of data items accumulated in the buffer.
     member val Data = data
+    /// The interval over which data was accumulated.
     member val Interval = interval
+    /// The number of data items.
     member val Count = data.Length
+    /// A rate based on the number of data items.
     member this.DataRate = dataRate.Value
 
 [<RequireQualifiedAccess>]
@@ -58,14 +88,21 @@ module Rate =
 
 [<RequireQualifiedAccess>]
 module Distribution =
+    /// <summary>A collection of floating point values accumulated over an interval.</summary>
+    /// <param name="values">The collection of values that make up the distribution.</param>
+    /// <param name="interval">The interval over which values were accumulated.</param>
     let create values interval =
         Distribution(values, interval)
 
 [<RequireQualifiedAccess>]
 module Buffer =
+    /// <summary>A collection of data accumulated over an interval.</summary>
+    /// <param name="data">The collection of data items accumulated in the buffer.</param>
+    /// <param name="interval">The interval over which data was accumulated.</param>
     let create data interval =
         Buffer<'Data>(data, interval)
 
+    /// A rate based on the number of data items.
     let dataRate (buffer: Buffer<'Data>) =
         buffer.DataRate
 
@@ -110,8 +147,11 @@ module Log =
         { new ILog<'Data> with
             member this.Data = data }
 
+    /// <summary>
     /// Creates a log from an observable source. This creates a subscription
     /// to the source observable that will start consuming items immediately.
+    /// </summary>
+    /// <param name="observable">The observable data source.</param>
     let ofObservable (observable: IObservable<'Data>) =
         // Publish the observable to ensure that all observers receive
         // the same data.
