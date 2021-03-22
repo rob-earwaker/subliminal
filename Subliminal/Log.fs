@@ -50,7 +50,7 @@ type Distribution
     /// A rate based on the number of values.
     member this.SampleRate = sampleRate.Value
     /// The median value.
-    member this.Median = this.Quantile(0.5)
+    member this.Median = this.Quantile(0.50)
 
     /// <summary>Calculates a quantile of the distribution.</summary>
     /// <param name="quantile">
@@ -121,7 +121,7 @@ module Buffer =
             let buffer = create data buffer.Interval
             key, buffer)
 
-    let rate (buffer: Buffer<double>) =
+    let rate (buffer: Buffer<float>) =
         let total = Array.sum buffer.Data
         Rate.create total buffer.Interval
 
@@ -129,7 +129,7 @@ module Buffer =
         let total = buffer.Data |> Array.sumBy selectIncrement
         Rate.create total buffer.Interval
 
-    let dist (buffer: Buffer<double>) =
+    let dist (buffer: Buffer<float>) =
         Distribution.create buffer.Data buffer.Interval
 
     let distOf (selectValue: 'Data -> float) (buffer: Buffer<'Data>) =
