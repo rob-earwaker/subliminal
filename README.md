@@ -43,26 +43,20 @@ for data in dataSet do
 
 Key design principles of Subliminal:
 
-- **Simple and concise metric capture.** Capture of metrics focuses on data collection only. The final destination of metric data, and even whether or not it gets recorded, is not specified by the metric source.
-- **Always-available, not always-on.** By exposing metrics to the consumer as observable streams of data that are not recorded by default, consumers can choose only the metrics that are important to their application.
-- **Configurable, not configured.** Configuration of the final destination for metric data, as well as any custom filtering or transformation, is done by the consumer not by the metric source. This gives consumers the flexibility of choosing what metric data gets sent where.
+- **Simple and concise data capture.** Metric capture focuses on data collection only. The final destination of metric data, and even whether or not it gets recorded, is not specified by the data source.
+- **Always-available, not always-on.** By exposing data to the consumer as observable streams that are not recorded by default, consumers can choose the data that's important to their application and transform it to fit their use case.
+- **Configurable, not configured.** Configuration of the final destination for data, as well as any custom filtering, transformation or aggregation, is done by the consumer not by the data source. This gives consumers the flexibility of choosing what data gets sent where, and in what shape.
 
-Metric types:
+## Data Collectors
 
-- `Gauge` - A gauge is the simplest type of metric. It provides absolute values of a particular quantity, e.g. the number of messages on a queue or the current processor usage.
-- `Counter` - A counter provides incremental values that measure the relative changes of a particular quantity over time, e.g. the number of entities retrieved from a database or the number of bytes read from disk. Unlike a gauge, the values produced by a counter represent relative changes of the quantity not absolute values.
-- `EventLog` `EventLog<TEvent>` - An event log provides notifications whenever a particular event occurs, e.g. when a message is handled or a file is deleted. Each event can optionally include context information.
-- `OperationLog` `OperationLog<TContext>` - An operation provides execution timing information for a particular action, e.g. adding an item to the basket or registering a new user. It is made up of several different event logs that record when an operation is started, completed or canceled. Each operation execution can optionally include context information.
-- `Log<TEntry>` - A log is a sequence of entries that provide some information, where each entry is independent of all others. In the simplest case, a log might provide debug messages in the form of text.
-- `Event` `Event<TEvent>` - An event represents an action that only occurs once and will therefore only provide a single value before completing the observable sequence. All future subscribers will still receive the event value despite not having an active subscription when the event was raised.
-
-Quickstart samples:
-[`Gauge`](Subliminal.Sample.Api/QuickstartGauge.cs)
-[`Counter`](Subliminal.Sample.Api/QuickstartCounter.cs)
-[`EventLog`](Subliminal.Sample.Api/QuickstartEventLog.cs)
-[`EventLog<TEvent>`](Subliminal.Sample.Api/QuickstartEventLogTEvent.cs)
-[`OperationLog`](Subliminal.Sample.Api/QuickstartOperationLog.cs)
-[`OperationLog<TContext>`](Subliminal.Sample.Api/QuickstartOperationLogTContext.cs)
-[`Log<TEntry>`](Subliminal.Sample.Api/QuickstartLogTEntry.cs)
-[`Event`](Subliminal.Sample.Api/QuickstartEvent.cs)
-[`Event<TEvent>`](Subliminal.Sample.Api/QuickstartEventTEvent.cs)
+| Log Type | Description |
+|-|-|
+| `Log<'Data>` | A log is the most fundamental way of exposing useful information as a stream of data. In the simplest case, a log might provide debug messages in the form of text. In a more complex case, a log might provide a set of related metrics that change over time, e.g. system resource usage. |
+| `Gauge` | A gauge is a log of floating point values that represent changes in a single metric over time, e.g. the number of messages on a queue or the current processor usage. |
+| `Gauge<'Context>` | A gauge that has some contextual information associated with it, e.g. if your gauge was tracking the number of open connections, you might want to include the name of the host as context to allow consumers the option to filter or group by host name. |
+| `Count` | e.g. the number of entities retrieved from a database or the number of bytes read from disk. Unlike a gauge, the values produced by a counter represent relative changes of the quantity not absolute values. |
+| `Count<'Context>` | |
+| `Event` | An event log provides notifications whenever a particular event occurs, e.g. when a message is handled or a file is deleted. Each event can optionally include context information. |
+| `Event<'Event>` | |
+| `Operation` | An operation provides execution timing information for a particular action, e.g. adding an item to a basket or registering a new user. Data is exposed in the form of several different events that are emitted when an operation is started, stopped, completed or canceled. |
+| `Operation<'Context>` | An operation that has some contextual information associated with it, e.g. if your operation was tracking the time taken to execute database queries you might want to include the database name or a query identifier as context. |
