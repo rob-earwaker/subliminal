@@ -1,4 +1,4 @@
-﻿namespace Subliminal.Tests
+﻿namespace Subliminal.Tests.FSharp
 
 open Subliminal
 open Swensen.Unquote
