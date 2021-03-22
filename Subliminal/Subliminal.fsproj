@@ -24,7 +24,7 @@
     <Compile Include="Trigger.fs" />
     <Compile Include="Log.fs" />
     <Compile Include="Gauge.fs" />
-    <Compile Include="Count.fs" />
+    <Compile Include="Counter.fs" />
     <Compile Include="Event.fs" />
     <Compile Include="Operation.fs" />
     <Compile Include="ProcessMonitor.fs" />

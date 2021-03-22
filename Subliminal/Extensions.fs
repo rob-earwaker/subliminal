@@ -124,7 +124,7 @@ type GaugeExtensions =
         gauge |> Gauge.withoutContext
 
 [<Extension>]
-type CountExtensions =
+type CounterExtensions =
     [<Extension>]
     static member AsCounter(counter) =
         counter |> Counter.asCounter
