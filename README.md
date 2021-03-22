@@ -54,8 +54,8 @@ Key design principles of Subliminal:
 | `Log<'Data>` | A log is the most fundamental way of exposing useful information as a stream of data. In the simplest case, a log might provide debug messages in the form of text. In a more complex case, a log might provide a set of related metrics that change over time, e.g. system resource usage. |
 | `Gauge` | A gauge is a log of floating point values that represent changes in a single metric over time, e.g. the number of messages on a queue or the current processor usage. |
 | `Gauge<'Context>` | A gauge that has some contextual information associated with it, e.g. if your gauge was tracking the number of open connections, you might want to include the name of the host as context to allow consumers the option to filter or group by host name. |
-| `Count` | e.g. the number of entities retrieved from a database or the number of bytes read from disk. Unlike a gauge, the values produced by a counter represent relative changes of the quantity not absolute values. |
-| `Count<'Context>` | |
+| `Counter` | e.g. the number of entities retrieved from a database or the number of bytes read from disk. Unlike a gauge, the values produced by a counter represent relative changes of the quantity not absolute values. |
+| `Counter<'Context>` | |
 | `Event` | An event log provides notifications whenever a particular event occurs, e.g. when a message is handled or a file is deleted. Each event can optionally include context information. |
 | `Event<'Event>` | |
 | `Operation` | An operation provides execution timing information for a particular action, e.g. adding an item to a basket or registering a new user. Data is exposed in the form of several different events that are emitted when an operation is started, stopped, completed or canceled. |
