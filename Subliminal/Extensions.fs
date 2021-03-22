@@ -94,12 +94,12 @@ type LogExtensions =
         Gauge.ofLog' log
 
     [<Extension>]
-    static member AsCount(log) =
-        Count.ofLog log
+    static member AsCounter(log) =
+        Counter.ofLog log
 
     [<Extension>]
-    static member AsCount(log: ILog<Increment<'Context>>) =
-        Count.ofLog' log
+    static member AsCounter(log: ILog<Increment<'Context>>) =
+        Counter.ofLog' log
 
     [<Extension>]
     static member AsEvent(log) =
@@ -126,16 +126,16 @@ type GaugeExtensions =
 [<Extension>]
 type CountExtensions =
     [<Extension>]
-    static member AsCount(count) =
-        count |> Count.asCount
+    static member AsCounter(counter) =
+        counter |> Counter.asCounter
 
     [<Extension>]
-    static member AsCount(count: ICount<'Context>) =
-        count |> Count.asCount'
+    static member AsCounter(counter: ICounter<'Context>) =
+        counter |> Counter.asCounter'
 
     [<Extension>]
-    static member WithoutContext(count: ICount<'Context>) =
-        count |> Count.withoutContext
+    static member WithoutContext(counter: ICounter<'Context>) =
+        counter |> Counter.withoutContext
 
 [<Extension>]
 type EventExtensions =

@@ -1,13 +1,13 @@
 ﻿namespace Subliminal
 
-type ICount =
+type ICounter =
     inherit ILog<float>
 
 type Increment<'Context>(value: float, context: 'Context) =
     member val Value = value
     member val Context = context
 
-type ICount<'Context> =
+type ICounter<'Context> =
     inherit ILog<Increment<'Context>>
 
 [<RequireQualifiedAccess>]
@@ -19,13 +19,13 @@ module Increment =
         increment.Context
 
 [<RequireQualifiedAccess>]
-module Count =
+module Counter =
     let private create increments =
-        { new ICount with
+        { new ICounter with
             member this.Data = increments }
 
     let private create' increments =
-        { new ICount<'Context> with
+        { new ICounter<'Context> with
             member this.Data = increments }
 
     let ofLog (log: ILog<float>) =
@@ -34,16 +34,16 @@ module Count =
     let ofLog' (log: ILog<Increment<'Context>>) =
         create' log.Data
 
-    let asCount (count: ICount) =
-        create count.Data
+    let asCounter (counter: ICounter) =
+        create counter.Data
 
-    let asCount' (count: ICount<'Context>) =
-        create' count.Data
+    let asCounter' (counter: ICounter<'Context>) =
+        create' counter.Data
 
-    let withoutContext (count: ICount<'Context>) =
-        count |> Log.map Increment.value |> ofLog
+    let withoutContext (counter: ICounter<'Context>) =
+        counter |> Log.map Increment.value |> ofLog
 
-type Count<'Context>() =
+type Counter<'Context>() =
     let log = Log<Increment<'Context>>()
 
     member this.Increment(context) =
@@ -55,10 +55,10 @@ type Count<'Context>() =
 
     member this.Data = log.Data
 
-    interface ICount<'Context> with
+    interface ICounter<'Context> with
         member this.Data = this.Data
 
-type Count() =
+type Counter() =
     let log = Log<float>()
 
     member this.Increment() =
@@ -70,5 +70,5 @@ type Count() =
 
     member this.Data = log.Data
 
-    interface ICount with
+    interface ICounter with
         member this.Data = this.Data
