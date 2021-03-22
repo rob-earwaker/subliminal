@@ -55,7 +55,7 @@ type Distribution
     /// <summary>Calculates a quantile of the distribution.</summary>
     /// <param name="quantile">
     /// The quantile to calculate, e.g. 0.25, 0.50 (median), 0.99.
-    /// Values will be clamped to the range 0.0 <= quantile <= 1.0.
+    /// Values will be clamped to the range 0.0 &lt;= quantile &lt;= 1.0.
     /// </param>
     member this.Quantile(quantile) =
         let index =
