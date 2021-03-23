@@ -1,5 +1,5 @@
 $majorVersionNumber = "0"
-$versionPrefix = "$majorVersionNumber.2.0"
+$versionPrefix = "$majorVersionNumber.3.0"
 
 Write-Output "APPVEYOR_BUILD_NUMBER: $env:APPVEYOR_BUILD_NUMBER"
 Write-Output "APPVEYOR_REPO_COMMIT: $env:APPVEYOR_REPO_COMMIT"
@@ -42,7 +42,7 @@ dotnet test .\Subliminal.Tests.FSharp -c $buildConfiguration --no-build
 
 if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
 
-dotnet pack .\Subliminal -c $buildConfiguration --no-build -o ..\artifacts `
+dotnet pack .\Subliminal -c $buildConfiguration --no-build -o .\artifacts `
     -p:PackageVersion=$version
 
 if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
