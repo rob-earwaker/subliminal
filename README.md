@@ -51,12 +51,12 @@ Key design principles of Subliminal:
 
 | Log Type | Description |
 |-|-|
-| `Log<'Data>()` | A log is the most fundamental way of exposing useful information as a stream of data. In the simplest case, a log might provide debug messages in the form of text. In a more complex case, a log might provide a set of related metrics that change over time, e.g. system resource usage. |
-| `Gauge()` | A gauge is a log of floating point values that represent changes in a single metric over time, e.g. the number of messages on a queue or the current processor usage. |
-| `Gauge<'Context>()` | A gauge that has some contextual information associated with it, e.g. if your gauge was capturing the number of open connections, you might want to include the name of the host as context. |
-| `Counter()` | A counter is a log of floating point values that represent independent measures of the same logical metric, e.g. the number of entities retrieved from a database or the number of bytes written to disk. |
-| `Counter<'Context>()` | A counter that has some contextual data associated with it, e.g. if you were capturing the size of messages being sent to a message broker you might want to include a message type name or the broker name as context. |
-| `Event()` | An event is a log that doesn't have any data associated with it but records occurrences of particular event, e.g. when a message is handled or when a file is deleted. |
-| `Event<'Event>()` | An event that has some data associated with it, e.g. if you were capturing occurrences of failed requests you might want to include the failure reason or failure code as event data. |
-| `Operation()` | An operation provides execution timing information for a particular action, e.g. adding an item to a basket or registering a new user. Data is exposed in the form of several different events that are emitted when an operation is started, stopped, completed or canceled. |
-| `Operation<'Context>()` | An operation that has some contextual information associated with it, e.g. if your operation was capturing the time taken to execute database queries you might want to include the database name or a query identifier as context. |
+| `Log<'Data>` | A log is the most fundamental way of exposing useful information as a stream of data. In the simplest case, a log might provide debug messages in the form of text. In a more complex case, a log might provide a set of related metrics that change over time, e.g. system resource usage. |
+| `Gauge` | A gauge is a log of floating point values that represent changes in a single metric over time, e.g. the number of messages on a queue or the current processor usage. |
+| `Gauge<'Context>` | A gauge that has some contextual information associated with it, e.g. if your gauge was capturing the number of open connections, you might want to include the name of the host as context. |
+| `Counter` | A counter is a log of floating point values that represent independent measures of the same logical metric, e.g. the number of entities retrieved from a database or the number of bytes written to disk. |
+| `Counter<'Context>` | A counter that has some contextual data associated with it, e.g. if you were capturing the size of messages being sent to a message broker you might want to include a message type name or the broker name as context. |
+| `Event` | An event is a log that doesn't have any data associated with it but records occurrences of particular event, e.g. when a message is handled or when a file is deleted. |
+| `Event<'Event>` | An event that has some data associated with it, e.g. if you were capturing occurrences of failed requests you might want to include the failure reason or failure code as event data. |
+| `Operation` | An operation provides execution timing information for a particular action, e.g. adding an item to a basket or registering a new user. Data is exposed in the form of several different events that are emitted when an operation is started, stopped, completed or canceled. |
+| `Operation<'Context>` | An operation that has some contextual information associated with it, e.g. if your operation was capturing the time taken to execute database queries you might want to include the database name or a query identifier as context. |
