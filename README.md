@@ -4,7 +4,7 @@
 [![AppVeyor branch](https://img.shields.io/appveyor/ci/rob-earwaker/subliminal/master?logo=appveyor&logoColor=white)](https://ci.appveyor.com/project/rob-earwaker/subliminal/branch/master)
 [![AppVeyor tests (branch)](https://img.shields.io/appveyor/tests/rob-earwaker/subliminal/master?logo=appveyor&logoColor=white&compact_message)](https://ci.appveyor.com/project/rob-earwaker/subliminal/branch/master/tests)
 
-Subliminal lets you instrument your library code in a simple and concise way, letting you focus on capturing data and not on the exact way in which the data will be consumed. Captured data is exposed as a stream that can be transformed, filtered, aggregated and subscribed to by consuming applications, and then sent to whichever monitoring solution the application happens to be using.
+Subliminal lets you instrument your library code in a simple and concise way, letting you focus more on capturing data and less on the exact way in which the data will be consumed. Captured data is exposed as a stream that can be transformed, filtered, aggregated and subscribed to by consuming applications, and then sent to whichever monitoring solution the application happens to be using.
 
 ```fsharp
 // Library
