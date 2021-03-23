@@ -37,7 +37,8 @@ dotnet build . -c $buildConfiguration `
 
 if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
 
-dotnet test .\Subliminal.Tests -c $buildConfiguration --no-build
+dotnet test .\Subliminal.Tests.CSharp -c $buildConfiguration --no-build
+dotnet test .\Subliminal.Tests.FSharp -c $buildConfiguration --no-build
 
 if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
 

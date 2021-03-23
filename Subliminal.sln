@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subliminal", "Subliminal\Subliminal.csproj", "{AB980232-2296-4942-B0C6-911C042B61F1}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Subliminal", "Subliminal\Subliminal.fsproj", "{AE314A14-9A2D-44F0-A7A1-E9FEDB264EFC}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Subliminal.Tests", "Subliminal.Tests\Subliminal.Tests.fsproj", "{1C9A19D9-30C9-405D-92CB-77EF5E765B43}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Subliminal.Tests.CSharp", "Subliminal.Tests.CSharp\Subliminal.Tests.CSharp.csproj", "{327ABA04-BEF0-44BC-8924-6340644163A2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subliminal.Sample.Serilog", "Subliminal.Sample.Serilog\Subliminal.Sample.Serilog.csproj", "{3447AAC8-5766-4454-B525-7C431237978D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Subliminal.Sample.Api", "Subliminal.Sample.Api\Subliminal.Sample.Api.csproj", "{BC8F1E13-E63D-4F09-AE0A-9EFAC12D900C}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Subliminal.Tests.FSharp", "Subliminal.Tests.FSharp\Subliminal.Tests.FSharp.fsproj", "{E981FFF9-4CF4-496A-B2E7-5CDC8C9DDAC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,22 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AB980232-2296-4942-B0C6-911C042B61F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB980232-2296-4942-B0C6-911C042B61F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB980232-2296-4942-B0C6-911C042B61F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB980232-2296-4942-B0C6-911C042B61F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C9A19D9-30C9-405D-92CB-77EF5E765B43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C9A19D9-30C9-405D-92CB-77EF5E765B43}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C9A19D9-30C9-405D-92CB-77EF5E765B43}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C9A19D9-30C9-405D-92CB-77EF5E765B43}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3447AAC8-5766-4454-B525-7C431237978D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3447AAC8-5766-4454-B525-7C431237978D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3447AAC8-5766-4454-B525-7C431237978D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3447AAC8-5766-4454-B525-7C431237978D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BC8F1E13-E63D-4F09-AE0A-9EFAC12D900C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BC8F1E13-E63D-4F09-AE0A-9EFAC12D900C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BC8F1E13-E63D-4F09-AE0A-9EFAC12D900C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BC8F1E13-E63D-4F09-AE0A-9EFAC12D900C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE314A14-9A2D-44F0-A7A1-E9FEDB264EFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE314A14-9A2D-44F0-A7A1-E9FEDB264EFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE314A14-9A2D-44F0-A7A1-E9FEDB264EFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE314A14-9A2D-44F0-A7A1-E9FEDB264EFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{327ABA04-BEF0-44BC-8924-6340644163A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{327ABA04-BEF0-44BC-8924-6340644163A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{327ABA04-BEF0-44BC-8924-6340644163A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{327ABA04-BEF0-44BC-8924-6340644163A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E981FFF9-4CF4-496A-B2E7-5CDC8C9DDAC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E981FFF9-4CF4-496A-B2E7-5CDC8C9DDAC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E981FFF9-4CF4-496A-B2E7-5CDC8C9DDAC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E981FFF9-4CF4-496A-B2E7-5CDC8C9DDAC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
