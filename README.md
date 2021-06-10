@@ -28,7 +28,7 @@ Processor.Operation.Completed
 |> Log.subscribeForever (fun completed ->
     // Send information to the console.
     printfn "Processing operation took %.4f seconds to complete"
-        completed.OperationId completed.Duration.TotalSeconds)
+        completed.Duration.TotalSeconds)
 
 // Do some data processing.
 for data in dataSet do
